@@ -95,4 +95,10 @@ public class BahmniPatientServiceImpl implements BahmniPatientService {
     private Patient getPatientByUuid(String uuid) {
         return patientService.getPatientByUuid(uuid);
     }
+
+    @Override
+    public Patient getPatientByIdentifier(String patientIdentifier){
+        return bahmniPatientDao.getPatient(patientIdentifier);
+
+    }
 }

@@ -193,6 +193,12 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>org.bahmni.module</groupId>
+            <artifactId>bahmnicore-api</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+        </dependency>
+        <dependency>
             <groupId>org.ict4h</groupId>
             <artifactId>atomfeed-client</artifactId>
             <version>${atomfeed.version}</version>

@@ -26,7 +26,7 @@ public class BahmniDrugOrderServiceImplTest {
         expectedException.expectMessage("Patient Id is null or empty. PatientId=''");
 
         Date orderDate = new Date();
-        BahmniDrugOrder calpol = new BahmniDrugOrder("3e4933ff-7799-11e3-a96a-0800271c1b75", 2.0, 10, 20.0, "mg");
+        BahmniDrugOrder calpol = new BahmniDrugOrder("3e4933ff-7799-11e3-a96a-0800271c1b75", 2.0, 20.0, "mg", orderDate);
         List<BahmniDrugOrder> drugOrders = Arrays.asList(calpol);
 
         BahmniDrugOrderService bahmniDrugOrderService = new BahmniDrugOrderServiceImpl(null, null, null, null, null, null, new BahmniPatientDaoImpl(null), null, null);
@@ -39,7 +39,7 @@ public class BahmniDrugOrderServiceImplTest {
         expectedException.expectMessage("Patient Id is null or empty. PatientId='null'");
 
         Date orderDate = new Date();
-        BahmniDrugOrder calpol = new BahmniDrugOrder("3e4933ff-7799-11e3-a96a-0800271c1b75", 2.0, 10, 20.0, "mg");
+        BahmniDrugOrder calpol = new BahmniDrugOrder("3e4933ff-7799-11e3-a96a-0800271c1b75", 2.0, 20.0, "mg", orderDate);
         List<BahmniDrugOrder> drugOrders = Arrays.asList(calpol);
 
         BahmniDrugOrderService bahmniDrugOrderService = new BahmniDrugOrderServiceImpl(null, null, null, null, null, null, new BahmniPatientDaoImpl(null), null, null);
@@ -54,7 +54,7 @@ public class BahmniDrugOrderServiceImplTest {
         expectedException.expectMessage("Patient Id is null or empty. PatientId='12345'");
 
         Date orderDate = new Date();
-        BahmniDrugOrder calpol = new BahmniDrugOrder("3e4933ff-7799-11e3-a96a-0800271c1b75", 2.0, 10, 20.0, "mg");
+        BahmniDrugOrder calpol = new BahmniDrugOrder("3e4933ff-7799-11e3-a96a-0800271c1b75", 2.0, 20.0, "mg", orderDate);
         List<BahmniDrugOrder> drugOrders = Arrays.asList(calpol);
 
         BahmniPatientDao bahmniPatientDao = mock(BahmniPatientDao.class);

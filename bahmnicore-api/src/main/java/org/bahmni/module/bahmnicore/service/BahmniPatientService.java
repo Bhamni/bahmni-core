@@ -12,4 +12,6 @@ public interface BahmniPatientService {
     public PatientConfigResponse getConfig();
     public Patient createPatient(BahmniPatient bahmniPatient);
     public List<PatientResponse> search(PatientSearchParameters searchParameters);
+
+    Patient getPatientByIdentifier(String patientIdentifier);
 }

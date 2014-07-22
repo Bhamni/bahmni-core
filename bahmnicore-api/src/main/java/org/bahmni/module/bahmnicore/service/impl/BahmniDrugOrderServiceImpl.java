@@ -1,7 +1,6 @@
 package org.bahmni.module.bahmnicore.service.impl;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.bahmni.module.bahmnicore.dao.BahmniPatientDao;
 import org.bahmni.module.bahmnicore.dao.OrderDao;
 import org.bahmni.module.bahmnicore.model.BahmniDrugOrder;
@@ -49,7 +48,7 @@ public class BahmniDrugOrderServiceImpl implements BahmniDrugOrderService {
     }
 
     @Override
-    public void add(String patientId, Date orderDate, List<BahmniDrugOrder> bahmniDrugOrders, String systemUserName) {
+    public void add(String patientId, Date encounterDate, List<BahmniDrugOrder> bahmniDrugOrders, String systemUserName) {
         if (StringUtils.isEmpty(patientId))
             throwPatientNotFoundException(patientId);
 
@@ -58,18 +57,14 @@ public class BahmniDrugOrderServiceImpl implements BahmniDrugOrderService {
             throwPatientNotFoundException(patientId);
 
         this.systemUserName = systemUserName;
-        Visit visitForDrugOrders = new VisitIdentificationHelper(visitService).getVisitFor(patient, orderDate, PHARMACY_VISIT);
-        addDrugOrdersToVisit(orderDate, bahmniDrugOrders, patient, visitForDrugOrders);
+        Visit visitForDrugOrders = new VisitIdentificationHelper(visitService).getVisitFor(patient, encounterDate, PHARMACY_VISIT);
+        addDrugOrdersToVisit(encounterDate, bahmniDrugOrders, patient, visitForDrugOrders);
     }
 
     @Override
     public List<DrugOrder> getActiveDrugOrders(String patientUuid) {
-        return (List<DrugOrder>) getDrugOrders(patientUuid);
-    }
-
-    private List<? extends Order> getDrugOrders(String patientUuid) {
         Patient patient = openmrsPatientService.getPatientByUuid(patientUuid);
-        return orderService.getActiveOrders(patient, orderService.getOrderTypeByName("Drug Order"), orderService.getCareSettingByName("Outpatient"), new Date());
+        return (List<DrugOrder>) (List<? extends Order>) orderService.getActiveOrders(patient, orderService.getOrderTypeByName("Drug Order"), orderService.getCareSettingByName("Outpatient"), new Date());
     }
 
     @Override
@@ -82,10 +77,10 @@ public class BahmniDrugOrderServiceImpl implements BahmniDrugOrderService {
         throw new RuntimeException("Patient Id is null or empty. PatientId='" + patientId + "'. Patient may have been directly created in billing system.");
     }
 
-    private void addDrugOrdersToVisit(Date orderDate, List<BahmniDrugOrder> bahmniDrugOrders, Patient patient, Visit visit) {
+    private void addDrugOrdersToVisit(Date encounterDate, List<BahmniDrugOrder> bahmniDrugOrders, Patient patient, Visit visit) {
         Encounter systemConsultationEncounter;
-        systemConsultationEncounter = createNewSystemConsultationEncounter(orderDate, patient);
-        Set<Order> drugOrders = createOrders(patient, orderDate, systemConsultationEncounter, bahmniDrugOrders);
+        systemConsultationEncounter = createNewSystemConsultationEncounter(encounterDate, patient);
+        Set<Order> drugOrders = createOrders(patient, systemConsultationEncounter, bahmniDrugOrders);
         for (Order drugOrder : drugOrders) {
             systemConsultationEncounter.addOrder(drugOrder);
         }
@@ -96,13 +91,13 @@ public class BahmniDrugOrderServiceImpl implements BahmniDrugOrderService {
         }
     }
 
-    private Encounter createNewSystemConsultationEncounter(Date orderDate, Patient patient) {
+    private Encounter createNewSystemConsultationEncounter(Date encounterDate, Patient patient) {
         Encounter systemConsultationEncounter;
         systemConsultationEncounter = new Encounter();
         systemConsultationEncounter.setProvider(getEncounterRole(), getSystemProvider());
         systemConsultationEncounter.setEncounterType(getConsultationEncounterType());
         systemConsultationEncounter.setPatient(patient);
-        systemConsultationEncounter.setEncounterDatetime(orderDate);
+        systemConsultationEncounter.setEncounterDatetime(encounterDate);
         return systemConsultationEncounter;
     }
 
@@ -133,15 +128,15 @@ public class BahmniDrugOrderServiceImpl implements BahmniDrugOrderService {
         return systemProvider;
     }
 
-    private Set<Order> createOrders(Patient patient, Date orderDate, Encounter encounter, List<BahmniDrugOrder> bahmniDrugOrders) {
+    private Set<Order> createOrders(Patient patient, Encounter encounter, List<BahmniDrugOrder> bahmniDrugOrders) {
         Set<Order> orders = new HashSet<>();
         for (BahmniDrugOrder bahmniDrugOrder : bahmniDrugOrders) {
             DrugOrder drugOrder = new DrugOrder();
             Drug drug = conceptService.getDrugByUuid(bahmniDrugOrder.getProductUuid());
             drugOrder.setDrug(drug);
             drugOrder.setConcept(drug.getConcept());
-            drugOrder.setStartDate(orderDate);
-            drugOrder.setAutoExpireDate(DateUtils.addDays(orderDate, bahmniDrugOrder.getNumberOfDays()));
+            drugOrder.setStartDate(bahmniDrugOrder.getStartDate());
+            drugOrder.setAutoExpireDate(bahmniDrugOrder.getAutoExpireDate());
             drugOrder.setEncounter(encounter);
             drugOrder.setPatient(patient);
             drugOrder.setPrn(false);

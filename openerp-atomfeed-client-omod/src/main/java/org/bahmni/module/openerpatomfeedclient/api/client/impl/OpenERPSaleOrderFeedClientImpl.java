@@ -24,16 +24,15 @@ public class OpenERPSaleOrderFeedClientImpl  {
 
     private FeedClient atomFeedClient;
     private OpenERPAtomFeedProperties properties;
-    private BahmniDrugOrderService bahmniDrugOrderService;
     private PlatformTransactionManager transactionManager;
+    private SaleOrderFeedEventWorker saleOrderFeedEventWorker;
 
     public OpenERPSaleOrderFeedClientImpl(
             OpenERPAtomFeedProperties properties,
-            BahmniDrugOrderService bahmniDrugOrderService,
-            PlatformTransactionManager transactionManager) {
+            PlatformTransactionManager transactionManager, SaleOrderFeedEventWorker saleOrderFeedEventWorker) {
         this.properties = properties;
-        this.bahmniDrugOrderService = bahmniDrugOrderService;
         this.transactionManager = transactionManager;
+        this.saleOrderFeedEventWorker = saleOrderFeedEventWorker;
     }
 
     protected void initializeAtomFeedClient() {
@@ -52,7 +51,7 @@ public class OpenERPSaleOrderFeedClientImpl  {
                         properties,
                         txManager,
                         new URI(feedUri),
-                        new SaleOrderFeedEventWorker(bahmniDrugOrderService,properties));
+                        saleOrderFeedEventWorker);
             } catch (URISyntaxException e) {
                 throw new RuntimeException(String.format("Is not a valid URI - %s", feedUri));
             }

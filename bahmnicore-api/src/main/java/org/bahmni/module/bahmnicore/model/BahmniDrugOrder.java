@@ -1,28 +1,26 @@
 package org.bahmni.module.bahmnicore.model;
 
+import org.apache.commons.lang3.time.DateUtils;
+
+import java.util.Date;
+
 public class BahmniDrugOrder {
     private int numberOfDays;
     private String productUuid;
     private Double quantity;
     private Double dosage;
     private String unit;
-
-    public BahmniDrugOrder() {
-    }
-
-    public BahmniDrugOrder(int numberOfDays, String productUuid, Double quantity, Double dosage, String unit) {
-        this.numberOfDays = numberOfDays;
-        this.productUuid = productUuid;
-        this.quantity = quantity;
-        this.dosage = dosage;
-        this.unit = unit;
-    }
+    private Date startDate;
 
     public int getNumberOfDays() {
         if(dosage == 0.0){
             return quantity.intValue();
         }
         return (int) (quantity / dosage);
+    }
+
+    public Date getAutoExpireDate() {
+        return DateUtils.addDays(getStartDate(), getNumberOfDays());
     }
 
     public String getProductUuid() {
@@ -41,12 +39,15 @@ public class BahmniDrugOrder {
         return unit;
     }
 
-    public BahmniDrugOrder(String productUuid, Double dosage, int numberOfDays, Double quantity, String unit) {
-        this.numberOfDays = numberOfDays;
+    public BahmniDrugOrder() {
+    }
+
+    public BahmniDrugOrder(String productUuid, Double dosage, Double quantity, String unit, Date startDate) {
         this.productUuid = productUuid;
         this.quantity = quantity;
         this.dosage = dosage;
         this.unit = unit;
+        this.startDate = startDate;
     }
 
     public void setNumberOfDays(int numberOfDays) {
@@ -67,5 +68,13 @@ public class BahmniDrugOrder {
 
     public void setUnit(String unit) {
         this.unit = unit;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public Date getStartDate() {
+        return startDate;
     }
 }

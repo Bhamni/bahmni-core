@@ -1,12 +1,9 @@
 package org.bahmni.module.openerpatomfeedclient.api.client.impl;
 
-import org.apache.log4j.Logger;
-import org.bahmni.module.bahmnicore.service.BahmniDrugOrderService;
 import org.bahmni.module.openerpatomfeedclient.api.OpenERPAtomFeedProperties;
 import org.bahmni.module.openerpatomfeedclient.api.client.OpenERPSaleOrderFeedClient;
-import org.ict4h.atomfeed.client.service.AtomFeedClient;
+import org.bahmni.module.openerpatomfeedclient.api.worker.SaleOrderFeedEventWorker;
 import org.ict4h.atomfeed.client.service.FeedClient;
-import org.ict4h.atomfeed.jdbc.JdbcConnectionProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -17,9 +14,8 @@ public class OpenERPSaleOrderProcessFeedClientImpl extends OpenERPSaleOrderFeedC
     @Autowired
     public OpenERPSaleOrderProcessFeedClientImpl(
             OpenERPAtomFeedProperties properties,
-            BahmniDrugOrderService bahmniDrugOrderService,
-            PlatformTransactionManager transactionManager) {
-        super(properties,bahmniDrugOrderService,transactionManager);
+            PlatformTransactionManager transactionManager, SaleOrderFeedEventWorker saleOrderFeedEventWorker) {
+        super(properties, transactionManager, saleOrderFeedEventWorker);
     }
 
     @Override

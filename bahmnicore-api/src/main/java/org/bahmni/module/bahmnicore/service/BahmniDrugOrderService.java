@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 public interface BahmniDrugOrderService {
-    void add(String patientId, Date orderDate, List<BahmniDrugOrder> bahmniDrugOrders, String systemUserName);
+    void add(String patientId, Date encounterDate, List<BahmniDrugOrder> bahmniDrugOrders, String systemUserName);
     List getActiveDrugOrders(String patientUuid);
     List<DrugOrder> getPrescribedDrugOrders(String patientUuid, Boolean includeActiveVisit, Integer numberOfVisit);
 
