@@ -66,7 +66,7 @@ public class BahmniDrugOrderController {
         for (DrugOrder drugOrder : activeDrugOrders) {
             HashMap<String, Object> responseHashMap = new HashMap<>();
             responseHashMap.put("name", drugOrder.getDrug().getName());
-            responseHashMap.put("orderDate", serializeDate(drugOrder.getStartDate()));
+            responseHashMap.put("orderDate", serializeDate(drugOrder.getDateActivated()));
 
             responseHashMap.put("dosingType", drugOrder.getDosingType().name());
             if (drugOrder.getDosingType() == DrugOrder.DosingType.FREE_TEXT) {
@@ -78,8 +78,8 @@ public class BahmniDrugOrderController {
 
             if (drugOrder.getAutoExpireDate() != null) {
                 DateTime autoExpireDate = new DateTime(drugOrder.getAutoExpireDate());
-                DateTime startDate = new DateTime(drugOrder.getStartDate());
-                responseHashMap.put("days", Days.daysBetween(startDate, autoExpireDate).getDays());
+                DateTime dateActivated = new DateTime(drugOrder.getDateActivated());
+                responseHashMap.put("days", Days.daysBetween(dateActivated, autoExpireDate).getDays());
             }
             responseHashMap.put("expireDate", serializeDate(drugOrder.getAutoExpireDate()));
             responseHashMap.put("name", drugOrder.getDrug().getName());

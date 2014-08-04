@@ -113,10 +113,10 @@ public class BahmniDrugOrderServiceImpl implements BahmniDrugOrderService {
                     Encounter encounter = activeDrugOrder.getEncounter();
                     newDrugOrder.setEncounter(encounter);
                     encounter.addOrder(newDrugOrder);
-                    int numberOfDaysBetweenDrugs = Days.daysBetween(new DateTime(activeDrugOrder.getStartDate()), new DateTime(newDrugOrder.getStartDate())).getDays();
-                    int activeDrugOrderNumberOfDays = Days.daysBetween(new DateTime(activeDrugOrder.getStartDate()), new DateTime(activeDrugOrder.getAutoExpireDate())).getDays();
+                    int numberOfDaysBetweenDrugs = Days.daysBetween(new DateTime(activeDrugOrder.getDateActivated()), new DateTime(newDrugOrder.getDateActivated())).getDays();
+                    int activeDrugOrderNumberOfDays = Days.daysBetween(new DateTime(activeDrugOrder.getDateActivated()), new DateTime(activeDrugOrder.getAutoExpireDate())).getDays();
                     newDrugOrder.setAutoExpireDate(DateUtils.addDays(newDrugOrder.getAutoExpireDate(), (activeDrugOrderNumberOfDays - numberOfDaysBetweenDrugs)));
-                    newDrugOrder.setStartDate(activeDrugOrder.getStartDate());
+                    newDrugOrder.setDateActivated(activeDrugOrder.getDateActivated());
                     newDrugOrder.setQuantity(activeDrugOrder.getQuantity() + newDrugOrder.getQuantity());
                     activeDrugOrder.setVoided(true);
                     activeDrugOrder.setVoidReason("To create a new drug order of same concept");
@@ -172,7 +172,7 @@ public class BahmniDrugOrderServiceImpl implements BahmniDrugOrderService {
             Drug drug = conceptService.getDrugByUuid(bahmniDrugOrder.getProductUuid());
             drugOrder.setDrug(drug);
             drugOrder.setConcept(drug.getConcept());
-            drugOrder.setStartDate(orderDate);
+            drugOrder.setDateActivated(orderDate);
             drugOrder.setAutoExpireDate(DateUtils.addDays(orderDate, bahmniDrugOrder.getNumberOfDays()));
             drugOrder.setPatient(patient);
             drugOrder.setPrn(false);

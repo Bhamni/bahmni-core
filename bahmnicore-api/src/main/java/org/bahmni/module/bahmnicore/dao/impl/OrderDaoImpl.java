@@ -58,7 +58,7 @@ public class OrderDaoImpl implements OrderDao {
         List<Integer> visitWithDrugOrderIds = getVisitIds(getVisitsWithOrders(patient, "DrugOrder", includeActiveVisit, numberOfVisits));
         if(!visitWithDrugOrderIds.isEmpty()) {
             Query query = currentSession.createQuery("select d from DrugOrder d, Encounter e, Visit v where d.encounter = e.encounterId and e.visit = v.visitId and v.visitId in (:visitIds) " +
-                    "and d.voided = false and d.action != :discontinued order by d.startDate desc");
+                    "and d.voided = false and d.action != :discontinued order by d.dateActivated desc");
             query.setParameterList("visitIds", visitWithDrugOrderIds);
             query.setParameter("discontinued", Order.Action.DISCONTINUE);
             return (List<DrugOrder>) query.list();
