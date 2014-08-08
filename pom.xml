@@ -16,6 +16,7 @@
         <module>openerp-atomfeed-client-omod</module>
         <module>bahmnicore-omod</module>
         <module>vagrant-deploy</module>
+        <module>admin</module>
     </modules>
 
     <properties>
