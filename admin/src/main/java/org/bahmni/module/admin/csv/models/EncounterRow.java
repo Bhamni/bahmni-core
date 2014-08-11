@@ -12,6 +12,12 @@ public class EncounterRow extends CSVEntity {
     @CSVHeader(name = "registrationNumber")
     public String patientIdentifier;
 
+    @CSVHeader(name = "encounterType")
+    public String encounterType;
+
+    @CSVHeader(name = "visitType")
+    public String visitType;
+
     @CSVHeader(name = "Registration Date")
     public String encounterDateTime;
 

@@ -27,5 +27,6 @@ public class EncounterImporterIT extends BaseModuleContextSensitiveTest {
         String filePath = EncounterImporterIT.class.getResource("/").getPath();
         MigrateResult migrateResult = encounterImporter.importEncounters(filePath, "sample.csv");
         assertEquals(1, migrateResult.numberOfSuccessfulRecords());
+        assertEquals(4, migrateResult.numberOfFailedRecords());
     }
 }

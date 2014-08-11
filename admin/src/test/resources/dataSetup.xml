@@ -34,7 +34,7 @@
                     date_created="2005-01-01 00:00:00.0" retired="false" uuid="encounterType"/>
     <encounter_type encounter_type_id="2" name="VALIDATION NOTES" description="Some desc" creator="1"
                     date_created="2005-01-01 00:00:00.0" retired="false" uuid="validationNotes"/>
-    <visit_type visit_type_id="1" name="OPD - Returning" creator="1" date_created="2012-10-23 18:04:14"
+    <visit_type visit_type_id="1" name="OPD" creator="1" date_created="2012-10-23 18:04:14"
                 changed_by="1" date_changed="2012-10-23 18:04:14"
                 retired="0" uuid="visitType"/>
 </dataset>

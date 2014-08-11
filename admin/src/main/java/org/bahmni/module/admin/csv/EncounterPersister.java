@@ -6,11 +6,11 @@ import org.bahmni.csv.RowResult;
 import org.bahmni.module.admin.csv.models.EncounterRow;
 import org.bahmni.module.bahmnicore.service.BahmniPatientService;
 import org.openmrs.Concept;
+import org.openmrs.EncounterType;
 import org.openmrs.Patient;
-import org.openmrs.PatientIdentifierType;
+import org.openmrs.VisitType;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.EncounterService;
-import org.openmrs.api.PatientService;
 import org.openmrs.api.VisitService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.bahmniemrapi.diagnosis.contract.BahmniDiagnosisRequest;
@@ -45,12 +45,30 @@ public class EncounterPersister implements EntityPersister<EncounterRow> {
     private VisitService visitService;
 
     private HashMap<String, EncounterTransaction.Concept> cachedConcepts = new HashMap<>();
-    private String visitTypeUUID;
     private String encounterTypeUUID;
+    private String visitTypeUUID;
+    private Patient patient;
 
     @Override
     public RowResult<EncounterRow> validate(EncounterRow encounterRow) {
-        return new RowResult<>(encounterRow);
+        Context.openSession();
+        Context.authenticate("admin", "test");
+        String errorMessage = null;
+        EncounterType encounterType = encounterService.getEncounterType(encounterRow.encounterType);
+        List<VisitType> visitTypes = visitService.getVisitTypes(encounterRow.visitType);
+        patient = matchPatients(patientService.get(encounterRow.patientIdentifier));
+        Context.closeSession();
+        if (encounterType == null) {
+            errorMessage = String.format("Encounter Type %s not found", encounterRow.encounterType);
+        } else if (visitTypes == null || visitTypes.size() == 0) {
+            errorMessage = String.format("Visit Type %s not found", encounterRow.visitType);
+        } else if (patient == null) {
+            errorMessage = String.format("Patient with identifier %s not found", encounterRow.patientIdentifier);
+        } else {
+            encounterTypeUUID = encounterType.getUuid();
+            visitTypeUUID = visitTypes.get(0).getUuid();
+        }
+        return new RowResult<>(encounterRow, errorMessage);
     }
 
     public EncounterPersister() {
@@ -58,31 +76,24 @@ public class EncounterPersister implements EntityPersister<EncounterRow> {
 
     @Override
     public RowResult<EncounterRow> persist(EncounterRow encounterRow) {
-        String patientIdentifier = encounterRow.patientIdentifier;
         try {
             Context.openSession();
             Context.authenticate("admin", "test");
-            if (encounterTypeUUID == null) {
-                encounterTypeUUID = encounterService.getEncounterType("OPD").getUuid();
-            }
-            if (visitTypeUUID == null) {
-                visitTypeUUID = visitService.getVisitTypes("OPD - RETURNING").get(0).getUuid();
-            }
-            List<Patient> matchingPatients = patientService.get(patientIdentifier);
-            if (matchingPatients.size() > 1)
-                return new RowResult<>(encounterRow, String.format("More than 1 matching patients found for identifier:'%s'", patientIdentifier));
-
-            if (matchingPatients.isEmpty())
-                return new RowResult<>(encounterRow, String.format("No matching patients found for identifier:'%s'", patientIdentifier));
-
-            Patient patient = matchingPatients.get(0);
-
             bahmniEncounterTransactionService.save(getBahmniEncounterTransaction(encounterRow, patient));
+            Context.flushSession();
             Context.closeSession();
             return new RowResult<>(encounterRow);
         } catch (Exception e) {
             log.error(e);
             return new RowResult<>(encounterRow, e);
+        }
+    }
+
+    private Patient matchPatients(List<Patient> matchingPatients) {
+        if (matchingPatients.size() == 1) {
+            return matchingPatients.get(0);
+        } else {
+            return null;
         }
     }
 
