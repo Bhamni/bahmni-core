@@ -1,25 +1,19 @@
 package org.bahmni.module.referencedatafeedclient.worker;
 
-import org.bahmni.module.referencedatafeedclient.ReferenceDataFeedProperties;
-import org.bahmni.module.referencedatafeedclient.dao.BahmniTestUnitsDao;
-import org.bahmni.module.referencedatafeedclient.domain.TestUnitOfMeasure;
-import org.bahmni.module.referencedatafeedclient.service.ReferenceDataConceptService;
-import org.bahmni.webclients.HttpClient;
-import org.ict4h.atomfeed.client.domain.Event;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.mockito.Mock;
-import org.openmrs.Concept;
-import org.openmrs.ConceptNumeric;
-import org.openmrs.api.ConceptService;
-import org.openmrs.web.test.BaseModuleWebContextSensitiveTest;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.bahmni.module.referencedatafeedclient.*;
+import org.bahmni.module.referencedatafeedclient.dao.*;
+import org.bahmni.module.referencedatafeedclient.domain.*;
+import org.bahmni.module.referencedatafeedclient.service.*;
+import org.bahmni.webclients.*;
+import org.ict4h.atomfeed.client.domain.*;
+import org.junit.*;
+import org.mockito.*;
+import org.openmrs.*;
+import org.openmrs.api.*;
+import org.openmrs.web.test.*;
+import org.springframework.beans.factory.annotation.*;
 
-import java.util.Properties;
-
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
+import static org.mockito.Mockito.*;
 
 @org.springframework.test.context.ContextConfiguration(locations = {"classpath:TestingApplicationContext.xml"}, inheritLocations = true)
 public class TestUnitOfMeasureEventWorkerIT extends BaseModuleWebContextSensitiveTest {
@@ -34,15 +28,13 @@ public class TestUnitOfMeasureEventWorkerIT extends BaseModuleWebContextSensitiv
     @Autowired
     private ReferenceDataConceptService referenceDataConceptService;
     @Autowired
-    private EventWorkerUtility eventWorkerUtility;
-    @Autowired
     private BahmniTestUnitsDao bahmniTestUnitsDao;
 
     private TestUnitOfMeasureEventWorker testUnitOfMeasureEventWorker;
 
     @Before
     public void setUp() throws Exception {
-        initMocks(this);
+        MockitoAnnotations.initMocks(this);
         testUnitOfMeasureEventWorker = new TestUnitOfMeasureEventWorker(httpClient, referenceDataFeedProperties, conceptService, referenceDataConceptService, new EventWorkerUtility(conceptService), bahmniTestUnitsDao);
         when(referenceDataFeedProperties.getReferenceDataUri()).thenReturn(referenceDataUri);
         executeDataSet("testUnitOfMeasureEventWorkerTestData.xml");

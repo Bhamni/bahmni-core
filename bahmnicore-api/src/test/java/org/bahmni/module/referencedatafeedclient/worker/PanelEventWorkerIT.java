@@ -8,6 +8,7 @@ import org.bahmni.module.referencedatafeedclient.worker.util.*;
 import org.bahmni.webclients.*;
 import org.ict4h.atomfeed.client.domain.*;
 import org.junit.*;
+import org.mockito.*;
 import org.mockito.Mock;
 import org.openmrs.*;
 import org.openmrs.api.*;
@@ -39,7 +40,7 @@ public class PanelEventWorkerIT extends BaseModuleWebContextSensitiveTest {
 
     @Before
     public void setUp() throws Exception {
-        initMocks(this);
+        MockitoAnnotations.initMocks(this);
         panelEventWorker = new PanelEventWorker(httpClient, referenceDataFeedProperties, conceptService, referenceDataConceptService, new EventWorkerUtility(conceptService));
         when(referenceDataFeedProperties.getReferenceDataUri()).thenReturn(referenceDataUri);
         executeDataSet("panelEventWorkerTestData.xml");

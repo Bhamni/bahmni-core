@@ -1,28 +1,24 @@
 package org.bahmni.module.referencedatafeedclient.worker;
 
-import org.bahmni.module.referencedatafeedclient.ReferenceDataFeedProperties;
-import org.bahmni.module.referencedatafeedclient.domain.Drug;
-import org.bahmni.module.referencedatafeedclient.domain.DrugForm;
-import org.bahmni.module.referencedatafeedclient.service.ReferenceDataConceptService;
-import org.bahmni.webclients.HttpClient;
-import org.ict4h.atomfeed.client.domain.Event;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
+import org.bahmni.module.referencedatafeedclient.*;
+import org.bahmni.module.referencedatafeedclient.domain.*;
+import org.bahmni.module.referencedatafeedclient.service.*;
+import org.bahmni.webclients.*;
+import org.ict4h.atomfeed.client.domain.*;
+import org.junit.*;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.mockito.Mock;
-import org.openmrs.api.ConceptService;
-import org.openmrs.web.test.BaseModuleWebContextSensitiveTest;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.junit.rules.*;
+import org.mockito.*;
+import org.openmrs.api.*;
+import org.openmrs.web.test.*;
+import org.springframework.beans.factory.annotation.*;
 
-import java.io.IOException;
+import java.io.*;
 
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
+import static org.mockito.Mockito.*;
 
 @org.springframework.test.context.ContextConfiguration(locations = {"classpath:TestingApplicationContext.xml"})
 public class DrugEventWorkerIT extends BaseModuleWebContextSensitiveTest {
@@ -42,7 +38,7 @@ public class DrugEventWorkerIT extends BaseModuleWebContextSensitiveTest {
 
     @Before
     public void setUp() throws Exception {
-        initMocks(this);
+        MockitoAnnotations.initMocks(this);
         when(referenceDataFeedProperties.getReferenceDataUri()).thenReturn(referenceDataUri);
         drugEventWorker = new DrugEventWorker(httpClient, referenceDataFeedProperties,referenceDataConceptService);
         executeDataSet("drugEventWorkerTestData.xml");

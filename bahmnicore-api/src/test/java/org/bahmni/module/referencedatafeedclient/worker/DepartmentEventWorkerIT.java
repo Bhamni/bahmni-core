@@ -7,7 +7,7 @@ import org.bahmni.webclients.HttpClient;
 import org.ict4h.atomfeed.client.domain.Event;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
+import org.mockito.*;
 import org.openmrs.Concept;
 import org.openmrs.ConceptDatatype;
 import org.openmrs.api.ConceptService;
@@ -18,7 +18,6 @@ import java.util.Locale;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
 
 @org.springframework.test.context.ContextConfiguration(locations = {"classpath:TestingApplicationContext.xml"}, inheritLocations = true)
 public class DepartmentEventWorkerIT extends BaseModuleWebContextSensitiveTest {
@@ -36,7 +35,7 @@ public class DepartmentEventWorkerIT extends BaseModuleWebContextSensitiveTest {
 
     @Before
     public void setUp() throws Exception {
-        initMocks(this);
+        MockitoAnnotations.initMocks(this);
         departmentEventWorker = new DepartmentEventWorker(httpClient, referenceDataFeedProperties, conceptService, referenceDataConceptService, new EventWorkerUtility(conceptService));
         when(referenceDataFeedProperties.getReferenceDataUri()).thenReturn(referenceDataUri);
         executeDataSet("departmentEventWorkerTestData.xml");

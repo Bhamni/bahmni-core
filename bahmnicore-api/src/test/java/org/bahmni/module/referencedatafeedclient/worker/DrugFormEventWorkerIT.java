@@ -1,23 +1,22 @@
 package org.bahmni.module.referencedatafeedclient.worker;
 
-import org.bahmni.module.referencedatafeedclient.ReferenceDataFeedProperties;
-import org.bahmni.module.referencedatafeedclient.domain.DrugForm;
-import org.bahmni.module.referencedatafeedclient.service.ReferenceDataConceptService;
-import org.bahmni.webclients.HttpClient;
-import org.ict4h.atomfeed.client.domain.Event;
-import org.junit.Before;
+import org.bahmni.module.referencedatafeedclient.*;
+import org.bahmni.module.referencedatafeedclient.domain.*;
+import org.bahmni.module.referencedatafeedclient.service.*;
+import org.bahmni.webclients.*;
+import org.ict4h.atomfeed.client.domain.*;
+import org.junit.*;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.openmrs.Concept;
-import org.openmrs.api.ConceptService;
-import org.openmrs.web.test.BaseModuleWebContextSensitiveTest;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.*;
+import org.openmrs.*;
+import org.openmrs.api.*;
+import org.openmrs.web.test.*;
+import org.springframework.beans.factory.annotation.*;
 
-import java.io.IOException;
+import java.io.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 @org.springframework.test.context.ContextConfiguration(locations = {"classpath:TestingApplicationContext.xml"})
 public class DrugFormEventWorkerIT extends BaseModuleWebContextSensitiveTest {
@@ -35,7 +34,7 @@ public class DrugFormEventWorkerIT extends BaseModuleWebContextSensitiveTest {
 
     @Before
     public void setUp() throws Exception {
-        initMocks(this);
+        MockitoAnnotations.initMocks(this);
         when(referenceDataFeedProperties.getReferenceDataUri()).thenReturn(referenceDataUri);
         drugFormEventWorker = new DrugFormEventWorker(httpClient, referenceDataFeedProperties, referenceDataConceptService);
     }

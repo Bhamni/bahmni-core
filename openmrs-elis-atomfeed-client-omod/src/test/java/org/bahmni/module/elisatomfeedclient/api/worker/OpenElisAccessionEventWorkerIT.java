@@ -12,7 +12,7 @@ import org.bahmni.webclients.HttpClient;
 import org.ict4h.atomfeed.client.domain.Event;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
+import org.mockito.*;
 import org.openmrs.Encounter;
 import org.openmrs.EncounterType;
 import org.openmrs.Obs;
@@ -46,7 +46,7 @@ public class OpenElisAccessionEventWorkerIT extends BaseModuleWebContextSensitiv
 
     @Before
     public void setUp() {
-        initMocks(this);
+        MockitoAnnotations.initMocks(this);
         this.openElisAccessionEventWorker = new OpenElisAccessionEventWorker(properties, httpClient,
                 Context.getEncounterService(), Context.getConceptService(), new AccessionHelper(properties),
                 Context.getProviderService(),
