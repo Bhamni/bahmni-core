@@ -1,8 +1,11 @@
 package org.bahmni.module.admin.csv;
 
 import org.bahmni.csv.MigrateResult;
+import org.bahmni.module.bahmnicore.BahmniCoreApiProperties;
+import org.bahmni.module.bahmnicore.properties.PropertiesReader;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.openmrs.api.EncounterService;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;

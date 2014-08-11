@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.bahmni.csv.EntityPersister;
 import org.bahmni.csv.RowResult;
 import org.bahmni.module.admin.csv.models.EncounterRow;
+import org.bahmni.module.bahmnicore.service.BahmniPatientService;
 import org.openmrs.Concept;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifierType;
@@ -29,7 +30,7 @@ public class EncounterPersister implements EntityPersister<EncounterRow> {
     private static final Logger log = Logger.getLogger(EncounterPersister.class);
 
     @Autowired
-    private PatientService patientService;
+    private BahmniPatientService patientService;
 
     @Autowired
     private BahmniEncounterTransactionService bahmniEncounterTransactionService;
@@ -67,7 +68,7 @@ public class EncounterPersister implements EntityPersister<EncounterRow> {
             if (visitTypeUUID == null) {
                 visitTypeUUID = visitService.getVisitTypes("OPD - RETURNING").get(0).getUuid();
             }
-            List<Patient> matchingPatients = patientService.getPatients(null, patientIdentifier, new ArrayList<PatientIdentifierType>(), true);
+            List<Patient> matchingPatients = patientService.get(patientIdentifier);
             if (matchingPatients.size() > 1)
                 return new RowResult<>(encounterRow, String.format("More than 1 matching patients found for identifier:'%s'", patientIdentifier));
 

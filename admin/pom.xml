@@ -74,6 +74,18 @@
             <type>jar</type>
         </dependency>
         <dependency>
+            <groupId>org.bahmni.module</groupId>
+            <artifactId>bahmnicore-api</artifactId>
+            <version>5.0-SNAPSHOT</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.2.5</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.openmrs.api</groupId>
             <artifactId>openmrs-api</artifactId>
             <version>${openMRSVersion}</version>
