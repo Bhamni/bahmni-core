@@ -8,8 +8,10 @@ import org.openmrs.Concept;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.api.ConceptService;
+import org.openmrs.api.EncounterService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.VisitService;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.bahmniemrapi.diagnosis.contract.BahmniDiagnosisRequest;
 import org.openmrs.module.bahmniemrapi.encountertransaction.contract.BahmniEncounterTransaction;
 import org.openmrs.module.bahmniemrapi.encountertransaction.service.BahmniEncounterTransactionService;
@@ -18,7 +20,9 @@ import org.openmrs.module.emrapi.encounter.domain.EncounterTransaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 @Component
 public class EncounterPersister implements EntityPersister<EncounterRow> {
@@ -33,7 +37,15 @@ public class EncounterPersister implements EntityPersister<EncounterRow> {
     @Autowired
     private ConceptService conceptService;
 
+    @Autowired
+    private EncounterService encounterService;
+
+    @Autowired
+    private VisitService visitService;
+
     private HashMap<String, EncounterTransaction.Concept> cachedConcepts = new HashMap<>();
+    private String visitTypeUUID;
+    private String encounterTypeUUID;
 
     @Override
     public RowResult<EncounterRow> validate(EncounterRow encounterRow) {
@@ -47,6 +59,14 @@ public class EncounterPersister implements EntityPersister<EncounterRow> {
     public RowResult<EncounterRow> persist(EncounterRow encounterRow) {
         String patientIdentifier = encounterRow.patientIdentifier;
         try {
+            Context.openSession();
+            Context.authenticate("admin", "test");
+            if (encounterTypeUUID == null) {
+                encounterTypeUUID = encounterService.getEncounterType("OPD").getUuid();
+            }
+            if (visitTypeUUID == null) {
+                visitTypeUUID = visitService.getVisitTypes("OPD - RETURNING").get(0).getUuid();
+            }
             List<Patient> matchingPatients = patientService.getPatients(null, patientIdentifier, new ArrayList<PatientIdentifierType>(), true);
             if (matchingPatients.size() > 1)
                 return new RowResult<>(encounterRow, String.format("More than 1 matching patients found for identifier:'%s'", patientIdentifier));
@@ -57,7 +77,7 @@ public class EncounterPersister implements EntityPersister<EncounterRow> {
             Patient patient = matchingPatients.get(0);
 
             bahmniEncounterTransactionService.save(getBahmniEncounterTransaction(encounterRow, patient));
-
+            Context.closeSession();
             return new RowResult<>(encounterRow);
         } catch (Exception e) {
             log.error(e);
@@ -68,9 +88,9 @@ public class EncounterPersister implements EntityPersister<EncounterRow> {
     private BahmniEncounterTransaction getBahmniEncounterTransaction(EncounterRow encounterRow, Patient patient) {
         BahmniEncounterTransaction bahmniEncounterTransaction = new BahmniEncounterTransaction();
         bahmniEncounterTransaction.setBahmniDiagnoses(getBahmniDiagnosis(encounterRow.getDiagnoses()));
-        //bahmniEncounterTransaction.setProviders();
         bahmniEncounterTransaction.setPatientUuid(patient.getUuid());
-        //bahmniEncounterTransaction.setEncounterTypeUuid(patient.getUuid());
+        bahmniEncounterTransaction.setEncounterTypeUuid(encounterTypeUUID);
+        bahmniEncounterTransaction.setVisitTypeUuid(visitTypeUUID);
         return bahmniEncounterTransaction;
     }
 
@@ -88,7 +108,7 @@ public class EncounterPersister implements EntityPersister<EncounterRow> {
     }
 
     private EncounterTransaction.Concept getDiagnosisConcept(String diagnosis) {
-        if(cachedConcepts.get(diagnosis) == null) {
+        if (cachedConcepts.get(diagnosis) == null) {
             Concept diagnosisConcept = conceptService.getConceptByName(diagnosis);
             cachedConcepts.put(diagnosis, getEncounterTransactionConcept(diagnosisConcept));
         }
