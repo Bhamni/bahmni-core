@@ -4,10 +4,14 @@
     <person person_id="1025" gender="M" dead="false" creator="1" birthdate_estimated="0" birthdate = "1983-01-30" date_created="2008-08-15 15:57:09.0" voided="false" uuid="341b4e41-790c-484f-b6ed-71dc8da222db"/>
     <person person_id="1026" gender="F" dead="false" creator="1" birthdate_estimated="0" date_created="2009-09-09 15:46:47.0" voided="false" uuid="df8ae447-6745-45be-b859-403241d9913d"/>
     <person person_id="1027" gender="F" dead="false" creator="1" birthdate_estimated="0" date_created="2008-08-15 15:46:47.0" voided="false" uuid="df8ae447-6745-45be-b859-403241d991dd"/>
+    <person person_id="101" gender="F" dead="false" creator="1" birthdate_estimated="0" date_created="2008-08-15 15:46:47.0" voided="false" uuid="df877447-6745-45be-b859-403241d991dd"/>
+    <person person_id="102" gender="F" dead="false" creator="1" birthdate_estimated="0" date_created="2008-08-15 15:46:47.0" voided="false" uuid="df888447-6745-45be-b859-403241d991dd"/>
 
     <patient patient_id="1024" creator="1" date_created="2005-09-22 00:00:00.0" changed_by="1" date_changed="2008-08-18 12:29:59.0" voided="false" void_reason=""/>
     <patient patient_id="1025" creator="1" date_created="2006-01-18 00:00:00.0" changed_by="1" date_changed="2008-08-18 12:25:31.0" voided="false" void_reason=""/>
     <patient patient_id="1026" creator="1" date_created="2006-01-18 00:00:00.0" changed_by="1" date_changed="2008-08-18 12:25:57.0" voided="false" void_reason=""/>
+    <patient patient_id="101" creator="1" date_created="2006-01-18 00:00:00.0" changed_by="1" date_changed="2008-08-18 12:25:57.0" voided="false" void_reason=""/>
+    <patient patient_id="102" creator="1" date_created="2006-01-18 00:00:00.0" changed_by="1" date_changed="2008-08-18 12:25:57.0" voided="false" void_reason=""/>
 
     <person_name person_name_id="1024" preferred="true" person_id="1024" prefix="Mr." given_name="Horatio" middle_name="Test" family_name="Banka" family_name_suffix="Esq." creator="1" date_created="2005-09-22 00:00:00.0" voided="false" void_reason="" uuid="399e3a7b-6482-487d-94ce-c07bb3ca3cca"/>
     <person_name person_name_id="1025" preferred="true" person_id="1025" prefix="Mr." given_name="Horatio" middle_name="Peeter" family_name="Sinha" family_name_suffix="Esq." creator="1" date_created="2005-09-22 00:00:00.0" voided="false" void_reason="" uuid="399e3a7b-6482-487d-94ce-c07bb3ca3ccb"/>
@@ -38,6 +42,9 @@
     <person_name person_name_id="1049" preferred="false" person_id="1027" prefix="Mr." given_name="John" middle_name="Peeter" family_name="testlast19" family_name_suffix="Esq." creator="1" date_created="2005-09-22 00:00:00.0" voided="false" void_reason="" uuid="399e3a7b-6482-487d-94ce-907bb3ca3c2g"/>
     <person_name person_name_id="1050" preferred="false" person_id="1027" prefix="Mr." given_name="John" middle_name="Peeter" family_name="testlast20" family_name_suffix="Esq." creator="1" date_created="2005-09-22 00:00:00.0" voided="false" void_reason="" uuid="399e3a7b-6482-487d-94ce-c071b3ca3c2g"/>
     <person_name person_name_id="1051" preferred="false" person_id="1027" prefix="Mr." given_name="John" middle_name="Peeter" family_name="testlast21" family_name_suffix="Esq." creator="1" date_created="2005-09-22 00:00:00.0" voided="false" void_reason="" uuid="399e3a7b-6482-487d-94ce-c072b3ca3c2g"/>
+
+    <person_name person_name_id="1052" preferred="false" person_id="101" prefix="Mr." given_name="Patient" middle_name="Number" family_name="1" family_name_suffix="Esq." creator="1" date_created="2005-09-22 00:00:00.0" voided="false" void_reason="" uuid="399e3a7b-6482-487d-94ce-c072b3ca3c66"/>
+    <person_name person_name_id="1053" preferred="false" person_id="102" prefix="Mr." given_name="Patient" middle_name="Number" family_name="2" family_name_suffix="Esq." creator="1" date_created="2005-09-22 00:00:00.0" voided="false" void_reason="" uuid="399e3a7b-6482-487d-94ce-c072b3ca3c99"/>
 
     <person_attribute_type person_attribute_type_id="1" name="caste" description="caste" format="java.lang.String" searchable="true" creator="1" date_created="2007-05-04 09:59:23.0" retired="false" uuid="b3b6d540-a32e-44c7-91b3-292d976675ab" sort_weight="1"/>
     <person_attribute_type person_attribute_type_id="201" name="givenNameLocal" description="caste" format="java.lang.String" searchable="true" creator="1" date_created="2007-05-04 09:59:23.0" retired="false" uuid="b3b6d900-a32e-44c7-91b3-292d976675ab" sort_weight="1"/>
@@ -94,6 +101,8 @@
     <patient_identifier date_created="2005-09-22 00:00:00" patient_identifier_id="9" patient_id ="10" identifier="GAN200008" identifier_type="3" location_id="1000" creator="1" changed_by="1000" voided_by="1000" uuid="0f743697-3726-48f8-914e-af65010fa50b" preferred="1" voided="0" />
     <patient_identifier date_created="2005-09-22 00:00:00" patient_identifier_id="10" patient_id ="11" identifier="GAN200009" identifier_type="3" location_id="1000" creator="1" changed_by="1000" voided_by="1000" uuid="9bc2d57d-3fd4-4993-bf3b-d79ac1f8519f" preferred="1" voided="0" />
     <patient_identifier date_created="2005-09-22 00:00:00" patient_identifier_id="11" patient_id ="12" identifier="GAN200010" identifier_type="3" location_id="1000" creator="1" changed_by="1000" voided_by="1000" uuid="034b464d-6f47-41c7-8d5e-2264026c00a6" preferred="1" voided="0" />
+    <patient_identifier date_created="2005-09-22 00:00:00" patient_identifier_id="12" patient_id ="101" identifier="GAN300001" identifier_type="3" location_id="1000" creator="1" changed_by="1000" voided_by="1000" uuid="034b464d-6f47-41c7-8d65-2264026c00a6" preferred="1" voided="0" />
+    <patient_identifier date_created="2005-09-22 00:00:00" patient_identifier_id="13" patient_id ="102" identifier="SEV300001" identifier_type="3" location_id="1000" creator="1" changed_by="1000" voided_by="1000" uuid="234b894d-6f47-41c7-8d65-2264026c00a6" preferred="1" voided="0" />
 
 
     <visit visit_id="1" date_started="2005-09-22 00:00:00" date_created="2005-09-22 00:00:00" patient_id="4" visit_type_id="1" date_stopped="2013-05-08 04:08:16" indication_concept_id="1000" location_id="2" creator="1" changed_by="1000" voided_by="1000" uuid="ad41fb41-a41a-4ad6-8835-2f59099acf5a" voided="0"/>

@@ -133,4 +133,9 @@ public class BahmniPatientServiceImplTest {
         assertEquals("primaryContact", config.getPersonAttributeTypes().get(1).getName());
     }
 
+    @Test
+    public void shouldGetPatientByPartialIdentifier() throws Exception {
+        bahmniPatientService.get("partial_identifier");
+        verify(bahmniPatientDao).getPatients("partial_identifier");
+    }
 }

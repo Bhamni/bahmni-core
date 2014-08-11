@@ -92,6 +92,11 @@ public class BahmniPatientServiceImpl implements BahmniPatientService {
         return bahmniPatientDao.getPatients(searchParameters.getIdentifier(), searchParameters.getName(), searchParameters.getLocalName(), searchParameters.getCityVillage(), searchParameters.getLength(), searchParameters.getStart(), searchParameters.getPatientAttributes());
     }
 
+    @Override
+    public List<Patient> get(String partialIdentifier) {
+        return bahmniPatientDao.getPatients(partialIdentifier);
+    }
+
     private Patient getPatientByUuid(String uuid) {
         return patientService.getPatientByUuid(uuid);
     }

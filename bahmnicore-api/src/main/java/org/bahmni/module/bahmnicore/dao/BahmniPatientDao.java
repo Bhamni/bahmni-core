@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface BahmniPatientDao {
 
-    List<PatientResponse> getPatients(String identifier, String name, String localName, String village, Integer length, Integer offset, String[] patientAttributes);
-    Patient getPatient(String identifier);
+    public List<PatientResponse> getPatients(String identifier, String name, String localName, String village, Integer length, Integer offset, String[] patientAttributes);
+    public Patient getPatient(String identifier);
+    public List<Patient> getPatients(String partialIdentifier);
 }

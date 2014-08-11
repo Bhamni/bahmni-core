@@ -173,6 +173,17 @@ public class BahmniPatientDaoImpl implements BahmniPatientDao {
         return null;
     }
 
+    @Override
+    public List<Patient> getPatients(String partialIdentifier) {
+        partialIdentifier = "%" + partialIdentifier;
+        Query querytoGetPatients = sessionFactory.getCurrentSession().createQuery(
+                "select pi.patient " +
+                        " from PatientIdentifier pi " +
+                        " where pi.identifier like :partialIdentifier ");
+        querytoGetPatients.setString("partialIdentifier", partialIdentifier);
+        return querytoGetPatients.list();
+    }
+
     private String getNameSearchCondition(NameSearchParameter nameSearchParameter) {
         if (nameSearchParameter.isEmpty())
             return "";

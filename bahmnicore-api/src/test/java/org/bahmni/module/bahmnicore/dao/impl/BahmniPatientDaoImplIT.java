@@ -5,9 +5,12 @@ import org.bahmni.module.bahmnicore.dao.BahmniPatientDao;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.openmrs.Patient;
+import org.openmrs.Person;
 import org.openmrs.web.test.BaseModuleWebContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -138,5 +141,28 @@ public class BahmniPatientDaoImplIT extends BaseModuleWebContextSensitiveTest {
         List<PatientResponse> patients = bahmniPatientDao.getPatients("", "", "testCaste1", null, 100, 0, patientAttributes);
         assertEquals(1, patients.size());
         assertEquals("", patients.get(0).getLocalName());
+    }
+
+    @Test
+    public void shouldFetchPatientsWithPartialIdentifierMatch() throws Exception {
+        String partialIdentifier = "300001";
+        List<Patient> patients = bahmniPatientDao.getPatients(partialIdentifier);
+        assertEquals(2, patients.size());
+        List<Person> persons = new ArrayList<>();
+        Person person1 = new Person();
+        Person person2 = new Person();
+        person1.setUuid("df877447-6745-45be-b859-403241d991dd");
+        person2.setUuid("df888447-6745-45be-b859-403241d991dd");
+        persons.add(person1);
+        persons.add(person2);
+        assertTrue(persons.contains(patients.get(0)));
+        assertTrue(persons.contains(patients.get(1)));
+    }
+
+    @Test
+    public void shouldReturnEmptyListForNoIdentifierMatch() throws Exception {
+        String partialIdentifier = "3000001";
+        List<Patient> patients = bahmniPatientDao.getPatients(partialIdentifier);
+        assertEquals(0, patients.size());
     }
 }
