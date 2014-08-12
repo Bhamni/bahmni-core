@@ -2,6 +2,7 @@ package org.bahmni.module.admin.csv;
 
 import org.apache.log4j.Logger;
 import org.bahmni.csv.EntityPersister;
+import org.bahmni.csv.KeyValue;
 import org.bahmni.csv.RowResult;
 import org.bahmni.module.admin.csv.models.EncounterRow;
 import org.bahmni.module.bahmnicore.service.BahmniPatientService;
@@ -44,10 +45,12 @@ public class EncounterPersister implements EntityPersister<EncounterRow> {
     @Autowired
     private VisitService visitService;
 
-    private HashMap<String, EncounterTransaction.Concept> cachedConcepts = new HashMap<>();
     private String encounterTypeUUID;
     private String visitTypeUUID;
     private Patient patient;
+
+    public EncounterPersister() {
+    }
 
     @Override
     public RowResult<EncounterRow> validate(EncounterRow encounterRow) {
@@ -71,15 +74,14 @@ public class EncounterPersister implements EntityPersister<EncounterRow> {
         return new RowResult<>(encounterRow, errorMessage);
     }
 
-    public EncounterPersister() {
-    }
 
     @Override
     public RowResult<EncounterRow> persist(EncounterRow encounterRow) {
         try {
             Context.openSession();
             Context.authenticate("admin", "test");
-            bahmniEncounterTransactionService.save(getBahmniEncounterTransaction(encounterRow, patient));
+            BahmniEncounterTransaction bahmniEncounterTransaction = getBahmniEncounterTransaction(encounterRow, patient);
+            bahmniEncounterTransactionService.save(bahmniEncounterTransaction);
             Context.flushSession();
             Context.closeSession();
             return new RowResult<>(encounterRow);
@@ -100,10 +102,23 @@ public class EncounterPersister implements EntityPersister<EncounterRow> {
     private BahmniEncounterTransaction getBahmniEncounterTransaction(EncounterRow encounterRow, Patient patient) {
         BahmniEncounterTransaction bahmniEncounterTransaction = new BahmniEncounterTransaction();
         bahmniEncounterTransaction.setBahmniDiagnoses(getBahmniDiagnosis(encounterRow.getDiagnoses()));
+        bahmniEncounterTransaction.setObservations(getObservations(encounterRow.obsRows));
         bahmniEncounterTransaction.setPatientUuid(patient.getUuid());
         bahmniEncounterTransaction.setEncounterTypeUuid(encounterTypeUUID);
         bahmniEncounterTransaction.setVisitTypeUuid(visitTypeUUID);
         return bahmniEncounterTransaction;
+    }
+
+    private List<EncounterTransaction.Observation> getObservations(List<KeyValue> obsRows) {
+        List<EncounterTransaction.Observation> observations = new ArrayList<>();
+        for (KeyValue obsRow : obsRows) {
+            EncounterTransaction.Observation observation = new EncounterTransaction.Observation();
+            Concept concept = conceptService.getConceptByName(obsRow.getKey());
+            observation.setConcept(new EncounterTransaction.Concept(concept.getUuid()));
+            observation.setValue(obsRow.getValue());
+            observations.add(observation);
+        }
+        return observations;
     }
 
     private List<BahmniDiagnosisRequest> getBahmniDiagnosis(List<String> diagnoses) {
@@ -120,11 +135,8 @@ public class EncounterPersister implements EntityPersister<EncounterRow> {
     }
 
     private EncounterTransaction.Concept getDiagnosisConcept(String diagnosis) {
-        if (cachedConcepts.get(diagnosis) == null) {
-            Concept diagnosisConcept = conceptService.getConceptByName(diagnosis);
-            cachedConcepts.put(diagnosis, getEncounterTransactionConcept(diagnosisConcept));
-        }
-        return cachedConcepts.get(diagnosis);
+        Concept diagnosisConcept = conceptService.getConceptByName(diagnosis);
+        return getEncounterTransactionConcept(diagnosisConcept);
     }
 
 
