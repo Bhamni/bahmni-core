@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.*;
 import org.openmrs.api.EncounterService;
+import org.openmrs.api.OrderService;
 import org.openmrs.api.VisitService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.UserContext;
@@ -413,6 +414,25 @@ public class EncounterPersisterIT extends BaseModuleContextSensitiveTest {
         List<Encounter> encounters = encounterService.getEncountersByPatientIdentifier(multipleEncounterRow.patientIdentifier);
         Context.closeSession();
         assertEquals(1, encounters.size());
+    }
+
+    @Test
+    public void persist_lab_results() {
+        MultipleEncounterRow multipleEncounterRow = new MultipleEncounterRow();
+        multipleEncounterRow.encounterType = "OPD";
+        multipleEncounterRow.visitType = "OPD";
+        multipleEncounterRow.patientIdentifier = "GAN200000";
+
+        EncounterRow anEncounter = new EncounterRow();
+        anEncounter.labResultRows = new ArrayList<>();
+        anEncounter.labResultRows.add(new KeyValue("ESR", "50"));
+        anEncounter.encounterDateTime = "11-11-1111";
+
+        multipleEncounterRow.encounterRows = new ArrayList<>();
+        multipleEncounterRow.encounterRows.add(anEncounter);
+
+        RowResult<MultipleEncounterRow> persistenceResult = encounterPersister.persist(multipleEncounterRow);
+        assertNull("Should have persisted the encounters." + persistenceResult.getErrorMessage(), persistenceResult.getErrorMessage());
     }
 
     private List<KeyValue> getPatientAttributes() {

@@ -1,4 +1,4 @@
-package org.bahmni.module.admin.observation;
+package org.bahmni.module.admin.mapper;
 
 import org.bahmni.csv.KeyValue;
 import org.bahmni.module.admin.csv.models.EncounterRow;

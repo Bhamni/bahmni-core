@@ -49,14 +49,12 @@ public class OpenElisPatientFeedClientImpl extends OpenElisFeedClient implements
         ConceptService conceptService = Context.getService(ConceptService.class);
         PersonService personService = Context.getPersonService();
         ProviderService providerService = Context.getProviderService();
-        OrderService orderService = Context.getOrderService();
-        VisitService visitService = Context.getVisitService();
-
 
         OpenElisAccessionEventWorker accessionEventWorker = new OpenElisAccessionEventWorker(properties,
                 authenticatedWebClient, encounterService, conceptService, new AccessionHelper(properties),
                 providerService, new HealthCenterFilterRule());
-        OpenElisPatientEventWorker patientEventWorker = new OpenElisPatientEventWorker(bahmniPatientService, personService, authenticatedWebClient, properties);
+        OpenElisPatientEventWorker patientEventWorker = new OpenElisPatientEventWorker(bahmniPatientService,
+                personService, authenticatedWebClient, properties);
         return new OpenElisPatientFeedWorker(patientEventWorker, accessionEventWorker);
     }
 

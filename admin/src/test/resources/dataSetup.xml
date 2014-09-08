@@ -62,5 +62,14 @@
 
     <patient_program patient_program_id="1" patient_id="2" program_id="1" date_enrolled="2008-08-01 00:00:00.0" creator="1" date_created="2008-08-18 11:40:48.0" changed_by="1" date_changed="2008-08-18 12:29:29.0" voided="false" uuid="b75462a0-4c92-451e-b8bc-e98b38b76534"/>
 
+    <concept concept_id="304" retired="false" datatype_id="1" class_id="1" is_set="false" creator="1"
+             date_created="2005-01-01 00:00:00.0" uuid="a04c36be-3f90-11e3-968c-0800271c1b75"/>
+    <concept_name concept_name_id="304" concept_id="304" name="ESR" locale="en" creator="1"
+                  date_created="2005-01-01 00:00:00.0" voided="false" uuid="d5af5872-3f90-11e3-968c-0800271c1b75"
+                  concept_name_type="FULLY_SPECIFIED" locale_preferred="0"/>
+    <concept_set concept_set_id="302" concept_id="304" concept_set="302" creator="1" sort_weight="100"
+                 date_created="2005-01-01 00:00:00.0"/>
+    <order_type order_type_id="16" name="Lab Order" description="An order for tests" creator="1" java_class_name="org.openmrs.Order"
+                date_created="2008-08-15 13:49:47.0" retired="false" uuid="519ab361-9bc6-11e3-927e-8840ab96f0f1"/>
 
 </dataset>

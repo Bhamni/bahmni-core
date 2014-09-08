@@ -1,4 +1,4 @@
-package org.bahmni.module.admin.observation;
+package org.bahmni.module.admin.mapper;
 
 import org.apache.commons.lang.StringUtils;
 import org.bahmni.csv.KeyValue;

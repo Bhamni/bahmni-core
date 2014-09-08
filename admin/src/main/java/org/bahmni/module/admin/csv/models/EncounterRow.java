@@ -22,6 +22,9 @@ public class EncounterRow extends CSVEntity {
     @CSVRegexHeader(pattern = "Diagnosis.*")
     public List<KeyValue> diagnosesRows;
 
+    @CSVRegexHeader(pattern = "Lab.*")
+    public List<KeyValue> labResultRows;
+
     public Date getEncounterDate() throws ParseException {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(ENCOUNTER_DATE_PATTERN);
         simpleDateFormat.setLenient(false);
