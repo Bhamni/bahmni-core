@@ -41,11 +41,20 @@ public class EncounterSessionMatcher implements BaseEncounterMatcher {
                 if (encounterType.equals(encounter.getEncounterType())) {
                     Date encounterDateChanged = encounter.getDateChanged() == null ? encounter.getDateCreated() : encounter.getDateChanged();
                     if(!isCurrentSessionTimeExpired(encounterDateChanged) && isSameProvider(provider, encounter))
-                        return encounter;
+                        if (locationNotDefined(encounterParameters, encounter) || isSameLocation(encounterParameters, encounter))
+                            return encounter;
                 }
             }
         }
         return null;
+    }
+
+    private boolean isSameLocation(EncounterParameters encounterParameters, Encounter encounter) {
+        return ((encounter.getLocation() != null && encounter.getLocation().equals(encounterParameters.getLocation())));
+    }
+
+    private boolean locationNotDefined(EncounterParameters encounterParameters, Encounter encounter) {
+        return (encounterParameters.getLocation() == null && encounter.getLocation() == null);
     }
 
     private boolean isSameProvider(Provider provider, Encounter encounter) {
