@@ -5,6 +5,7 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.openmrs.module.bahmniemrapi.accessionnote.contract.AccessionNote;
 import org.openmrs.module.bahmniemrapi.diagnosis.contract.BahmniDiagnosisRequest;
+import org.openmrs.module.bahmniemrapi.document.contract.Document;
 import org.openmrs.module.emrapi.encounter.domain.EncounterTransaction;
 import org.openmrs.module.emrapi.utils.CustomJsonDateSerializer;
 
@@ -18,7 +19,8 @@ public class BahmniEncounterTransaction extends EncounterTransaction {
     
     private List<BahmniDiagnosisRequest> bahmniDiagnoses = new ArrayList<>();
     private List<AccessionNote> accessionNotes;
-    
+    private List<Document> documents = new ArrayList<>();
+
     private EncounterTransaction encounterTransaction = new EncounterTransaction();
     private String encounterType;
     private String visitType;
@@ -213,6 +215,14 @@ public class BahmniEncounterTransaction extends EncounterTransaction {
 
     public String getVisitType() {
         return visitType;
+    }
+
+    public List<Document> getDocuments() {
+        return documents;
+    }
+
+    public void setDocuments(List<Document> documents) {
+        this.documents = documents;
     }
 }
 

@@ -29,7 +29,6 @@ import java.util.List;
 public class BahmniEncounterTransactionServiceImpl implements BahmniEncounterTransactionService {
 
     private ConceptService conceptService;
-    private VisitService visitService;
     private EncounterService encounterService;
     private EmrEncounterService emrEncounterService;
     private EncounterTransactionMapper encounterTransactionMapper;
@@ -37,12 +36,11 @@ public class BahmniEncounterTransactionServiceImpl implements BahmniEncounterTra
     private AccessionNotesMapper accessionNotesMapper;
     private EncounterTransactionObsMapper encounterTransactionObsMapper;
 
-    public BahmniEncounterTransactionServiceImpl(ConceptService conceptService, VisitService visitService,
+    public BahmniEncounterTransactionServiceImpl(ConceptService conceptService,
                                                  EncounterService encounterService, ObsService obsService,
                                                  EmrEncounterService emrEncounterService, EncounterTransactionMapper encounterTransactionMapper,
                                                  EncounterTransactionObsMapper encounterTransactionObsMapper, AccessionNotesMapper accessionNotesMapper) {
         this.conceptService = conceptService;
-        this.visitService = visitService;
         this.encounterService = encounterService;
         this.emrEncounterService = emrEncounterService;
         this.encounterTransactionMapper = encounterTransactionMapper;

@@ -16,11 +16,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 
 @org.springframework.test.context.ContextConfiguration(locations = {"classpath:TestingApplicationContext.xml"}, inheritLocations = true)
-public class VisitDocumentControllerIT extends BaseWebControllerTest {
+public class BahmniEncounterControllerDocumentsIT extends BaseWebControllerTest {
 
     public static final String TMP_DOCUMENT_IMAGES = "/tmp/document_images";
     private final String image = "R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
