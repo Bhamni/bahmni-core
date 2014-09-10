@@ -21,7 +21,7 @@ scp_to_vagrant $PROJECT_BASE/bahmnicore-omod/target/bahmnicore*-$VERSION.omod $M
 
 # Copy omod files to the vagrant box - in /tmp
 scp_to_vagrant $PROJECT_BASE/openerp-atomfeed-client-omod/target/openerp-atomfeed-client*-$VERSION.omod $MODULE_DEPLOYMENT_FOLDER/openerp-atomfeed-client-$VERSION.omod
-scp_to_vagrant $PROJECT_BASE/openmrs-elis-atomfeed-client-omod/target/elisatomfeedclient*-$VERSION.omod $MODULE_DEPLOYMENT_FOLDER/elisatomfeedclient-$VERSION.omod
+scp_to_vagrant $PROJECT_BASE/openmrs-elis-atomfeed-client-omod/target/openelis-atomfeed-client*-$VERSION.omod $MODULE_DEPLOYMENT_FOLDER/openelis-atomfeed-client-$VERSION.omod
 scp_to_vagrant $PROJECT_BASE/reference-data/omod/target/reference-data*-$VERSION.omod $MODULE_DEPLOYMENT_FOLDER/reference-data-$VERSION.omod
 
 #Deploy them from Vagrant /tmp to appropriate location

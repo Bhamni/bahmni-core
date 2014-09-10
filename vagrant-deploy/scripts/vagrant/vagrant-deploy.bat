@@ -25,7 +25,7 @@ if exist %KEY_FILE% (
     REM Deploy Open erp atom feed client
     pscp  -i %KEY_FILE% %CWD%/../../openerp-atomfeed-client-omod/target/openerp-atomfeed-client-omod-%VERSION%.omod vagrant@%MACHINE_IP%:%MODULE_DEPLOYMENT_FOLDER%/openerp-atomfeed-client-%VERSION%.omod
     REM Deploy Open elis
-    pscp  -i %KEY_FILE% %CWD%/../../openmrs-elis-atomfeed-client-omod/target/openelis-atomfeed-client-omod-%VERSION%.omod vagrant@%MACHINE_IP%:%MODULE_DEPLOYMENT_FOLDER%/elisatomfeedclient-%VERSION%.omod
+    pscp  -i %KEY_FILE% %CWD%/../../openmrs-elis-atomfeed-client-omod/target/openelis-atomfeed-client-omod-%VERSION%.omod vagrant@%MACHINE_IP%:%MODULE_DEPLOYMENT_FOLDER%/openelis-atomfeed-client-%VERSION%.omod
     REM Copy omods into module directories
     putty -ssh vagrant@%MACHINE_IP% -i %KEY_FILE% -m %SCRIPTS_DIR%/deploy_omods.sh
     REM Start tomcat
