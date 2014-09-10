@@ -13,6 +13,7 @@
     <person_name person_name_id="1027" preferred="true" person_id="1026" prefix="Mr." given_name="John" middle_name="Peeter" family_name="Sinha" family_name_suffix="Esq." creator="1" date_created="2005-09-22 00:00:00.0" voided="false" void_reason="" uuid="399e3a7b-6482-487d-94ce-c07bb3ca3c2d"/>
 
     <location location_id="2" name="Ganiyari" description="Ganiyari hospital" creator="1" retired="0" retired_by=" 0" parent_location=" 0" uuid="8d6c993e-c2cc-11de-8d13-0040c6dffd0f" date_created="2005-09-22 00:00:00" />
+    <location location_id="3" name="Ramesh" description="Suresh hospital" creator="1" retired="0" retired_by=" 0" parent_location=" 0" uuid="899c993e-c2cc-11de-8d13-0040c6dffd0f" date_created="2005-09-22 00:00:00" />
 
 
     <patient_identifier date_created="2005-09-22 00:00:00" patient_identifier_id="1" patient_id ="1024" identifier="GAN200000" identifier_type="3" location_id="1000" creator="1" changed_by="1000" voided_by="1000" uuid="7cb74fd1-128d-4584-842f-81d3535da3a6" preferred="1" voided="0" />
@@ -61,7 +62,5 @@
     <obs obs_id="1028" obs_group_id="1024" person_id="1024" concept_id="444" value_text="/patient_file" obs_datetime="2014-06-24 11:36:42" encounter_id="15" creator="1" voided="0" date_created="2013-12-04 11:36:42" uuid="6d0ae386-707a-4629-9850-f15606e63555"/>
     <obs obs_id="1029" obs_group_id="1025" person_id="1024" concept_id="444" value_text="/radiology/foo.jpg" obs_datetime="2014-06-24 11:36:42" encounter_id="16" creator="1" voided="0" date_created="2013-12-04 11:36:42" uuid="6d0ae386-707a-4629-9850-f15606e63666"/>
     <obs obs_id="1030" obs_group_id="1026" person_id="1024" concept_id="444" value_text="/radiology/bar.jpg" obs_datetime="2014-06-24 11:36:42" encounter_id="15" creator="1" voided="0" date_created="2013-12-04 11:36:42" uuid="6d0ae386-707a-4629-9850-f15606e63777"/>
-
-    <global_property property="emr.encounterProviderMatcher" property_value="org.openmrs.module.bahmniemrapi.encountertransaction.matcher.EncounterProviderSessionMatcher" uuid="4f55827e-26fe-102b-80cb-2017a47871b3"/>
 
 </dataset>

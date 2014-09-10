@@ -14,10 +14,6 @@
         <property name="administrationService" ref="adminService"/>
     </bean>
 
-    <bean id="bahmniEncounterProviderSessionmatcher" class="org.openmrs.module.bahmniemrapi.encountertransaction.matcher.EncounterProviderSessionMatcher">
-        <property name="administrationService" ref="adminService"/>
-    </bean>
-
     <bean parent="serviceContext">
         <property name="moduleService">
             <list merge="true">

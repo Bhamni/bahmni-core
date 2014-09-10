@@ -1,14 +1,6 @@
 package org.openmrs.module.bahmniemrapi.document.service.impl;
 
-import org.openmrs.Concept;
-import org.openmrs.Encounter;
-import org.openmrs.EncounterRole;
-import org.openmrs.EncounterType;
-import org.openmrs.Obs;
-import org.openmrs.Patient;
-import org.openmrs.Provider;
-import org.openmrs.Visit;
-import org.openmrs.VisitType;
+import org.openmrs.*;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.EncounterService;
@@ -17,24 +9,13 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.bahmniemrapi.document.contract.Document;
 import org.openmrs.module.bahmniemrapi.document.contract.VisitDocumentRequest;
 import org.openmrs.module.bahmniemrapi.document.service.VisitDocumentService;
+import org.openmrs.module.bahmniemrapi.encountertransaction.matcher.EncounterProviderMatcher;
 import org.openmrs.module.emrapi.encounter.EncounterParameters;
-import org.openmrs.module.emrapi.encounter.exception.EncounterMatcherNotFoundException;
-import org.openmrs.module.emrapi.encounter.matcher.BaseEncounterMatcher;
-import org.openmrs.module.emrapi.encounter.matcher.DefaultEncounterMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static org.apache.commons.lang.StringUtils.isNotEmpty;
+import java.util.*;
 
 @Service
 public class VisitDocumentServiceImpl implements VisitDocumentService {
@@ -44,16 +25,13 @@ public class VisitDocumentServiceImpl implements VisitDocumentService {
     private VisitService visitService;
     private ConceptService conceptService;
     private EncounterService encounterService;
-	private AdministrationService administrationService;
-	private Map<String, BaseEncounterMatcher> encounterMatcherMap ;
 
-	@Autowired
+    @Autowired
 	public VisitDocumentServiceImpl(VisitService visitService, ConceptService conceptService, EncounterService encounterService,@Qualifier("adminService")AdministrationService administrationService) {
         this.visitService = visitService;
         this.conceptService = conceptService;
         this.encounterService = encounterService;
-		this.administrationService = administrationService;
-	}
+    }
 
     @Override
     public Visit upload(VisitDocumentRequest visitDocumentRequest) {
@@ -63,7 +41,7 @@ public class VisitDocumentServiceImpl implements VisitDocumentService {
 
         Date encounterDate = (visit.getStopDatetime() != null) ? visit.getStartDatetime() : new Date();
 
-        Encounter encounter = findOrCreateEncounter(visit, visitDocumentRequest.getEncounterTypeUuid(), encounterDate, patient, visitDocumentRequest.getProviderUuid());
+        Encounter encounter = findOrCreateEncounter(visit, visitDocumentRequest.getEncounterTypeUuid(), encounterDate, patient, visitDocumentRequest.getProviderUuid(), visitDocumentRequest.getLocationUuid());
         visit.addEncounter(encounter);
 
         updateEncounter(encounter, encounterDate, visitDocumentRequest.getDocuments());
@@ -146,14 +124,15 @@ public class VisitDocumentServiceImpl implements VisitDocumentService {
         return observation;
     }
 
-    private Encounter findOrCreateEncounter(Visit visit, String encounterTypeUUID, Date encounterDateTime, Patient patient, String providerUuid) {
-        EncounterParameters encounterParameters = EncounterParameters.instance();
+    private Encounter findOrCreateEncounter(Visit visit, String encounterTypeUUID, Date encounterDateTime, Patient patient, String providerUuid, String locationUuid) {
 		EncounterType encounterType = encounterService.getEncounterTypeByUuid(encounterTypeUUID);
-		Provider providerByUuid = Context.getProviderService().getProviderByUuid(providerUuid);
+        Location location = Context.getLocationService().getLocationByUuid(locationUuid);
+        Provider provider = Context.getProviderService().getProviderByUuid(providerUuid);
 
-		encounterParameters.setEncounterType(encounterType);
-		encounterParameters.setProviders(new HashSet<Provider>(Arrays.asList(providerByUuid)));
-		Encounter existingEncounter = findEncounter(visit, encounterParameters);
+        EncounterParameters encounterParameters = EncounterParameters.instance();
+        encounterParameters.setEncounterType(encounterType).setProviders(new HashSet<>(Arrays.asList(provider))).setLocation(location);
+
+        Encounter existingEncounter = new EncounterProviderMatcher().findEncounter(visit, encounterParameters);
 		if (existingEncounter != null) {
 			return existingEncounter;
 		}
@@ -162,21 +141,13 @@ public class VisitDocumentServiceImpl implements VisitDocumentService {
 		encounter.setPatient(patient);
 		encounter.setEncounterType(encounterType);
 		encounter.setEncounterDatetime(encounterDateTime);
+        encounter.setLocation(location);
 		EncounterRole encounterRoleByUuid = Context.getEncounterService().getEncounterRoleByUuid(EncounterRole.UNKNOWN_ENCOUNTER_ROLE_UUID);
-        encounter.addProvider(encounterRoleByUuid, providerByUuid);
+        encounter.addProvider(encounterRoleByUuid, provider);
         return encounter;
     }
 
-    private Encounter findEncounter(Visit visit, EncounterParameters encounterParameters) {
-        String matcherClass = administrationService.getGlobalProperty("emr.encounterProviderMatcher");
-        BaseEncounterMatcher encounterMatcher = isNotEmpty(matcherClass)? getEncounterMatcherMap().get(matcherClass) : new DefaultEncounterMatcher();
-        if (encounterMatcher == null) {
-            throw new EncounterMatcherNotFoundException();
-        }
-        return encounterMatcher.findEncounter(visit, encounterParameters);
-    }
-
-	private Visit createVisit(String visitTypeUUID, Date visitStartDate, Date visitEndDate, Patient patient) {
+    private Visit createVisit(String visitTypeUUID, Date visitStartDate, Date visitEndDate, Patient patient) {
         VisitType visitType = Context.getVisitService().getVisitTypeByUuid(visitTypeUUID);
         Visit visit = new Visit();
         visit.setPatient(patient);
@@ -194,14 +165,4 @@ public class VisitDocumentServiceImpl implements VisitDocumentService {
         return createVisit(request.getVisitTypeUuid(), request.getVisitStartDate(), request.getVisitEndDate(), patient);
     }
 
-	private Map<String, BaseEncounterMatcher> getEncounterMatcherMap(){
-		if(encounterMatcherMap == null){
-			encounterMatcherMap = new HashMap<>();
-			List<BaseEncounterMatcher> encounterMatchers = Context.getRegisteredComponents(BaseEncounterMatcher.class);
-			for (BaseEncounterMatcher encounterMatcher : encounterMatchers) {
-				encounterMatcherMap.put(encounterMatcher.getClass().getCanonicalName(), encounterMatcher);
-			}
-		}
-		return  encounterMatcherMap;
-	}
 }

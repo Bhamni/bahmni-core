@@ -23,12 +23,11 @@ import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
-@Ignore
 public class VisitDocumentServiceImplIT extends BaseModuleContextSensitiveTest {
 
+    public static final String LOCATION_UUID = "8d6c993e-c2cc-11de-8d13-0040c6dffd0f";
     @Autowired
     VisitDocumentService visitDocumentService;
     @Autowired
@@ -44,7 +43,6 @@ public class VisitDocumentServiceImplIT extends BaseModuleContextSensitiveTest {
     }
 
     @Test
-    @Ignore
     public void shouldDeleteObservationsOfPreviousEncounters() throws ParseException {
         Date visitStartDate = getDateFromString("2014-06-22 00:00:00");
         Date encounterDate = getDateFromString("2014-06-23 00:00:00");
@@ -60,7 +58,7 @@ public class VisitDocumentServiceImplIT extends BaseModuleContextSensitiveTest {
                 "759799ab-c9a5-435e-b671-77773ada74e4",
                 encounterDate,
                 documents,
-                "331c6bf8-7846-11e3-a96a-0800271c1b75");
+                "331c6bf8-7846-11e3-a96a-0800271c1b75", null);
         visitDocumentService.upload(visitDocumentRequest);
 
         Encounter encounter = encounterService.getEncounterByUuid("6d0ae386-707a-4629-9850-f15206e63ab0");
@@ -72,7 +70,6 @@ public class VisitDocumentServiceImplIT extends BaseModuleContextSensitiveTest {
 
 
     @Test
-    @Ignore
     public void shouldChangeObservationsOfPreviousEncounters() throws Exception {
         Date visitStartDate = getDateFromString("2014-06-22 00:00:00");
         Date encounterDate = getDateFromString("2014-06-23 00:00:00");
@@ -89,7 +86,7 @@ public class VisitDocumentServiceImplIT extends BaseModuleContextSensitiveTest {
                 "4ee21921-01cc-4720-a6bf-a61a17c4d05b",
                 encounterDate,
                 documents,
-                "331c6bf8-7846-11e3-a96a-0800271c1333");
+                "331c6bf8-7846-11e3-a96a-0800271c1333", "899c993e-c2cc-11de-8d13-0040c6dffd0f");
         executeDataSet("visitDocumentData.xml");
         visitDocumentService.upload(visitDocumentRequest);
 
@@ -105,10 +102,10 @@ public class VisitDocumentServiceImplIT extends BaseModuleContextSensitiveTest {
         assertNotNull(savedDoc);
         assertThat(savedDoc.getConcept().getId(),is(333));
         assertThat(savedDoc.getGroupMembers().iterator().next().getValueText(),is("/radiology/foo.jpg"));
+        assertEquals(LOCATION_UUID, encounter.getLocation().getUuid());
     }
 
     @Test
-    @Ignore
     public void shouldCreateObservations() throws Exception {
         Date visitStartDate = getDateFromString("2014-06-22 00:00:00");
         Date encounterDate = getDateFromString("2014-06-23 00:00:00");
@@ -125,7 +122,7 @@ public class VisitDocumentServiceImplIT extends BaseModuleContextSensitiveTest {
                 "759799ab-c9a5-435e-b671-77773ada74e4",
                 encounterDate,
                 documents,
-                "331c6bf8-7846-11e3-a96a-0800271c1b75");
+                "331c6bf8-7846-11e3-a96a-0800271c1b75", LOCATION_UUID);
 
         visitDocumentService.upload(visitDocumentRequest);
 
@@ -136,10 +133,10 @@ public class VisitDocumentServiceImplIT extends BaseModuleContextSensitiveTest {
         assertNotNull(savedDoc);
         assertThat(savedDoc.getConcept().getId(),is(222));
         assertThat(savedDoc.getGroupMembers().iterator().next().getValueText(),is("/radiology/fooo-bar.jpg"));
+        assertEquals(LOCATION_UUID, encounter.getLocation().getUuid());
     }
 
     @Test
-    @Ignore
     public void shouldUseVisitStartTimeAsEncounterDateTimeForPreviousVisits() throws Exception {
         Date visitStartDate = getDateFromString("2010-09-22 00:00:00");
 
@@ -155,7 +152,7 @@ public class VisitDocumentServiceImplIT extends BaseModuleContextSensitiveTest {
                 "759799ab-c9a5-435e-b671-77773ada74e4",
                 null,
                 documents,
-                "331c6bf8-7846-11e3-a96a-0800271c1333");
+                "331c6bf8-7846-11e3-a96a-0800271c1333", null);
         executeDataSet("visitDocumentData.xml");
 
 //        Date currentDate = new Date(System.currentTimeMillis() - 1000);
@@ -172,7 +169,6 @@ public class VisitDocumentServiceImplIT extends BaseModuleContextSensitiveTest {
     }
 
     @Test
-    @Ignore
     public void shouldUseNewDateAsEncounterDateTimeForActiveVisits() throws Exception {
         Date visitStartDate = getDateFromString("2014-06-22 00:00:00");
         Date encounterDate = getDateFromString("2014-06-23 00:00:00");
@@ -189,7 +185,7 @@ public class VisitDocumentServiceImplIT extends BaseModuleContextSensitiveTest {
                 "4ee21921-01cc-4720-a6bf-a61a17c4d05b",
                 encounterDate,
                 documents,
-                "331c6bf8-7846-11e3-a96a-0800271c1b75");
+                "331c6bf8-7846-11e3-a96a-0800271c1b75", null);
 
         Date currentDate = new Date(System.currentTimeMillis() - 1000);
         visitDocumentService.upload(visitDocumentRequest);
