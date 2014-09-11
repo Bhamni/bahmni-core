@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import static org.bahmni.module.referencedata.advice.ConceptOperationEventInterceptorTest.getConceptSets;
+import static org.bahmni.module.referencedata.advice.RequestConceptOperationEventInterceptorTest.getConceptSets;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
