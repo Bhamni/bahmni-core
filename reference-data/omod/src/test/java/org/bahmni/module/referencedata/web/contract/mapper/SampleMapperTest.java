@@ -21,8 +21,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import static org.bahmni.module.referencedata.advice.RequestConceptOperationEventInterceptorTest.getConceptSet;
-import static org.bahmni.module.referencedata.advice.RequestConceptOperationEventInterceptorTest.getConceptSets;
+import static org.bahmni.module.referencedata.advice.ConceptOperationEventInterceptorTest.getConceptSet;
+import static org.bahmni.module.referencedata.advice.ConceptOperationEventInterceptorTest.getConceptSets;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;

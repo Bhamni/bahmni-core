@@ -1,7 +1,7 @@
 package org.bahmni.module.referencedata.web.service;
 
-import org.bahmni.module.referencedata.web.contract.RequestConcept;
+import org.bahmni.module.referencedata.web.contract.Concept;
 
 public interface ReferenceDataConceptService {
-    public org.openmrs.Concept saveConcept(RequestConcept requestConcept);
+    public org.openmrs.Concept saveConcept(Concept concept);
 }

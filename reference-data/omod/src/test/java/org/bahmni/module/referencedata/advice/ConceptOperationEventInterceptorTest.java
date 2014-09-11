@@ -34,7 +34,7 @@ import static org.mockito.Mockito.*;
 
 @PrepareForTest(Context.class)
 @RunWith(PowerMockRunner.class)
-public class RequestConceptOperationEventInterceptorTest {
+public class ConceptOperationEventInterceptorTest {
     @Mock
     private AtomFeedSpringTransactionManager atomFeedSpringTransactionManager;
     @Mock

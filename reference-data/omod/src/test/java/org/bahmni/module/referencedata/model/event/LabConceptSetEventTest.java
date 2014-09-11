@@ -20,14 +20,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import static org.bahmni.module.referencedata.advice.RequestConceptOperationEventInterceptorTest.getConceptSet;
-import static org.bahmni.module.referencedata.advice.RequestConceptOperationEventInterceptorTest.getConceptSets;
+import static org.bahmni.module.referencedata.advice.ConceptOperationEventInterceptorTest.getConceptSet;
+import static org.bahmni.module.referencedata.advice.ConceptOperationEventInterceptorTest.getConceptSets;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 @PrepareForTest(Context.class)
 @RunWith(PowerMockRunner.class)
-public class LabRequestConceptSetEventTest {
+public class LabConceptSetEventTest {
     public static final String SAMPLE_CONCEPT_UUID = "aebc57b7-0683-464e-ac48-48b8838abdfc";
 
     private Concept parentConcept;

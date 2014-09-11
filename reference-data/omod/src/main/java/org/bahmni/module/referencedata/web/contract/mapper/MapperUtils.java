@@ -10,7 +10,9 @@ import org.openmrs.ConceptSet;
 import org.openmrs.api.context.Context;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.bahmni.module.referencedata.model.event.DepartmentEvent.isDepartmentConcept;
 import static org.bahmni.module.referencedata.model.event.SampleEvent.isSampleConcept;
@@ -22,6 +24,14 @@ public class MapperUtils {
             return description.getDescription();
         }
         return null;
+    }
+
+    public static Set<ConceptDescription> constructDescription(String description) {
+        if (description == null) return null;
+        ConceptDescription conceptDescription = new ConceptDescription(description, Context.getLocale());
+        Set<ConceptDescription> descriptions = new HashSet<>();
+        descriptions.add(conceptDescription);
+        return descriptions;
     }
 
     public static Department getDepartment(Concept concept) {

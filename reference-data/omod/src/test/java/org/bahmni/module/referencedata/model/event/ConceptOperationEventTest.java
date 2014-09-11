@@ -18,7 +18,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import java.util.List;
 import java.util.Locale;
 
-import static org.bahmni.module.referencedata.advice.RequestConceptOperationEventInterceptorTest.getConceptSets;
+import static org.bahmni.module.referencedata.advice.ConceptOperationEventInterceptorTest.getConceptSets;
 import static org.bahmni.module.referencedata.model.event.ConceptOperationEvent.isChildOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -28,7 +28,7 @@ import static org.mockito.Mockito.when;
 
 @PrepareForTest(Context.class)
 @RunWith(PowerMockRunner.class)
-public class RequestConceptOperationEventTest {
+public class ConceptOperationEventTest {
     public static final String URL = "url";
     public static final String CATEGORY = "category";
     public static final String TITLE = "title";
