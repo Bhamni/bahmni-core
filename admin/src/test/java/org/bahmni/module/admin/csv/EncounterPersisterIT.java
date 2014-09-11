@@ -7,7 +7,10 @@ import org.bahmni.module.admin.csv.models.EncounterRow;
 import org.bahmni.module.admin.csv.models.MultipleEncounterRow;
 import org.junit.Before;
 import org.junit.Test;
-import org.openmrs.*;
+import org.openmrs.Encounter;
+import org.openmrs.Obs;
+import org.openmrs.Patient;
+import org.openmrs.Visit;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.VisitService;
 import org.openmrs.api.context.Context;
@@ -110,7 +113,7 @@ public class EncounterPersisterIT extends BaseModuleContextSensitiveTest {
 
         RowResult<MultipleEncounterRow> validationResult = encounterPersister.persist(multipleEncounterRow);
         assertTrue("Visit Type null not found. Error Message:" + validationResult.getErrorMessage(),
-                        validationResult.getErrorMessage().contains("Visit type:'null' not found"));
+                validationResult.getErrorMessage().contains("Visit type:'null' not found"));
     }
 
     @Test

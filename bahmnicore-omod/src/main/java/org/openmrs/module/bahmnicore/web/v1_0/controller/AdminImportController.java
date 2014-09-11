@@ -11,6 +11,7 @@ import org.bahmni.module.admin.csv.EncounterPersister;
 import org.bahmni.module.admin.csv.PatientProgramPersister;
 import org.bahmni.module.admin.csv.models.MultipleEncounterRow;
 import org.bahmni.module.admin.csv.models.PatientProgramRow;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.engine.SessionImplementor;
 import org.hibernate.impl.SessionImpl;
@@ -61,7 +62,6 @@ public class AdminImportController extends BaseRestController {
     @Autowired
     @Qualifier("adminService")
     private AdministrationService administrationService;
-    private ImportStatusDao importStatusDao = new ImportStatusDao(new MRSConnectionProvider());
 
     @RequestMapping(value = baseUrl + "/encounter", method = RequestMethod.POST)
     @ResponseBody
@@ -72,10 +72,9 @@ public class AdminImportController extends BaseRestController {
             encounterPersister.init(Context.getUserContext(), patientMatchingAlgorithm);
             String uploadedOriginalFileName = ((CommonsMultipartFile) file).getFileItem().getName();
             String username = Context.getUserContext().getAuthenticatedUser().getUsername();
-
             boolean skipValidation = true;
             return new FileImporter<MultipleEncounterRow>().importCSV(uploadedOriginalFileName, persistedUploadedFile,
-                    encounterPersister, MultipleEncounterRow.class, new MRSConnectionProvider(), username, skipValidation);
+                    encounterPersister, MultipleEncounterRow.class, new NewMRSConnectionProvider(), username, skipValidation);
         } catch (Exception e) {
             logger.error("Could not upload file", e);
             return false;
@@ -94,7 +93,7 @@ public class AdminImportController extends BaseRestController {
 
             boolean skipValidation = true;
             return new FileImporter<PatientProgramRow>().importCSV(uploadedOriginalFileName, persistedUploadedFile,
-                    patientProgramPersister, PatientProgramRow.class, new MRSConnectionProvider(), username, skipValidation);
+                    patientProgramPersister, PatientProgramRow.class, new NewMRSConnectionProvider(), username, skipValidation);
         } catch (Exception e) {
             logger.error("Could not upload file", e);
             return false;
@@ -105,6 +104,20 @@ public class AdminImportController extends BaseRestController {
     @ResponseBody
     public List<ImportStatus> status(@RequestParam(required = false) Integer numberOfDays) throws SQLException {
         numberOfDays = numberOfDays == null ? DEFAULT_NUMBER_OF_DAYS : numberOfDays;
+
+        ImportStatusDao importStatusDao = new ImportStatusDao(new JDBCConnectionProvider() {
+            @Override
+            public Connection getConnection() {
+                //TODO: ensure that only connection associated with current thread current transaction is given
+                SessionImplementor session = (SessionImpl) sessionFactory.getCurrentSession();
+                return session.connection();
+            }
+
+            @Override
+            public void closeConnection() {
+
+            }
+        });
         return importStatusDao.getImportStatusFromDate(DateUtils.addDays(new Date(), (numberOfDays * -1)));
     }
 
@@ -142,14 +155,21 @@ public class AdminImportController extends BaseRestController {
         return new CSVFile(uploadDirectory, relativePath);
     }
 
-    private class MRSConnectionProvider implements JDBCConnectionProvider {
+    private class NewMRSConnectionProvider implements JDBCConnectionProvider {
+        private ThreadLocal<Session> session = new ThreadLocal<>();
+
         @Override
         public Connection getConnection() {
-            //TODO: ensure that only connection associated with current thread current transaction is given
-            SessionImplementor session = (SessionImpl) sessionFactory.openSession();
-            return session.connection();
+            if (session.get() == null || !session.get().isOpen())
+                session.set(sessionFactory.openSession());
+
+            return session.get().connection();
         }
 
+        @Override
+        public void closeConnection() {
+            session.get().close();
+        }
     }
 
 }
