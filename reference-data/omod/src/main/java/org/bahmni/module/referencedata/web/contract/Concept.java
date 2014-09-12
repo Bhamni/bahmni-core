@@ -2,6 +2,8 @@ package org.bahmni.module.referencedata.web.contract;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
+import javax.validation.constraints.NotNull;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Concept {
     private String uuid;
@@ -22,6 +24,7 @@ public class Concept {
         this.uuid = uuid;
     }
 
+    @NotNull
     public String getUniqueName() {
         return uniqueName;
     }
@@ -46,6 +49,7 @@ public class Concept {
         this.description = description;
     }
 
+    @NotNull
     public String getClassName() {
         return className;
     }
@@ -54,6 +58,7 @@ public class Concept {
         this.className = className;
     }
 
+    @NotNull
     public String getDataType() {
         return dataType;
     }

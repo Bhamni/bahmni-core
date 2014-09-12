@@ -152,4 +152,44 @@ public class ConceptControllerIT extends BaseWebControllerTest {
         MockHttpServletResponse response = handle(request);
         assertEquals(response.getStatus(), HttpStatus.BAD_REQUEST.value());
     }
+
+
+    @Test
+    public void shouldNotCreateConceptForEmptyConceptDataType() throws Exception {
+        String uniqueName = "uniqueName";
+        String displayName = "uniqueName";
+        String className = "Ramesh";
+        String description = "Sample basic concept being created";
+
+        String conceptDataJson = "{" +
+                "\"uniqueName\":\"" + uniqueName + "\"," +
+                "\"displayName\":\"" + displayName + "\"," +
+                "\"description\":\"" + description + "\"," +
+                "\"className\":\"" + className + "\"" +
+                "}";
+
+        MockHttpServletRequest request = newPostRequest("/rest/v1/reference-data/concept", conceptDataJson);
+        MockHttpServletResponse response = handle(request);
+        assertEquals(response.getStatus(), HttpStatus.BAD_REQUEST.value());
+    }
+
+    @Test
+    public void shouldNotCreateConceptForEmptyConceptClass() throws Exception {
+        String uniqueName = "uniqueName";
+        String displayName = "uniqueName";
+        String description = "Sample basic concept being created";
+        String dataType = "N/A";
+
+
+        String conceptDataJson = "{" +
+                "\"uniqueName\":\"" + uniqueName + "\"," +
+                "\"displayName\":\"" + displayName + "\"," +
+                "\"description\":\"" + description + "\"," +
+                "\"className\":\"" + dataType + "\"" +
+                "}";
+
+        MockHttpServletRequest request = newPostRequest("/rest/v1/reference-data/concept", conceptDataJson);
+        MockHttpServletResponse response = handle(request);
+        assertEquals(response.getStatus(), HttpStatus.BAD_REQUEST.value());
+    }
 }

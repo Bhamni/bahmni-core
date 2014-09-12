@@ -12,6 +12,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.openmrs.ConceptClass;
 import org.openmrs.ConceptDatatype;
+import org.openmrs.api.APIException;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.context.Context;
 import org.powermock.api.mockito.PowerMockito;
@@ -66,7 +67,7 @@ public class ReferenceDataConceptServiceImplTest {
     }
 
     @Test
-    public void shouldCreateConcept() throws Exception {
+    public void shouldCreateConcept() throws Throwable {
 
         when(conceptService.getConceptClassByName(anyString())).thenReturn(conceptClass);
         when(conceptService.getConceptDatatypeByName(anyString())).thenReturn(conceptDatatype);
@@ -82,7 +83,7 @@ public class ReferenceDataConceptServiceImplTest {
     }
 
     @Test
-    public void shouldThrowExceptionIfConceptClassNotFound() {
+    public void shouldThrowExceptionIfConceptClassNotFound() throws Throwable {
         concept.setClassName("abc");
 
         when(conceptService.getConceptClassByName(concept.getClassName())).thenReturn(null);
@@ -93,40 +94,29 @@ public class ReferenceDataConceptServiceImplTest {
     }
 
     @Test
-    public void shouldThrowExceptionIfConceptDatatypeNotFound() {
+    public void shouldThrowExceptionIfConceptDatatypeNotFound() throws Throwable {
         concept.setDataType("xyz");
 
         when(conceptService.getConceptClassByName(concept.getClassName())).thenReturn(conceptClass);
         when(conceptService.getConceptDatatypeByName(concept.getDataType())).thenReturn(null);
 
-        exception.expect(RuntimeException.class);
+        exception.expect(APIException.class);
         exception.expectMessage("Concept Datatype xyz not found");
         referenceDataConceptService.saveConcept(concept);
     }
 
-    @Test
-    public void shouldThrowExceptionIfConceptUniqueNameIsNull() {
-        concept.setUniqueName(null);
-        concept.setDataType("xyz");
-
-        when(conceptService.getConceptClassByName(concept.getClassName())).thenReturn(conceptClass);
-        when(conceptService.getConceptDatatypeByName(concept.getDataType())).thenReturn(null);
-
-        exception.expect(RuntimeException.class);
-        exception.expectMessage("Concept unique name Cannot be empty");
-        referenceDataConceptService.saveConcept(concept);
-    }
 
     @Test
-    public void shouldThrowExceptionIfConceptUniqueNameIsEmptyString() {
-        concept.setUniqueName("");
+    public void shouldThrowExceptionIfConceptDatatypeAndConceptClassNotFound() throws Throwable {
         concept.setDataType("xyz");
+        concept.setClassName("abc");
 
-        when(conceptService.getConceptClassByName(concept.getClassName())).thenReturn(conceptClass);
+        when(conceptService.getConceptClassByName(concept.getClassName())).thenReturn(null);
         when(conceptService.getConceptDatatypeByName(concept.getDataType())).thenReturn(null);
 
-        exception.expect(RuntimeException.class);
-        exception.expectMessage("Concept unique name Cannot be empty");
+        exception.expect(APIException.class);
+        exception.expectMessage("Concept Class abc not found\n" +
+                "Concept Datatype xyz not found\n");
         referenceDataConceptService.saveConcept(concept);
     }
 }

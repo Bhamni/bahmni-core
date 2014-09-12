@@ -25,9 +25,8 @@ public class ConceptController extends BaseRestController {
             org.openmrs.Concept savedConcept = referenceDataConceptService.saveConcept(concept);
             return new ResponseEntity<>(String.valueOf(savedConcept.getId()), HttpStatus.CREATED);
         }
-        catch (APIException e){
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        catch (Throwable error){
+            return new ResponseEntity<>(error.getMessage(), HttpStatus.BAD_REQUEST);
         }
-
     }
 }
