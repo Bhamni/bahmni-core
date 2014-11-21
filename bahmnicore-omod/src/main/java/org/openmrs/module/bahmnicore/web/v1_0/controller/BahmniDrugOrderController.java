@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @Controller
@@ -43,6 +45,7 @@ public class BahmniDrugOrderController {
         logger.info(activeDrugOrders.size() + " active drug orders found");
 
         try {
+            Collections.sort(activeDrugOrders, new DrugIdComparator());
             return new BahmniDrugOrderMapper(new BahmniProviderMapper()).mapToResponse(activeDrugOrders);
         } catch (IOException e) {
             logger.error("Could not parse dosing instructions",e);
@@ -58,6 +61,7 @@ public class BahmniDrugOrderController {
                                                          @RequestParam(value = "numberOfVisits", required = false) Integer numberOfVisits){
         List<DrugOrder> drugOrders = drugOrderService.getPrescribedDrugOrders(patientUuid, includeActiveVisit, numberOfVisits);
         try {
+            Collections.sort(drugOrders, new DrugIdComparator());
             return new BahmniDrugOrderMapper(new BahmniProviderMapper()).mapToResponse(drugOrders);
         } catch (IOException e) {
             logger.error("Could not parse drug order",e);
@@ -71,4 +75,10 @@ public class BahmniDrugOrderController {
         return drugOrderService.getConfig();
     }
 
+    class DrugIdComparator implements Comparator<DrugOrder> {
+        @Override
+        public int compare(DrugOrder drugOrder1, DrugOrder drugOrder2) {
+            return drugOrder1.getOrderId().compareTo(drugOrder2.getOrderId());
+        }
+    }
 }
