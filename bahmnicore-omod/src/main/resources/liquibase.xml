@@ -2611,5 +2611,21 @@
             insert into order_frequency(concept_id, frequency_per_day, creator, date_created, uuid) values(@concept_id, 6/7, 1, @now, @uuid);
         </sql>
     </changeSet>
-
+    <changeSet id="bahmni-core-201412051745" author="Rohan">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM concept_class where name = 'Computed/Editable';
+            </sqlCheck>
+        </preConditions>
+        <comment>Add concept class Computed/Editable</comment>
+        <sql>
+            set @uuid = '';
+            set @date = '';
+            select uuid() into @uuid;
+            select curdate() into @date;
+            select @uuid;
+            insert into concept_class (name, description, creator, date_created, retired, uuid)
+            values ('Computed/Editable', 'Computed/Editable', 1, @date, 0, @uuid);
+        </sql>
+    </changeSet>
 </databaseChangeLog>
