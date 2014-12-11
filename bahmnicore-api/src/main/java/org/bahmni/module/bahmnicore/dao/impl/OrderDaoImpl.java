@@ -83,6 +83,23 @@ public class OrderDaoImpl implements OrderDao {
         return (List<Visit>) queryVisitsWithDrugOrders.list();
     }
 
+    @Override
+    public List<Visit> getVisitsWithOrdersForConcepts(Patient patient, String orderType, Boolean includeActiveVisit, Integer numberOfVisits,List<Concept> concepts) {
+        Session currentSession = sessionFactory.getCurrentSession();
+        String includevisit = includeActiveVisit == null || includeActiveVisit == false ? "and v.stopDatetime is not null and v.stopDatetime < :now" : "";
+        Query queryVisitsWithOrders = currentSession.createQuery("select v from "  + orderType + " o, Encounter e, Visit v where o.encounter = e.encounterId and e.visit = v.visitId and v.patient = (:patientId) " +
+                "and o.voided = false and o.concept in (:concepts) and o.action != :discontinued " +  includevisit + " group by v.visitId order by v.startDatetime desc");
+        queryVisitsWithOrders.setParameter("patientId", patient);
+        queryVisitsWithOrders.setParameter("discontinued", Order.Action.DISCONTINUE);
+        queryVisitsWithOrders.setParameterList("concepts", concepts);
+        if(includeActiveVisit == null || includeActiveVisit == false) {
+            queryVisitsWithOrders.setParameter("now", new Date());
+        }
+        if(numberOfVisits != null ) {
+            queryVisitsWithOrders.setMaxResults(numberOfVisits);
+        }
+        return (List<Visit>) queryVisitsWithOrders.list();
+    }
     private List<Integer> getVisitIds(List<Visit> visits) {
         List<Integer> visitIds = new ArrayList<>();
         for (Visit visit : visits) {

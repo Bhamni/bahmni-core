@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+    <person person_id="1001" gender="M" dead="false" creator="1" birthdate_estimated="0" date_created="2008-08-15 15:57:09.0" voided="false" void_reason="" uuid="75e04d42-3ca8-11e3-bf2b-080027175c1b"/>
+    <patient patient_id="1001" creator="1" date_created="2005-09-22 00:00:00.0" changed_by="1" date_changed="2008-08-18 12:29:59.0" voided="false" void_reason=""/>
+    <visit visit_id="1" date_started="2001-09-22 00:00:00" date_created="2001-09-22 00:00:00" patient_id="1001" visit_type_id="1" date_stopped="2002-10-08 04:08:16" location_id="2" creator="1" changed_by="1000" voided_by="1000" uuid="8244fcd2-f20f-11e3-b47b-c6959a4485cd" voided="0"/>
+    <visit visit_id="2" date_started="2012-12-12 00:00:00" date_created="2012-12-12 00:00:00" patient_id="1001" visit_type_id="1" date_stopped="2012-11-18 04:08:16" location_id="2" creator="1" changed_by="1000" voided_by="1000" uuid="8244fcd2-f20f-11e3-b47b-c6959azzzzzz" voided="0"/>
+    <encounter encounter_id="15" encounter_type="2" patient_id="1001" visit_id="1" location_id="2" encounter_datetime="2004-09-01 00:00:00.0" creator="1" date_created="2004-08-18 14:09:05.0" voided="false" uuid="4aaf37ee-f208-11e3-b47b-c6959a4485cd"/>
+    <encounter encounter_id="16" encounter_type="2" patient_id="1001" visit_id="2" location_id="2" encounter_datetime="2008-08-01 00:00:00.0" creator="1" date_created="2008-08-18 14:09:05.0" voided="false" uuid="6d0ae386-707a-4629-9850-f15206e63ab0"/>
+
+    <orders order_id="15" order_type_id="15" patient_id="1001" encounter_id="15" order_action="NEW" urgency="ROUTINE" concept_id="1" orderer="1" care_setting="1" order_number="1" instructions="non-expiring" date_activated="2008-08-08 00:00:00.0" creator="1" date_created="2008-08-19 12:20:22.0" voided="false" uuid="6d0ae386-707a-4629-9850-f15206e63ab0"/>
+    <orders order_id="17" order_type_id="15" patient_id="1001" encounter_id="15" order_action="DISCONTINUE" urgency="ROUTINE" concept_id="3" orderer="1" care_setting="1" order_number="2" previous_order_id="16" instructions="discontinued 1" date_activated="2014-08-08 00:00:00.0" auto_expire_date="2099-08-08 00:00:00.0" creator="1" date_created="2008-08-19 12:20:22.0" voided="false" uuid="92c1bdef-72d4-49d9-8a1f-804892f66abf"/>
+    <orders order_id="16" order_type_id="15" patient_id="1001" encounter_id="16" order_action="NEW" urgency="ROUTINE" concept_id="1" orderer="1" care_setting="1" order_number="2" instructions="expire-date in future" date_activated="2013-08-08 00:00:00.0" date_stopped="2014-08-08 00:00:00.0" auto_expire_date="2099-08-08 00:00:00.0" creator="1" date_created="2008-08-19 12:20:22.0" voided="false" uuid="92c1bdef-72d4-49d9-8a1f-804892f66acf"/>
+    <orders order_id="18" order_type_id="15" patient_id="1001" encounter_id="16" order_action="NEW" urgency="ROUTINE" concept_id="2" orderer="1" care_setting="1" order_number="3" instructions="expired" date_activated="2014-08-08 00:00:00.0" date_stopped="2014-08-08 00:00:00.0" auto_expire_date="2009-08-08 00:00:00.0" creator="1" date_created="2008-08-19 12:20:22.0" voided="false" uuid="92c1bdef-72d4-49d9-8a1f-804892f66abe"/>
+    <orders order_id="19" order_type_id="15" patient_id="1001" encounter_id="16" order_action="DISCONTINUE" urgency="ROUTINE" concept_id="3" orderer="1" care_setting="1" order_number="3" instructions="expired" date_activated="2014-08-08 00:00:00.0" previous_order_id="18" auto_expire_date="2009-08-08 00:00:00.0" creator="1" date_created="2008-08-19 12:20:22.0" voided="false" uuid="10c1bdef-72d4-49d9-8a1f-804892f66abe"/>
+
+    <drug_order order_id="15" drug_inventory_id="1" dose="125.0" dispense_as_written="true" as_needed="false" frequency="2000"/>
+    <drug_order order_id="16" drug_inventory_id="1" dose="225.0" dispense_as_written="true" as_needed="false" frequency="2000"/>
+    <drug_order order_id="17" drug_inventory_id="1" dose="225.0" dispense_as_written="true" as_needed="false" frequency="2000"/>
+    <drug_order order_id="18" drug_inventory_id="1" dose="225.0" dispense_as_written="true" as_needed="false" frequency="2000"/>
+    <drug_order order_id="19" drug_inventory_id="1" dose="225.0" dispense_as_written="true" as_needed="false" frequency="2000"/>
+
+
+    <concept concept_id="1" retired="false" datatype_id="1" class_id="1" is_set="false" creator="1" date_created="2005-01-01 00:00:00.0" uuid="e060cf44-3d3d-11e3-bf2b-0800271c1b75"/>
+    <concept_name concept_id="1" name="Calpol 250mg" locale="en" creator="1" date_created="2005-01-01 00:00:00.0" concept_name_id="1" voided="false" uuid="15c9daea-3d3e-11e3-bf2b-0800271c1b75" concept_name_type="FULLY_SPECIFIED" locale_preferred="0"/>
+    <drug drug_id="1" concept_id="1" name="Calpol" combination="false" dosage_form="100" creator="1" strength="250mg" date_created="2005-01-01 00:00:00.0" retired="false" uuid="3e4933ff-7799-11e3-a96a-0800271c1b75" />
+
+    <concept concept_id="2" retired="false" datatype_id="1" class_id="1" is_set="false" creator="1" date_created="2005-01-01 00:00:00.0" uuid="60211202-7855-11e3-a96a-0800271c1b75"/>
+    <concept_name concept_id="2" name="cetirizine 100mg" locale="en" creator="1" date_created="2005-01-01 00:00:00.0" concept_name_id="2" voided="false" uuid="6a629643-7855-11e3-a96a-0800271c1b75" concept_name_type="FULLY_SPECIFIED" locale_preferred="0"/>
+    <drug drug_id="2" concept_id="2" name="Cetirizine" combination="false" dosage_form="100" strength ="100mg" creator="1" date_created="2005-01-01 00:00:00.0" retired="false" uuid="f5bf0aa6-7855-11e3-bd53-328f386b70f0" />
+
+    <concept concept_id="3" retired="false" datatype_id="1" class_id="1" is_set="false" creator="1" date_created="2005-01-01 00:00:00.0" uuid="60211202-7855-11e3-a96a-0800271c1b7a"/>
+    <concept_name concept_name_id="3" concept_id="3" name="cetzine 100mg" locale="en" creator="1" date_created="2005-01-01 00:00:00.0" voided="false" uuid="6a629643-7855-11e3-a96a-0800271c1b7a" concept_name_type="FULLY_SPECIFIED" locale_preferred="0"/>
+    <drug drug_id="3" concept_id="3" name="Cetzine" combination="false" dosage_form="100" creator="1" date_created="2005-01-01 00:00:00.0" retired="false" uuid="f5bf0aa6-7855-11e3-bd53-328f386b70fa" />
+
+
+</dataset>

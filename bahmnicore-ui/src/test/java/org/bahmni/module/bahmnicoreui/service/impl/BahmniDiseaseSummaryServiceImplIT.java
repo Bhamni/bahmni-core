@@ -1,5 +1,6 @@
 package org.bahmni.module.bahmnicoreui.service.impl;
 
+import org.bahmni.module.bahmnicore.dao.OrderDao;
 import org.bahmni.module.bahmnicore.service.BahmniDrugOrderService;
 import org.bahmni.module.bahmnicore.service.BahmniObsService;
 import org.bahmni.module.bahmnicoreui.contract.ConceptValue;
@@ -34,10 +35,12 @@ public class BahmniDiseaseSummaryServiceImplIT extends BaseModuleContextSensitiv
     private LabOrderResultsService labOrderResultsService;
     @Autowired
     private BahmniDrugOrderService drugOrderService;
+    @Autowired
+    private OrderDao orderDao;
 
     @org.junit.Before
     public void setUp() throws Exception {
-        bahmniDiseaseSummaryData = new BahmniDiseaseSummaryServiceImpl(patientService, bahmniObsService, labOrderResultsService, conceptService, drugOrderService);
+        bahmniDiseaseSummaryData = new BahmniDiseaseSummaryServiceImpl(patientService, bahmniObsService, labOrderResultsService, conceptService, drugOrderService, orderDao);
         executeDataSet("diagnosisMetadata.xml");
         executeDataSet("dispositionMetadata.xml");
     }
@@ -148,7 +151,25 @@ public class BahmniDiseaseSummaryServiceImplIT extends BaseModuleContextSensitiv
 
     @Test
     public void shouldReturnDrugOrdersForGivenConceptsAndNoOfVisits() throws Exception {
+        executeDataSet("drugOrderTestData.xml");
 
+        DiseaseDataParams diseaseDataParams = new DiseaseDataParams();
+        diseaseDataParams.setNumberOfVisits(1);
+        ArrayList<String> drugConcepts = new ArrayList<String>(){{
+            add("Calpol 250mg");
+        }};
+
+        diseaseDataParams.setDrugConcepts(drugConcepts);
+        DiseaseSummaryData diseaseSummary = bahmniDiseaseSummaryData.getDiseaseSummary("75e04d42-3ca8-11e3-bf2b-080027175c1b", diseaseDataParams);
+        Map<String, Map<String, ConceptValue>> drugTable = diseaseSummary.getTabularData();
+
+        assertNotNull(drugTable);
+        assertEquals(1, drugTable.size());
+
+        Map<String, ConceptValue> durgOrdersInVisit = drugTable.get("2012-12-12");
+        assertNotNull(durgOrdersInVisit);
+        assertEquals(1, durgOrdersInVisit.size());
+        assertEquals("250mg", durgOrdersInVisit.get("Calpol 250mg").getValue());
     }
 
 
