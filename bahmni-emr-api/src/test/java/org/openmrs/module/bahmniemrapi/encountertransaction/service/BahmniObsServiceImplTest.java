@@ -1,13 +1,13 @@
-package org.bahmni.module.bahmnicore.service.impl;
+package org.openmrs.module.bahmniemrapi.encountertransaction.service;
 
 import org.bahmni.module.bahmnicore.dao.ObsDao;
-import org.bahmni.module.bahmnicore.service.BahmniObsService;
 import org.bahmni.test.builder.ConceptBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.openmrs.Concept;
+import org.openmrs.module.bahmniemrapi.encountertransaction.service.impl.BahmniObsServiceImpl;
 import org.openmrs.util.LocaleUtility;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;

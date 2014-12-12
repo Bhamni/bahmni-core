@@ -2,10 +2,13 @@ package org.bahmni.module.bahmnicore.service.impl;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
-import org.bahmni.module.bahmnicore.contract.drugorder.*;
+import org.bahmni.module.bahmnicore.contract.drugorder.ConceptData;
+import org.bahmni.module.bahmnicore.contract.drugorder.DrugOrderConfigResponse;
+import org.bahmni.module.bahmnicore.contract.drugorder.OrderFrequencyData;
 import org.bahmni.module.bahmnicore.dao.PatientDao;
 import org.bahmni.module.bahmnicore.dao.OrderDao;
 import org.bahmni.module.bahmnicore.model.BahmniFeedDrugOrder;
+import org.bahmni.module.bahmnicore.model.FlexibleDosingInstructions;
 import org.bahmni.module.bahmnicore.service.BahmniDrugOrderService;
 import org.bahmni.module.bahmnicore.util.VisitIdentificationHelper;
 import org.joda.time.DateTime;
@@ -13,7 +16,6 @@ import org.joda.time.Days;
 import org.openmrs.*;
 import org.openmrs.api.*;
 import org.openmrs.api.context.*;
-import org.openmrs.module.bahmniemrapi.drugorder.dosinginstructions.FlexibleDosingInstructions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -1,7 +1,7 @@
 package org.openmrs.module.bahmnicore.web.v1_0.controller;
 
 import org.apache.commons.lang3.ObjectUtils;
-import org.bahmni.module.bahmnicore.service.BahmniObsService;
+import org.openmrs.module.bahmniemrapi.encountertransaction.service.BahmniObsService;
 import org.openmrs.Concept;
 import org.openmrs.api.ConceptService;
 import org.openmrs.module.bahmniemrapi.encountertransaction.contract.BahmniObservation;

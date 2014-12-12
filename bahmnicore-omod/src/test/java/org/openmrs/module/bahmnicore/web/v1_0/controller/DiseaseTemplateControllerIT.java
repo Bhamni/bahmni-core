@@ -1,16 +1,13 @@
 package org.openmrs.module.bahmnicore.web.v1_0.controller;
 
-import org.bahmni.module.bahmnicore.contract.diseasetemplate.DiseaseTemplate;
-import org.bahmni.module.bahmnicore.contract.diseasetemplate.ObservationTemplate;
+import org.openmrs.module.bahmniemrapi.encountertransaction.contract.DiseaseTemplate;
+import org.openmrs.module.bahmniemrapi.encountertransaction.contract.ObservationTemplate;
 import org.bahmni.test.web.controller.BaseWebControllerTest;
 import org.codehaus.jackson.type.TypeReference;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.api.ObsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.util.List;
 

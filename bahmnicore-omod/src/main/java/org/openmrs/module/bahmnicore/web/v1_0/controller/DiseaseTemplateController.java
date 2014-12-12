@@ -1,8 +1,8 @@
 package org.openmrs.module.bahmnicore.web.v1_0.controller;
 
-import org.bahmni.module.bahmnicore.contract.diseasetemplate.DiseaseTemplate;
+import org.openmrs.module.bahmniemrapi.encountertransaction.contract.DiseaseTemplate;
 import org.bahmni.module.bahmnicore.contract.diseasetemplate.DiseaseTemplatesConfig;
-import org.bahmni.module.bahmnicore.service.DiseaseTemplateService;
+import org.openmrs.module.bahmniemrapi.encountertransaction.service.DiseaseTemplateService;
 import org.openmrs.module.webservices.rest.web.v1_0.controller.BaseRestController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

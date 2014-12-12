@@ -10,7 +10,6 @@ import org.bahmni.module.admin.encounter.BahmniEncounterTransactionImportService
 import org.bahmni.module.admin.observation.DiagnosisMapper;
 import org.bahmni.module.admin.observation.ObservationMapper;
 import org.bahmni.module.admin.retrospectiveEncounter.service.DuplicateObservationService;
-import org.bahmni.module.bahmnicore.service.impl.RetrospectiveEncounterTransactionService;
 import org.openmrs.Patient;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.EncounterService;
@@ -42,6 +41,7 @@ public class EncounterPersister implements EntityPersister<MultipleEncounterRow>
     private boolean shouldMatchExactPatientId;
     protected DiagnosisMapper diagnosisMapper;
     private ObservationMapper observationMapper;
+    @Autowired
     private DuplicateObservationService duplicateObservationService;
 
     private static final Logger log = Logger.getLogger(EncounterPersister.class);
@@ -86,10 +86,8 @@ public class EncounterPersister implements EntityPersister<MultipleEncounterRow>
                 duplicateObservationService.filter(bahmniEncounterTransaction, patient, multipleEncounterRow.getVisitStartDate(), multipleEncounterRow.getVisitEndDate());
             }
 
-            RetrospectiveEncounterTransactionService retrospectiveEncounterTransactionService =
-                    new RetrospectiveEncounterTransactionService(bahmniEncounterTransactionService, visitService);
             for (BahmniEncounterTransaction bahmniEncounterTransaction : bahmniEncounterTransactions) {
-                retrospectiveEncounterTransactionService.save(bahmniEncounterTransaction, patient, multipleEncounterRow.getVisitStartDate(), multipleEncounterRow.getVisitEndDate());
+                bahmniEncounterTransactionService.save(bahmniEncounterTransaction, patient, multipleEncounterRow.getVisitStartDate(), multipleEncounterRow.getVisitEndDate());
             }
 
             return new Messages();

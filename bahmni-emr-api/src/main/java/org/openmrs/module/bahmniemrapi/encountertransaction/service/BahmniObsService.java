@@ -1,4 +1,4 @@
-package org.bahmni.module.bahmnicore.service;
+package org.openmrs.module.bahmniemrapi.encountertransaction.service;
 
 import org.openmrs.Concept;
 import org.openmrs.Obs;

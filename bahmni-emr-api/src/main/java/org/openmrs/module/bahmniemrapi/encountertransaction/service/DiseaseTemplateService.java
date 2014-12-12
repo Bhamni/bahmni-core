@@ -1,9 +1,8 @@
-package org.bahmni.module.bahmnicore.service;
+package org.openmrs.module.bahmniemrapi.encountertransaction.service;
 
-import org.bahmni.module.bahmnicore.contract.diseasetemplate.DiseaseTemplate;
+import org.openmrs.module.bahmniemrapi.encountertransaction.contract.DiseaseTemplate;
 import org.bahmni.module.bahmnicore.contract.diseasetemplate.DiseaseTemplatesConfig;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public interface DiseaseTemplateService {

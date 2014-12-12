@@ -1,13 +1,12 @@
-package org.bahmni.module.bahmnicore.service.impl;
+package org.openmrs.module.bahmniemrapi.encountertransaction.service;
 
-import org.bahmni.module.bahmnicore.contract.diseasetemplate.DiseaseTemplate;
 import org.bahmni.module.bahmnicore.contract.diseasetemplate.DiseaseTemplateConfig;
 import org.bahmni.module.bahmnicore.contract.diseasetemplate.DiseaseTemplatesConfig;
-import org.bahmni.module.bahmnicore.contract.diseasetemplate.ObservationTemplate;
-import org.bahmni.module.bahmnicore.service.DiseaseTemplateService;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.module.bahmniemrapi.encountertransaction.contract.BahmniObservation;
+import org.openmrs.module.bahmniemrapi.encountertransaction.contract.DiseaseTemplate;
+import org.openmrs.module.bahmniemrapi.encountertransaction.contract.ObservationTemplate;
 import org.openmrs.web.test.BaseModuleWebContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 

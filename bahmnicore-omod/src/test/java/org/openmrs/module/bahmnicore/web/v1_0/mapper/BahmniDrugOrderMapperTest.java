@@ -17,7 +17,7 @@ import org.openmrs.SimpleDosingInstructions;
 import org.openmrs.Visit;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.module.bahmniemrapi.drugorder.contract.BahmniDrugOrder;
-import org.openmrs.module.bahmniemrapi.drugorder.dosinginstructions.FlexibleDosingInstructions;
+import org.bahmni.module.bahmnicore.model.FlexibleDosingInstructions;
 import org.openmrs.module.bahmniemrapi.drugorder.mapper.BahmniDrugOrderMapper;
 import org.openmrs.module.bahmniemrapi.drugorder.mapper.BahmniProviderMapper;
 import org.openmrs.module.emrapi.encounter.domain.EncounterTransaction;

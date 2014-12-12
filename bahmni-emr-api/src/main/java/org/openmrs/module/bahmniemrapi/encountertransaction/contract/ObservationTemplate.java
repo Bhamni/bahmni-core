@@ -1,7 +1,6 @@
-package org.bahmni.module.bahmnicore.contract.diseasetemplate;
+package org.openmrs.module.bahmniemrapi.encountertransaction.contract;
 
 import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.openmrs.module.bahmniemrapi.encountertransaction.contract.BahmniObservation;
 import org.openmrs.module.emrapi.encounter.domain.EncounterTransaction;
 import org.openmrs.module.emrapi.utils.CustomJsonDateSerializer;
 

@@ -1,10 +1,9 @@
-package org.openmrs.module.bahmniemrapi.drugorder.dosinginstructions;
+package org.bahmni.module.bahmnicore.model;
 
 import static org.apache.commons.lang3.time.DateUtils.addMilliseconds;
 import org.openmrs.DosingInstructions;
 import org.openmrs.DrugOrder;
 import org.openmrs.Duration;
-import org.openmrs.SimpleDosingInstructions;
 import org.openmrs.api.APIException;
 import org.springframework.validation.Errors;
 

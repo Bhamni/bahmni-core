@@ -37,12 +37,12 @@
     <drug drug_id="4001" concept_id="2004" dosage_form="51" name="Paracetamol 250 mg" combination="true" creator="2" date_created="2005-02-24 00:00:00.0" retired="false" uuid="42f00efa-26fe-102b-80cb-0017b9a871b2"/>
 
 
-    <drug_order order_id="1005" drug_inventory_id="2001" dosing_type="org.openmrs.module.bahmniemrapi.drugorder.dosinginstructions.FlexibleDosingInstructions"
+    <drug_order order_id="1005" drug_inventory_id="2001" dosing_type="org.bahmni.module.bahmnicore.model.FlexibleDosingInstructions"
                 dosing_instructions="{&quot;dose&quot;: &quot;5.0&quot;, &quot;doseUnits&quot;: &quot;Tablet&quot;}" duration="6" duration_units="27" dispense_as_written="true" as_needed="false"
                 frequency="2"/>
-    <drug_order order_id="1006" drug_inventory_id="3001" dosing_type="org.openmrs.module.bahmniemrapi.drugorder.dosinginstructions.FlexibleDosingInstructions"
+    <drug_order order_id="1006" drug_inventory_id="3001" dosing_type="org.bahmni.module.bahmnicore.model.FlexibleDosingInstructions"
                 dosing_instructions="{&quot;dose&quot;: &quot;2.5&quot;, &quot;doseUnits&quot;: &quot;Tablet&quot;}" duration="6" dispense_as_written="true" as_needed="false" frequency="2"/>
-    <drug_order order_id="1007" drug_inventory_id="4001" dose="4.5" dose_units="51" dosing_type="org.openmrs.module.bahmniemrapi.drugorder.dosinginstructions.FlexibleDosingInstructions" route="22" frequency="1" duration="6" duration_units="27" dispense_as_written="true" as_needed="false"/>
-    <drug_order order_id="1008" drug_inventory_id="2001" dosing_type="org.openmrs.module.bahmniemrapi.drugorder.dosinginstructions.FlexibleDosingInstructions" dosing_instructions="{&quot;dose&quot;: &quot;1.5&quot;, &quot;doseUnits&quot;: &quot;Tablet&quot;}" duration="15" dispense_as_written="true" as_needed="false" frequency="2"/>
+    <drug_order order_id="1007" drug_inventory_id="4001" dose="4.5" dose_units="51" dosing_type="org.bahmni.module.bahmnicore.model.FlexibleDosingInstructions" route="22" frequency="1" duration="6" duration_units="27" dispense_as_written="true" as_needed="false"/>
+    <drug_order order_id="1008" drug_inventory_id="2001" dosing_type="org.bahmni.module.bahmnicore.model.FlexibleDosingInstructions" dosing_instructions="{&quot;dose&quot;: &quot;1.5&quot;, &quot;doseUnits&quot;: &quot;Tablet&quot;}" duration="15" dispense_as_written="true" as_needed="false" frequency="2"/>
 
 </dataset>

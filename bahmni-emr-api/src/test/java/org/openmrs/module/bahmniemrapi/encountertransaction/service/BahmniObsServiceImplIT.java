@@ -1,14 +1,12 @@
-package org.bahmni.module.bahmnicore.service.impl;
+package org.openmrs.module.bahmniemrapi.encountertransaction.service;
 
 import org.bahmni.module.bahmnicore.dao.ObsDao;
-import org.bahmni.module.bahmnicore.service.BahmniObsService;
 import org.bahmni.test.builder.ConceptBuilder;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.Concept;
-import org.openmrs.Obs;
 import org.openmrs.module.bahmniemrapi.encountertransaction.contract.BahmniObservation;
+import org.openmrs.module.bahmniemrapi.encountertransaction.service.impl.BahmniObsServiceImpl;
 import org.openmrs.web.test.BaseModuleWebContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 

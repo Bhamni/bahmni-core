@@ -1,13 +1,11 @@
-package org.bahmni.module.bahmnicore.service.impl;
+package org.openmrs.module.bahmniemrapi.encountertransaction.service.impl;
 
-import org.bahmni.module.bahmnicore.contract.diseasetemplate.DiseaseTemplate;
+import org.openmrs.module.bahmniemrapi.encountertransaction.contract.DiseaseTemplate;
 import org.bahmni.module.bahmnicore.contract.diseasetemplate.DiseaseTemplateConfig;
 import org.bahmni.module.bahmnicore.contract.diseasetemplate.DiseaseTemplatesConfig;
-import org.bahmni.module.bahmnicore.contract.diseasetemplate.ObservationTemplate;
-import org.bahmni.module.bahmnicore.mapper.ObservationTemplateMapper;
-import org.bahmni.module.bahmnicore.service.BahmniObsService;
+import org.openmrs.module.bahmniemrapi.encountertransaction.contract.ObservationTemplate;
+import org.openmrs.module.bahmniemrapi.encountertransaction.mapper.ObservationTemplateMapper;
 import org.bahmni.module.bahmnicore.service.BahmniVisitService;
-import org.bahmni.module.bahmnicore.service.DiseaseTemplateService;
 import org.openmrs.Concept;
 import org.openmrs.Obs;
 import org.openmrs.Visit;
@@ -15,6 +13,8 @@ import org.openmrs.api.ConceptService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.bahmniemrapi.encountertransaction.contract.BahmniObservation;
 import org.openmrs.module.bahmniemrapi.encountertransaction.mapper.BahmniObservationMapper;
+import org.openmrs.module.bahmniemrapi.encountertransaction.service.BahmniObsService;
+import org.openmrs.module.bahmniemrapi.encountertransaction.service.DiseaseTemplateService;
 import org.openmrs.module.emrapi.encounter.ConceptMapper;
 import org.openmrs.module.emrapi.encounter.domain.EncounterTransaction;
 import org.springframework.beans.factory.annotation.Autowired;

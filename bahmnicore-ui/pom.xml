@@ -78,7 +78,7 @@
         </dependency>
         <dependency>
             <groupId>org.bahmni.module</groupId>
-            <artifactId>bahmnicore-api</artifactId>
+            <artifactId>bahmni-emr-api</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

@@ -27,6 +27,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 
+@org.springframework.test.context.ContextConfiguration(locations = {"classpath:TestingApplicationContext.xml"}, inheritLocations = true)
 public class VisitDocumentServiceImplIT extends BaseModuleContextSensitiveTest {
 
     public static final String LOCATION_UUID = "8d6c993e-c2cc-11de-8d13-0040c6dffd0f";

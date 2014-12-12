@@ -1,4 +1,4 @@
-package org.bahmni.module.bahmnicore.contract.diseasetemplate;
+package org.openmrs.module.bahmniemrapi.encountertransaction.contract;
 
 
 import org.openmrs.module.emrapi.encounter.domain.EncounterTransaction;

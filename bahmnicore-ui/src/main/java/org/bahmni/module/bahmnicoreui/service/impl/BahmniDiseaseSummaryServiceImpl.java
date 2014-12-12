@@ -34,13 +34,6 @@ public class BahmniDiseaseSummaryServiceImpl implements BahmniDiseaseSummaryServ
     public DiseaseSummaryData getDiseaseSummary(String patientUuid, DiseaseDataParams queryParams) {
         DiseaseSummaryData diseaseSummaryData = new DiseaseSummaryData();
 
-//        List<Concept> drugConcepts = new ArrayList<>();
-//        if(queryParams.getDrugConcepts() != null){
-//            for (String conceptName : queryParams.getDrugConcepts()) {
-//                drugConcepts.add(conceptService.getConceptByName(conceptName.replaceAll("%20", " ")));
-//            }
-//        }
-
         Patient patient = patientService.getPatientByUuid(patientUuid);
 
         diseaseSummaryData.concat(obsDiseaseSummaryAggregator.aggregate(patient, queryParams.getObsConcepts(), queryParams.getNumberOfVisits()));

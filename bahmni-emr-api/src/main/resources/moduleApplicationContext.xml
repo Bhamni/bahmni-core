@@ -32,7 +32,7 @@
         </property>
     </bean>
 
-    <bean id="bahmniEncounterTransactionServiceTarget" class="org.openmrs.module.bahmniemrapi.encountertransaction.impl.BahmniEncounterTransactionServiceImpl" autowire="constructor">
+    <bean id="bahmniEncounterTransactionServiceTarget" class="org.openmrs.module.bahmniemrapi.encountertransaction.service.impl.BahmniEncounterTransactionServiceImpl" autowire="constructor">
         <constructor-arg  ref="encounterService"/>
         <constructor-arg  ref="emrEncounterService"/>
         <constructor-arg  ref="encounterTransactionMapper"/>

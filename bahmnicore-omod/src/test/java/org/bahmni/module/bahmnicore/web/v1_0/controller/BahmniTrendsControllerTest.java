@@ -2,7 +2,7 @@ package org.bahmni.module.bahmnicore.web.v1_0.controller;
 
 import org.bahmni.module.bahmnicore.contract.encounter.data.ConceptData;
 import org.bahmni.module.bahmnicore.contract.encounter.data.PersonObservationData;
-import org.bahmni.module.bahmnicore.service.BahmniObsService;
+import org.openmrs.module.bahmniemrapi.encountertransaction.service.BahmniObsService;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;

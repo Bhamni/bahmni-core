@@ -1,9 +1,9 @@
-package org.bahmni.module.bahmnicore.mapper;
+package org.openmrs.module.bahmniemrapi.encountertransaction.mapper;
 
 import org.apache.commons.lang3.ObjectUtils;
-import org.bahmni.module.bahmnicore.contract.diseasetemplate.ObservationTemplate;
 import org.openmrs.Concept;
 import org.openmrs.module.bahmniemrapi.encountertransaction.contract.BahmniObservation;
+import org.openmrs.module.bahmniemrapi.encountertransaction.contract.ObservationTemplate;
 import org.openmrs.module.emrapi.encounter.ConceptMapper;
 import org.openmrs.module.emrapi.encounter.domain.EncounterTransaction;
 
