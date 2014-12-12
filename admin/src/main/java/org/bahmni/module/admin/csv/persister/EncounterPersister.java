@@ -4,13 +4,13 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.bahmni.csv.EntityPersister;
 import org.bahmni.csv.Messages;
-import org.bahmni.csv.RowResult;
 import org.bahmni.module.admin.csv.models.MultipleEncounterRow;
 import org.bahmni.module.admin.csv.service.PatientMatchService;
 import org.bahmni.module.admin.encounter.BahmniEncounterTransactionImportService;
 import org.bahmni.module.admin.observation.DiagnosisMapper;
 import org.bahmni.module.admin.observation.ObservationMapper;
-import org.bahmni.module.admin.retrospectiveEncounter.service.RetrospectiveEncounterTransactionService;
+import org.bahmni.module.admin.retrospectiveEncounter.service.DuplicateObservationService;
+import org.bahmni.module.bahmnicore.service.impl.RetrospectiveEncounterTransactionService;
 import org.openmrs.Patient;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.EncounterService;
@@ -42,6 +42,7 @@ public class EncounterPersister implements EntityPersister<MultipleEncounterRow>
     private boolean shouldMatchExactPatientId;
     protected DiagnosisMapper diagnosisMapper;
     private ObservationMapper observationMapper;
+    private DuplicateObservationService duplicateObservationService;
 
     private static final Logger log = Logger.getLogger(EncounterPersister.class);
 
@@ -81,17 +82,15 @@ public class EncounterPersister implements EntityPersister<MultipleEncounterRow>
                     new BahmniEncounterTransactionImportService(encounterService, observationMapper, diagnosisMapper);
             List<BahmniEncounterTransaction> bahmniEncounterTransactions = encounterTransactionImportService.getBahmniEncounterTransaction(multipleEncounterRow, patient);
 
+            for (BahmniEncounterTransaction bahmniEncounterTransaction : bahmniEncounterTransactions) {
+                duplicateObservationService.filter(bahmniEncounterTransaction, patient, multipleEncounterRow.getVisitStartDate(), multipleEncounterRow.getVisitEndDate());
+            }
+
             RetrospectiveEncounterTransactionService retrospectiveEncounterTransactionService =
                     new RetrospectiveEncounterTransactionService(bahmniEncounterTransactionService, visitService);
-
             for (BahmniEncounterTransaction bahmniEncounterTransaction : bahmniEncounterTransactions) {
-//                retrospectiveEncounterTransactionService.save(bahmniEncounterTransaction, patient, multipleEncounterRow.getVisitStartDate(), multipleEncounterRow.getVisitEndDate());
-                retrospectiveEncounterTransactionService.filterExistingObservationsAndDiagnosis(bahmniEncounterTransaction, patient, multipleEncounterRow.getVisitStartDate(), multipleEncounterRow.getVisitEndDate());
+                retrospectiveEncounterTransactionService.save(bahmniEncounterTransaction, patient, multipleEncounterRow.getVisitStartDate(), multipleEncounterRow.getVisitEndDate());
             }
-            for (BahmniEncounterTransaction bahmniEncounterTransaction : bahmniEncounterTransactions) {
-                retrospectiveEncounterTransactionService.save(bahmniEncounterTransaction);
-            }
-
 
             return new Messages();
         } catch (Exception e) {

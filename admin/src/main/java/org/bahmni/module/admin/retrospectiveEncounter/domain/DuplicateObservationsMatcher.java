@@ -40,19 +40,6 @@ public class DuplicateObservationsMatcher {
         return uniqueObservations;
     }
 
-//    public List<BahmniObservation> getUniqueBahmniObservations(List<BahmniObservation> observations) {
-//        List<Obs> allObs = getObservationsForVisit();
-//        List<BahmniObservation> uniqueObservations = new ArrayList<>();
-//        for (BahmniObservation anObservation : observations) {
-//            String anObservationValue = (String) anObservation.getValue();
-//            String observationConceptName = anObservation.getConcept().getName();
-//            if (isUnique(allObs, anObservationValue, observationConceptName)) {
-//                uniqueObservations.add(anObservation);
-//            }
-//        }
-//        return uniqueObservations;
-//    }
-
     public List<BahmniObservation> getNewlyAddedBahmniObservations(List<BahmniObservation> observations, Date encounterDateTime) {
         List<Encounter> matchedEncounters = getAllEncountersByDate(encounterDateTime);
         return filterObsIfItIsExists(observations, matchedEncounters);
