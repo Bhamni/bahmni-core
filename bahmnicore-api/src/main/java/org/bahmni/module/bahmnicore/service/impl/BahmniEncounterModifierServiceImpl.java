@@ -1,43 +1,54 @@
 package org.bahmni.module.bahmnicore.service.impl;
 
+import groovy.lang.GroovyClassLoader;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.bahmni.module.bahmnicore.contract.encounter.data.ConceptData;
+import org.bahmni.module.bahmnicore.encounterModifier.EncounterModifier;
+import org.bahmni.module.bahmnicore.encounterModifier.exception.CannotModifyEncounterException;
 import org.bahmni.module.bahmnicore.service.BahmniEncounterModifierService;
 import org.openmrs.module.bahmniemrapi.encountertransaction.contract.BahmniEncounterTransaction;
-import org.openmrs.module.bahmniemrapi.encountertransaction.contract.BahmniObservation;
+import org.openmrs.util.OpenmrsUtil;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class BahmniEncounterModifierServiceImpl implements BahmniEncounterModifierService {
 
-    private static Logger logger = Logger.getLogger(BahmniEncounterModifierServiceImpl.class);
+    public static final String ENCOUNTER_MODIFIER_ALGORITHM_DIRECTORY = "/encounterModifier/";
+    protected Map<String, EncounterModifier> encounterModifiers = new HashMap<>();
+
+    private static final Logger log = Logger.getLogger(BahmniEncounterModifierServiceImpl.class);
 
     @Override
-    public BahmniEncounterTransaction modifyEncounter(BahmniEncounterTransaction bahmniEncounterTransaction, ConceptData conceptSetData){
-        List<BahmniObservation> observationsFromConceptSet = new ArrayList<>();
-        BahmniObservation conceptSetObservation = findConceptSetObservationFromEncounterTransaction(bahmniEncounterTransaction.getObservations(), conceptSetData);
-        getLeafObservationsFromConceptSet(conceptSetObservation, observationsFromConceptSet);
-        return null;
+    public BahmniEncounterTransaction getModifiedEncounter(BahmniEncounterTransaction bahmniEncounterTransaction, ConceptData conceptSetData) throws CannotModifyEncounterException, InstantiationException, IllegalAccessException, IOException {
+        String encounterModifierClassName = conceptSetData.getName().replaceAll(" ", "").concat(".groovy");
+        return modifyEncounter(bahmniEncounterTransaction, encounterModifierClassName, conceptSetData);
     }
 
-    private BahmniObservation findConceptSetObservationFromEncounterTransaction(List<BahmniObservation> observations, ConceptData conceptSetData) {
-        for (BahmniObservation observation : observations) {
-            if(observation.getConcept().getUuid().equals(conceptSetData.getUuid())){
-                return observation;
-            }
+    private BahmniEncounterTransaction modifyEncounter(BahmniEncounterTransaction bahmniEncounterTransaction, String encounterModifierClassName, ConceptData conceptSetData) throws IOException, IllegalAccessException, InstantiationException, CannotModifyEncounterException {
+        if (StringUtils.isEmpty(conceptSetData.getName())) {
+            return bahmniEncounterTransaction;
         }
-        return null;
+        EncounterModifier encounterModifier = getEncounterModifierAlgorithm(encounterModifierClassName);
+        log.debug("EncounterModifier : Using Algorithm in " + encounterModifier.getClass().getName());
+        return encounterModifier.run(bahmniEncounterTransaction, conceptSetData);
     }
 
-    private void getLeafObservationsFromConceptSet(BahmniObservation bahmniObservation, List<BahmniObservation> observationsFromConceptSet) {
-        if (bahmniObservation.getGroupMembers().size() > 0) {
-            for (BahmniObservation groupMember : bahmniObservation.getGroupMembers())
-                getLeafObservationsFromConceptSet(groupMember, observationsFromConceptSet);
-        } else {
-            observationsFromConceptSet.add(bahmniObservation);
+    private EncounterModifier getEncounterModifierAlgorithm(String encounterModifierClassName) throws IOException, InstantiationException, IllegalAccessException {
+        EncounterModifier encounterModifier = encounterModifiers.get(encounterModifierClassName);
+        if (encounterModifier == null) {
+            Class clazz = new GroovyClassLoader().parseClass(new File(getEncounterModifierClassPath(encounterModifierClassName)));
+            encounterModifiers.put(encounterModifierClassName, (EncounterModifier) clazz.newInstance());
         }
+        return encounterModifiers.get(encounterModifierClassName);
+    }
+
+    private String getEncounterModifierClassPath(String encounterModifierClassName) {
+        return OpenmrsUtil.getApplicationDataDirectory() + ENCOUNTER_MODIFIER_ALGORITHM_DIRECTORY + encounterModifierClassName ;
     }
 }

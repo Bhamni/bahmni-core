@@ -27,6 +27,6 @@ public class BahmniEncounterModifierController extends BaseRestController {
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     public BahmniEncounterTransaction get(@RequestBody EncounterModifierData encounterModifierData) throws Throwable {
-        return bahmniEncounterModifierService.modifyEncounter(encounterModifierData.getBahmniEncounterTransaction(), encounterModifierData.getConceptSetData());
+        return bahmniEncounterModifierService.getModifiedEncounter(encounterModifierData.getBahmniEncounterTransaction(), encounterModifierData.getConceptSetData());
     }
 }
