@@ -6,7 +6,7 @@ import org.bahmni.module.bahmnicore.contract.diseasetemplate.DiseaseTemplatesCon
 import org.bahmni.module.bahmnicore.contract.diseasetemplate.ObservationTemplate;
 import org.bahmni.module.bahmnicore.mapper.ObservationTemplateMapper;
 import org.bahmni.module.bahmnicore.service.BahmniObsService;
-import org.bahmni.module.bahmnicore.service.BahmniVisitService;
+import org.openmrs.module.bahmniemrapi.visit.service.BahmniVisitService;
 import org.bahmni.module.bahmnicore.service.DiseaseTemplateService;
 import org.openmrs.Concept;
 import org.openmrs.Obs;

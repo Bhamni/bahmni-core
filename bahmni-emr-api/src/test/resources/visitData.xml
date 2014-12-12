@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+    <visit_type visit_type_id="1" name="Clinic or Hospital Visit" creator="1" date_created="2012-10-23 18:04:14"
+                changed_by="1" date_changed="2012-10-23 18:04:14" retired="0"
+                uuid="f01c54cb-2225-471a-9cd5-d348552c337c"/>
+
+    <visit visit_id="901" date_started="2014-11-10 00:00:00" date_created="2014-11-10 00:00:00" patient_id="1"
+           visit_type_id="1" date_stopped="2014-11-19 00:00:00" creator="1" changed_by="1"
+           uuid="ad41fb41-a41a-4ad6-8835-2f59099acf5b" voided="0"/>
+
+    <visit visit_id="902" date_started="2010-11-10 00:00:00" date_created="2014-11-10 00:00:00" patient_id="1"
+           visit_type_id="1" date_stopped="2010-11-19 00:00:00" creator="1" changed_by="1"
+           uuid="ad41fb41-a41a-4ad6-8835-cc59099acf5b" voided="0"/>
+
+
+    <visit visit_id="903" date_started="2010-11-12 00:00:00" date_created="2014-11-10 00:00:00" patient_id="1"
+           visit_type_id="1" date_stopped="2010-11-15 00:00:00" creator="1" changed_by="1"
+           uuid="ad41fbc1-a41a-4ad6-8835-2fmm099acf5b" voided="0"/>
+</dataset>
