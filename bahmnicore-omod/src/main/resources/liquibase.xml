@@ -2621,5 +2621,35 @@
             insert into order_frequency(concept_id, frequency_per_day, creator, date_created, uuid) values(@concept_id, 1, 1, @now, @uuid);
         </sql>
     </changeSet>
+    <changeSet id="bahmni-core-201412151305" author="mujir/sanjana">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM concept_name where name in ('Diagnosis Set of Sets')
+            </sqlCheck>
+        </preConditions>
+        <comment>Add diagnosis set of sets concept</comment>
+        <sql>
+            set @concept_id = 0;
+            set @concept_name_short_id = 0;
+            set @concept_name_full_id = 0;
 
+            call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Diagnosis Set of Sets', 'Diagnosis Set of Sets', 'N/A', 'ConvSet', true);
+            call add_concept_word(@concept_id, @concept_name_short_id, 'Diagnosis', 1);
+            call add_concept_word(@concept_id, @concept_name_short_id, 'Set of Sets', 1);
+        </sql>
+    </changeSet>
+    <changeSet id="bahmni-core-201412151307" author="mujir/sanjana">
+        <validCheckSum>3:fdb31c1d95d7168afa2359f24afc1682</validCheckSum>
+        <validCheckSum>3:0e435346d02030b84e72e1b04748231c</validCheckSum>
+        <comment>set emr.concept.diagnosisSetOfSets global property</comment>
+        <sql>
+            set @concept_uuid = 0;
+            select distinct c.uuid from concept c inner join concept_name cn on c.concept_id = cn.concept_id where name in ('Diagnosis Set of Sets') into @concept_uuid;
+
+            select uuid() into @concept_uuid;
+            INSERT INTO global_property (`property`, `property_value`, `description`, `uuid`)
+            VALUES ('emr.concept.diagnosisSetOfSets', @concept_uuid, 'Diagnosis Set of Sets', @concept_uuid)
+            ON DUPLICATE KEY UPDATE property_value = @concept_uuid;
+        </sql>
+    </changeSet>
 </databaseChangeLog>
