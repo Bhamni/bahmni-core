@@ -45,11 +45,6 @@
             <version>1.5-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>org.bahmni.module</groupId>
-            <artifactId>bahmni-emr-api</artifactId>
-            <version>5.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>reporting-api</artifactId>
         </dependency>
@@ -74,6 +69,11 @@
             <artifactId>openmrs-api</artifactId>
             <version>${openMRSVersion}</version>
             <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.bahmni.module</groupId>
+            <artifactId>bahmni-emr-api</artifactId>
+            <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>org.bahmni.module</groupId>

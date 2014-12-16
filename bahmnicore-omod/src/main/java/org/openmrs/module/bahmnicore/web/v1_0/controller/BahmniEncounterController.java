@@ -10,16 +10,13 @@ import org.openmrs.OrderType;
 import org.openmrs.VisitType;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.EncounterService;
-import org.openmrs.api.ObsService;
 import org.openmrs.api.OrderService;
 import org.openmrs.api.VisitService;
 import org.openmrs.module.bahmnicore.web.v1_0.InvalidInputException;
 import org.openmrs.module.bahmniemrapi.encountertransaction.contract.BahmniEncounterTransaction;
 import org.openmrs.module.bahmniemrapi.encountertransaction.contract.BahmniObservation;
-import org.openmrs.module.bahmniemrapi.encountertransaction.service.BahmniEncounterTransactionService;
-import org.openmrs.module.bahmniemrapi.accessionnote.mapper.AccessionNotesMapper;
 import org.openmrs.module.bahmniemrapi.encountertransaction.mapper.BahmniEncounterTransactionMapper;
-import org.openmrs.module.bahmniemrapi.encountertransaction.mapper.EncounterTransactionObsMapper;
+import org.openmrs.module.bahmniemrapi.encountertransaction.service.BahmniEncounterTransactionService;
 import org.openmrs.module.emrapi.encounter.EmrEncounterService;
 import org.openmrs.module.emrapi.encounter.EncounterSearchParameters;
 import org.openmrs.module.emrapi.encounter.EncounterTransactionMapper;
@@ -62,9 +59,9 @@ public class BahmniEncounterController extends BaseRestController {
     @Autowired
     private BahmniEncounterTransactionMapper bahmniEncounterTransactionMapper;
 
-    @RequestMapping(method = RequestMethod.GET, value = "config")
+    @RequestMapping(method = RequestMethod.GET, value = "config", params = "callerContext")
     @ResponseBody
-    public EncounterConfigResponse getConfig(String callerContext) {
+    public EncounterConfigResponse getConfig(@RequestParam(value = "callerContext") String callerContext) {
         EncounterConfigResponse encounterConfigResponse = new EncounterConfigResponse();
         List<VisitType> visitTypes = visitService.getAllVisitTypes();
         for (VisitType visitType : visitTypes) {

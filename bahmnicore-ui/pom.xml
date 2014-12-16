@@ -79,7 +79,8 @@
         <dependency>
             <groupId>org.bahmni.module</groupId>
             <artifactId>bahmni-emr-api</artifactId>
-            <version>${project.version}</version>
+            <version>${project.parent.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>

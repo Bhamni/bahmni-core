@@ -1,5 +1,7 @@
 #!/bin/bash -x
 
+set -e -x
+
 PATH_OF_CURRENT_SCRIPT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source $PATH_OF_CURRENT_SCRIPT/vagrant_functions.sh
 
