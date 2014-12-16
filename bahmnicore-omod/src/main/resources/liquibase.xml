@@ -2628,4 +2628,26 @@
             values ('Computed/Editable', 'Computed/Editable', 1, @date, 0, @uuid);
         </sql>
     </changeSet>
+    <changeSet id="bahmni-core-201412160932" author="Rohan, Shruthi">
+        <comment>Adding minutes concept for drug order duration units</comment>
+        <sql>
+            set @concept_id = 0;
+            set @concept_name_short_id = 0;
+            set @concept_name_full_id = 0;
+            set @quantityUnits_concept_id = 0;
+            set @concept_map_type_id = 0;
+            set @concept_reference_term_id = 0;
+
+            select concept_id from concept_name where name = 'Duration Units' and concept_name_type = 'FULLY_SPECIFIED' into @set_concept_id;
+            select concept_map_type_id from concept_map_type where name='SAME-AS' into @concept_map_type_id;
+
+            call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id,'Minute(s)','minute(s)', 'N/A', 'Misc', false);
+            call add_concept_word(@concept_id, @concept_name_short_id, 'Minute(s)', 1);
+            call add_concept_word(@concept_id, @concept_name_short_id, 'minute(s)', 1);
+            call add_concept_set_members (@set_concept_id,@concept_id,1);
+            select concept_reference_term_id from concept_reference_term where name='Minute(s)' into @concept_reference_term_id;
+            insert into concept_reference_map (concept_reference_term_id, concept_map_type_id, concept_id, date_created, creator) values (
+            @concept_reference_term_id , @concept_map_type_id, @concept_id, now(),1);
+        </sql>
+    </changeSet>
 </databaseChangeLog>
