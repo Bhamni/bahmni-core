@@ -2,9 +2,6 @@ package org.openmrs.module.bahmniemrapi.encountertransaction.impl;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.openmrs.Visit;
-import org.openmrs.api.EncounterService;
-import org.openmrs.api.VisitService;
 import org.openmrs.module.bahmniemrapi.encountertransaction.contract.BahmniEncounterTransaction;
 import org.openmrs.module.bahmniemrapi.encountertransaction.contract.BahmniObservation;
 import org.openmrs.module.bahmniemrapi.encountertransaction.service.BahmniEncounterTransactionService;

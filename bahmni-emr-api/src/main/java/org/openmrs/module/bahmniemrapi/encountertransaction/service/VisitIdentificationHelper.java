@@ -1,4 +1,4 @@
-package org.bahmni.module.bahmnicore.util;
+package org.openmrs.module.bahmniemrapi.encountertransaction.service;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.joda.time.DateTime;
@@ -24,7 +24,6 @@ public class VisitIdentificationHelper {
     public VisitIdentificationHelper(VisitService visitService) {
         this.visitService = visitService;
     }
-
 
     public Visit getVisitFor(Patient patient, String visitTypeForNewVisit, Date orderDate, Date visitStartDate, Date visitEndDate) {
         Date nextDate = getNextDate(orderDate);

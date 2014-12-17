@@ -7,7 +7,7 @@ import org.bahmni.module.bahmnicore.dao.PatientDao;
 import org.bahmni.module.bahmnicore.dao.OrderDao;
 import org.bahmni.module.bahmnicore.model.BahmniFeedDrugOrder;
 import org.bahmni.module.bahmnicore.service.BahmniDrugOrderService;
-import org.bahmni.module.bahmnicore.util.VisitIdentificationHelper;
+import org.openmrs.module.bahmniemrapi.encountertransaction.service.VisitIdentificationHelper;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.openmrs.*;

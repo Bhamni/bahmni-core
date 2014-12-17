@@ -4,6 +4,7 @@ import org.openmrs.Encounter;
 import org.openmrs.Patient;
 import org.openmrs.Person;
 import org.openmrs.Visit;
+import org.openmrs.VisitType;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -28,6 +29,11 @@ public class VisitBuilder {
 
     public VisitBuilder withStartDatetime(Date startDatetime) {
         visit.setStartDatetime(startDatetime);
+        return this;
+    }
+
+    public VisitBuilder withVisitType(VisitType visitType){
+        visit.setVisitType(visitType);
         return this;
     }
 

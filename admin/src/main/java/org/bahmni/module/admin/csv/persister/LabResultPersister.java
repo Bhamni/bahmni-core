@@ -2,11 +2,10 @@ package org.bahmni.module.admin.csv.persister;
 
 import org.bahmni.csv.EntityPersister;
 import org.bahmni.csv.Messages;
-import org.bahmni.csv.RowResult;
 import org.bahmni.module.admin.csv.models.LabResultRow;
 import org.bahmni.module.admin.csv.models.LabResultsRow;
 import org.bahmni.module.admin.csv.service.PatientMatchService;
-import org.bahmni.module.bahmnicore.util.VisitIdentificationHelper;
+import org.openmrs.module.bahmniemrapi.encountertransaction.service.VisitIdentificationHelper;
 import org.openmrs.*;
 import org.openmrs.api.*;
 import org.openmrs.api.context.UserContext;
