@@ -5,7 +5,7 @@ import org.bahmni.module.elisatomfeedclient.api.ElisAtomFeedProperties;
 import org.bahmni.module.elisatomfeedclient.api.domain.AccessionDiff;
 import org.bahmni.module.elisatomfeedclient.api.domain.OpenElisAccession;
 import org.bahmni.module.elisatomfeedclient.api.domain.OpenElisTestDetail;
-import org.bahmni.module.bahmnicore.util.VisitIdentificationHelper;
+import org.openmrs.module.bahmniemrapi.encountertransaction.service.VisitIdentificationHelper;
 import org.joda.time.DateTime;
 import org.openmrs.*;
 import org.openmrs.api.ConceptService;
