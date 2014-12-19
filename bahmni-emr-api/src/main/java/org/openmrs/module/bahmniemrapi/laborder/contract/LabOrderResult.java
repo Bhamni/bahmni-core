@@ -1,15 +1,17 @@
 package org.openmrs.module.bahmniemrapi.laborder.contract;
 
+import java.util.List;
 import lombok.Data;
 
 import java.util.Date;
+import org.openmrs.module.bahmniemrapi.accessionnote.contract.AccessionNote;
 
 @Data
 public class LabOrderResult {
     private String accessionUuid;
     private Date accessionDateTime;
     private Date visitStartTime;
-    private String accessionNotes;
+    private List<AccessionNote> accessionNotes;
     private String testName;
     private String testUnitOfMeasurement;
     private String testUuid;
@@ -28,7 +30,7 @@ public class LabOrderResult {
     public LabOrderResult() {
     }
 
-    public LabOrderResult(String accessionUuid, Date accessionDateTime, String testName, String testUnitOfMeasurement, Double minNormal, Double maxNormal, String result, Boolean abnormal, Boolean referredOut, String uploadedFileName) {
+    public LabOrderResult(String accessionUuid, Date accessionDateTime, String testName, String testUnitOfMeasurement, Double minNormal, Double maxNormal, String result, Boolean abnormal, Boolean referredOut, String uploadedFileName, List<AccessionNote> accessionNotes) {
         this.accessionUuid = accessionUuid;
         this.testName = testName;
         this.testUnitOfMeasurement = testUnitOfMeasurement;
@@ -39,5 +41,6 @@ public class LabOrderResult {
         this.abnormal = abnormal;
         this.referredOut = referredOut;
         this.uploadedFileName = uploadedFileName;
+        this.accessionNotes = accessionNotes;
     }
 }

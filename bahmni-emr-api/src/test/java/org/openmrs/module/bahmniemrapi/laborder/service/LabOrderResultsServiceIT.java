@@ -1,5 +1,9 @@
 package org.openmrs.module.bahmniemrapi.laborder.service;
 
+import java.text.SimpleDateFormat;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.Concept;
@@ -8,6 +12,7 @@ import org.openmrs.Patient;
 import org.openmrs.Visit;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.bahmniemrapi.accessionnote.contract.AccessionNote;
 import org.openmrs.module.bahmniemrapi.laborder.contract.LabOrderResult;
 import org.openmrs.module.bahmniemrapi.laborder.contract.LabOrderResults;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
@@ -64,6 +69,33 @@ public class LabOrderResultsServiceIT extends BaseModuleContextSensitiveTest {
 
         assertOrderPresent(labOrderResults, "PS for Malaria", null, 17, "System OpenMRS", "Result for PS Malaria", null, null, null, null, false, null);
     }
+
+
+    @Test
+    public void shouldMapAccessionNotesForAGivenVisit() throws Exception {
+        executeDataSet("diagnosisMetadata.xml");
+        executeDataSet("dispositionMetadata.xml");
+        executeDataSet("labOrderTestData.xml");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        Patient patient = Context.getPatientService().getPatient(1);
+        Visit visit = Context.getVisitService().getVisit(4);
+
+        LabOrderResults results = labOrderResultsService.getAll(patient, Arrays.asList(visit));
+        List<LabOrderResult> labOrderResults = results.getResults();
+
+        assertEquals(1, labOrderResults.size());
+        List<AccessionNote> accessionNotes = labOrderResults.get(0).getAccessionNotes();
+        assertNotNull(accessionNotes);
+        assertThat(accessionNotes.size(), is(equalTo(1)));
+        AccessionNote accessionNote = accessionNotes.get(0);
+        assertThat(accessionNote.getAccessionUuid(), is(equalTo("b0a81566-0c0c-11e4-bb80-f18addb6f9bb")));
+        assertThat(accessionNote.getProviderName(), is(equalTo("System OpenMRS")));
+        assertThat(accessionNote.getText(),is(equalTo("Notes from Lab Manager")));
+
+        assertOrderPresent(labOrderResults, "PS for Malaria", null, 17, "System OpenMRS", "Result for PS Malaria", null, null, null, null, false, null);
+    }
+
 
     @Test
     public void shouldGetLabOrdersForParticularConcepts() throws Exception{

@@ -18,16 +18,18 @@ import java.util.List;
 @Component
 public class BahmniEncounterTransactionMapper {
     private EncounterTransactionObsMapper encounterTransactionObsMapper;
-    private AccessionNotesMapper validationNotesMapper;
+    private AccessionNotesMapper accessionNotesMapper;
     private BahmniDiagnosisMapper bahmniDiagnosisMapper;
     private ObsRelationshipMapper obsRelationshipMapper;
     private PatientService patientService;
     private EncounterService encounterService;
 
     @Autowired
-    public BahmniEncounterTransactionMapper(AccessionNotesMapper validationNotesMapper, EncounterTransactionObsMapper encounterTransactionObsMapper, BahmniDiagnosisMapper bahmniDiagnosisMapper, ObsRelationshipMapper obsRelationshipMapper, PatientService patientService, EncounterService encounterService) {
+    public BahmniEncounterTransactionMapper(AccessionNotesMapper accessionNotesMapper, EncounterTransactionObsMapper encounterTransactionObsMapper,
+                                            BahmniDiagnosisMapper bahmniDiagnosisMapper, ObsRelationshipMapper obsRelationshipMapper,
+                                            PatientService patientService, EncounterService encounterService) {
         this.encounterTransactionObsMapper = encounterTransactionObsMapper;
-        this.validationNotesMapper = validationNotesMapper;
+        this.accessionNotesMapper = accessionNotesMapper;
         this.bahmniDiagnosisMapper = bahmniDiagnosisMapper;
         this.obsRelationshipMapper = obsRelationshipMapper;
         this.patientService = patientService;
@@ -38,7 +40,7 @@ public class BahmniEncounterTransactionMapper {
         BahmniEncounterTransaction bahmniEncounterTransaction = new BahmniEncounterTransaction(encounterTransaction);
         List<BahmniDiagnosisRequest> bahmniDiagnoses = bahmniDiagnosisMapper.map(encounterTransaction.getDiagnoses());
         bahmniEncounterTransaction.setBahmniDiagnoses(bahmniDiagnoses);
-        bahmniEncounterTransaction.setAccessionNotes(validationNotesMapper.map(encounterTransaction));
+        bahmniEncounterTransaction.setAccessionNotes(accessionNotesMapper.map(encounterTransaction));
         List<EncounterTransaction.Observation> etObservations = encounterTransactionObsMapper.map(encounterTransaction);
         List<BahmniObservation> bahmniObservations = BahmniObservationMapper.toBahmniObsFromETObs(etObservations, encounterTransaction.getEncounterDateTime());
         bahmniEncounterTransaction.setObservations(obsRelationshipMapper.map(bahmniObservations, encounterTransaction.getEncounterUuid(), encounterTransaction.getProviders(), encounterTransaction.getEncounterDateTime()));

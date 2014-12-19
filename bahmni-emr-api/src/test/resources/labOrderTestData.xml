@@ -391,4 +391,18 @@
 
     <encounter_provider encounter_provider_id="3" encounter_id="50" provider_id="24" creator="1" date_created="2008-07-01 14:09:05.0"
                         voided="false" uuid="3645f99a-0c0d-11e4-bb80-f18addb6f9bb"/>
+
+    <!-- Add accession notes -->
+    <encounter encounter_id="51" encounter_type="5" patient_id="1" visit_id="4" location_id="2"
+               encounter_datetime="2013-08-19 00:00:00.0" creator="1" date_created="2013-08-19 14:09:05.0"
+               voided="false" uuid="1293cc38-0c0d-11e4-bb80-f18accb3f9bb"/>
+
+    <encounter_provider encounter_provider_id="5" encounter_id="51" provider_id="24" creator="1" date_created="2008-07-01 14:09:05.0"
+                        voided="false" uuid="3645f99a-0c0d-11e4-bb80-f18addb6feee"/>
+
+    <obs obs_id="1104" encounter_id="51" person_id="1" obs_datetime="2013-08-19 15:09:05.0" date_created="2013-08-19 15:09:05.0"
+         uuid="884585ac-1a0d-11e4-bb80-f18addb6f9bb" creator="1" concept_id="703" value_text="b0a81566-0c0c-11e4-bb80-f18addb6f9bb" voided="0" />
+    <obs obs_id="1105" encounter_id="51" person_id="1" obs_datetime="2008-08-19 15:09:05.0" date_created="2013-08-19 15:09:05.0"
+         uuid="45f885df-0c0d-11e4-bb80-f112ddb6f9bb" creator="1" concept_id="702" value_text="Notes from Lab Manager" voided="0" />
+
 </dataset>
