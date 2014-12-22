@@ -62,42 +62,60 @@ public class DrugOrderSaveCommandImpl implements EncounterDataPreSaveCommand {
 
         for (List<EncounterTransaction.DrugOrder> orders : sameDrugUuidOrderLists.values()) {
             Collections.sort(orders, drugOrderStartDateComparator);
-            checkAndFixOverlappingOrderWithCurrentDateOrder(orders);
+            checkAndFixChainOverlapsWithCurrentDateOrder(orders);
         }
 
         return bahmniEncounterTransaction;
     }
 
-    private void checkAndFixOverlappingOrderWithCurrentDateOrder(Collection<EncounterTransaction.DrugOrder> orders) {
+    private void checkAndFixChainOverlapsWithCurrentDateOrder(Collection<EncounterTransaction.DrugOrder> orders) {
 //        Refactor using Lambda expressions after updating to Java 8
-        EncounterTransaction.DrugOrder currentDateOrder = null;
-        Date expectedStartDateForCurrentOrder = null;
-        Date expectedStopDateForCurrentOrder = null;
-        for (EncounterTransaction.DrugOrder order : orders) {
-            if (order.getScheduledDate() == null && order.getAction() != "DISCONTINUE") { // To detect orders with dateActivated = current date
-                currentDateOrder = order;
-                Concept durationUnitConcept = conceptService.getConceptByName(order.getDurationUnits());
-                if( order.getScheduledDate() == null){
-                    expectedStartDateForCurrentOrder = new Date();
-                }
-                else{
-                    expectedStartDateForCurrentOrder = order.getScheduledDate();
-                }
-                expectedStopDateForCurrentOrder = DrugOrderUtil.calculateAutoExpireDate(order.getDuration(), durationUnitConcept, null, expectedStartDateForCurrentOrder, orderMetadataService.getOrderFrequencyByName(order.getDosingInstructions().getFrequency(), false));
-                break;
-            }
-        }
+        EncounterTransaction.DrugOrder currentDateOrder = getCurrentOrderFromOrderList(orders);
+        Date expectedStartDateForCurrentOrder = setExpectedStartDateForOrder(currentDateOrder);
+        Date expectedStopDateForCurrentOrder = setExpectedStopDateForOrder(currentDateOrder, expectedStartDateForCurrentOrder);
+
         if(currentDateOrder != null){
             for (EncounterTransaction.DrugOrder order : orders) {
                 if(order!=currentDateOrder && order.getScheduledDate()!=null && order.getAction() != "DISCONTINUE" && DateUtils.isSameDay(order.getScheduledDate(), expectedStopDateForCurrentOrder)){
                     currentDateOrder.setScheduledDate(expectedStartDateForCurrentOrder);
                     currentDateOrder.setAutoExpireDate(expectedStopDateForCurrentOrder);
+
                     order.setScheduledDate(DrugOrderUtil.aMomentAfter(expectedStopDateForCurrentOrder));
-                    Concept durationUnitConcept = conceptService.getConceptByName(order.getDurationUnits());
-                    order.setAutoExpireDate(DrugOrderUtil.calculateAutoExpireDate(order.getDuration(), durationUnitConcept, null, order.getScheduledDate(), orderMetadataService.getOrderFrequencyByName(order.getDosingInstructions().getFrequency(), false)));
+
+                    currentDateOrder = order;
+                    expectedStartDateForCurrentOrder = setExpectedStartDateForOrder(order);
+                    expectedStopDateForCurrentOrder = setExpectedStopDateForOrder(currentDateOrder, expectedStartDateForCurrentOrder);
                 }
             }
         }
+    }
+
+    private Date setExpectedStopDateForOrder(EncounterTransaction.DrugOrder order, Date expectedStartDateForCurrentOrder) {
+        if(order == null){
+            return null;
+        }
+        Concept durationUnitConcept = conceptService.getConceptByName(order.getDurationUnits());
+        return DrugOrderUtil.calculateAutoExpireDate(order.getDuration(), durationUnitConcept, null, expectedStartDateForCurrentOrder, orderMetadataService.getOrderFrequencyByName(order.getDosingInstructions().getFrequency(), false));
+    }
+
+    private Date setExpectedStartDateForOrder(EncounterTransaction.DrugOrder order) {
+        if(order == null){
+            return null;
+        }
+
+        if( order.getScheduledDate() == null){
+            return new Date();
+        }
+        return order.getScheduledDate();
+    }
+
+    private EncounterTransaction.DrugOrder getCurrentOrderFromOrderList(Collection<EncounterTransaction.DrugOrder> orders) {
+        for (EncounterTransaction.DrugOrder order : orders) {
+            if (order.getScheduledDate() == null && order.getAction() != "DISCONTINUE") { // To detect orders with dateActivated = current date
+                return order;
+            }
+        }
+        return null;
     }
 
 }
