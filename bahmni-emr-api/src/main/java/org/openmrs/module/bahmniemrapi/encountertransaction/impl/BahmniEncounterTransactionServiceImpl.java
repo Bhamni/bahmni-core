@@ -5,7 +5,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.openmrs.Encounter;
 import org.openmrs.EncounterType;
 import org.openmrs.api.EncounterService;
-import org.openmrs.module.bahmniemrapi.encountertransaction.command.EncounterDataSaveCommand;
+import org.openmrs.module.bahmniemrapi.encountertransaction.command.EncounterDataPreSaveCommand;
+import org.openmrs.module.bahmniemrapi.encountertransaction.command.EncounterDataPostSaveCommand;
 import org.openmrs.module.bahmniemrapi.encountertransaction.contract.BahmniEncounterTransaction;
 import org.openmrs.module.bahmniemrapi.encountertransaction.mapper.BahmniEncounterTransactionMapper;
 import org.openmrs.module.bahmniemrapi.encountertransaction.mapper.LocationBasedEncounterTypeIdentifier;
@@ -25,16 +26,18 @@ public class BahmniEncounterTransactionServiceImpl implements BahmniEncounterTra
     private EmrEncounterService emrEncounterService;
     private EncounterTransactionMapper encounterTransactionMapper;
     private LocationBasedEncounterTypeIdentifier locationBasedEncounterTypeIdentifier;
-    private List<EncounterDataSaveCommand> encounterDataSaveCommands;
+    private EncounterDataPreSaveCommand encounterDataPreSaveCommand;
+    private List<EncounterDataPostSaveCommand> encounterDataPostSaveCommands;
     private BahmniEncounterTransactionMapper bahmniEncounterTransactionMapper;
 
     @Autowired
-    public BahmniEncounterTransactionServiceImpl(EncounterService encounterService, EmrEncounterService emrEncounterService, EncounterTransactionMapper encounterTransactionMapper, LocationBasedEncounterTypeIdentifier locationBasedEncounterTypeIdentifier, List<EncounterDataSaveCommand> encounterDataSaveCommands, BahmniEncounterTransactionMapper bahmniEncounterTransactionMapper) {
+    public BahmniEncounterTransactionServiceImpl(EncounterService encounterService, EmrEncounterService emrEncounterService, EncounterTransactionMapper encounterTransactionMapper, LocationBasedEncounterTypeIdentifier locationBasedEncounterTypeIdentifier, EncounterDataPreSaveCommand encounterDataPreSaveCommand, List<EncounterDataPostSaveCommand> encounterDataPostSaveCommands, BahmniEncounterTransactionMapper bahmniEncounterTransactionMapper) {
         this.encounterService = encounterService;
         this.emrEncounterService = emrEncounterService;
         this.encounterTransactionMapper = encounterTransactionMapper;
         this.locationBasedEncounterTypeIdentifier = locationBasedEncounterTypeIdentifier;
-        this.encounterDataSaveCommands = encounterDataSaveCommands;
+        this.encounterDataPreSaveCommand = encounterDataPreSaveCommand;
+        this.encounterDataPostSaveCommands = encounterDataPostSaveCommands;
         this.bahmniEncounterTransactionMapper = bahmniEncounterTransactionMapper;
     }
 
@@ -42,13 +45,14 @@ public class BahmniEncounterTransactionServiceImpl implements BahmniEncounterTra
     public BahmniEncounterTransaction save(BahmniEncounterTransaction bahmniEncounterTransaction) {
         // TODO : Mujir - map string VisitType to the uuids and set on bahmniEncounterTransaction object
         setEncounterType(bahmniEncounterTransaction);
+        encounterDataPreSaveCommand.update(bahmniEncounterTransaction);
         EncounterTransaction encounterTransaction = emrEncounterService.save(bahmniEncounterTransaction.toEncounterTransaction());
         //Get the saved encounter transaction from emr-api
         String encounterUuid = encounterTransaction.getEncounterUuid();
         Encounter currentEncounter = encounterService.getEncounterByUuid(encounterUuid);
 
         EncounterTransaction updatedEncounterTransaction=encounterTransactionMapper.map(currentEncounter, true);
-        for (EncounterDataSaveCommand saveCommand : encounterDataSaveCommands) {
+        for (EncounterDataPostSaveCommand saveCommand : encounterDataPostSaveCommands) {
             updatedEncounterTransaction = saveCommand.save(bahmniEncounterTransaction,currentEncounter, updatedEncounterTransaction);
         }
         return bahmniEncounterTransactionMapper.map(updatedEncounterTransaction);

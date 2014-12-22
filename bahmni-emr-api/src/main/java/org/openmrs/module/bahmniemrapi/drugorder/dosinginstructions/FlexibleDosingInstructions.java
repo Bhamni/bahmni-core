@@ -1,11 +1,9 @@
 package org.openmrs.module.bahmniemrapi.drugorder.dosinginstructions;
 
-import static org.apache.commons.lang3.time.DateUtils.addMilliseconds;
 import org.openmrs.DosingInstructions;
 import org.openmrs.DrugOrder;
-import org.openmrs.Duration;
-import org.openmrs.SimpleDosingInstructions;
 import org.openmrs.api.APIException;
+import org.openmrs.module.bahmniemrapi.drugorder.DrugOrderUtil;
 import org.springframework.validation.Errors;
 
 import java.util.Date;
@@ -23,6 +21,8 @@ public class FlexibleDosingInstructions implements DosingInstructions {
         order.setDosingType(this.getClass());
     }
 
+    public DrugOrderUtil drugOrderUtil;
+
     @Override
     public DosingInstructions getDosingInstructions(DrugOrder order) {
         if (!order.getDosingType().equals(this.getClass())) {
@@ -39,21 +39,7 @@ public class FlexibleDosingInstructions implements DosingInstructions {
 
     @Override
     public Date getAutoExpireDate(DrugOrder drugOrder) {
-        if (drugOrder.getDuration() == null || drugOrder.getDurationUnits() == null) {
-            return null;
-        }
-        if (drugOrder.getNumRefills() != null && drugOrder.getNumRefills() > 0) {
-            return null;
-        }
-        String durationCode = Duration.getCode(drugOrder.getDurationUnits());
-        if (durationCode == null) {
-            return null;
-        }
-        Duration duration = new Duration(drugOrder.getDuration(), durationCode);
-        return aMomentBefore(duration.addToDate(drugOrder.getEffectiveStartDate(), drugOrder.getFrequency()));
+        return drugOrderUtil.calculateAutoExpireDate(drugOrder.getDuration(), drugOrder.getDurationUnits(), drugOrder.getNumRefills(), drugOrder.getEffectiveStartDate(), drugOrder.getFrequency());
     }
 
-    private Date aMomentBefore(Date date) {
-        return addMilliseconds(date, -1);
-    }
 }

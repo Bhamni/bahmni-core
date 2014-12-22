@@ -6,7 +6,7 @@ import org.bahmni.module.obsrelationship.model.ObsRelationshipType;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.api.ObsService;
-import org.openmrs.module.bahmniemrapi.encountertransaction.command.EncounterDataSaveCommand;
+import org.openmrs.module.bahmniemrapi.encountertransaction.command.EncounterDataPostSaveCommand;
 import org.openmrs.module.bahmniemrapi.encountertransaction.contract.BahmniEncounterTransaction;
 import org.openmrs.module.bahmniemrapi.encountertransaction.contract.BahmniObservation;
 import org.openmrs.module.emrapi.encounter.domain.EncounterTransaction;
@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class BahmniObservationSaveCommandImpl implements EncounterDataSaveCommand {
+public class BahmniObservationSaveCommandImpl implements EncounterDataPostSaveCommand {
     private ObsRelationService obsRelationService;
     private ObsService obsService;
 

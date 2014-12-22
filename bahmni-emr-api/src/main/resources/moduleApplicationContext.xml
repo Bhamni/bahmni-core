@@ -37,6 +37,7 @@
         <constructor-arg  ref="emrEncounterService"/>
         <constructor-arg  ref="encounterTransactionMapper"/>
         <constructor-arg  ref="locationBasedEncounterTypeIdentifier"/>
+        <constructor-arg ref="drugOrderSaveCommandImpl"/>
         <constructor-arg>
             <list>
                 <ref bean="bahmniDiagnosisSaveCommandImpl"/>
