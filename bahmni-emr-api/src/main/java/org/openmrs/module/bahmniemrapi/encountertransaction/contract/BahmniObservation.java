@@ -129,11 +129,11 @@ public class BahmniObservation {
     }
 
     public EncounterTransaction.Observation toETObservation() {
-        if (encounterTransactionObservation.getGroupMembers().size() == 0) {
-            for (BahmniObservation groupMember : this.groupMembers) {
-                encounterTransactionObservation.addGroupMember(groupMember.toETObservation());
-            }
+        List<EncounterTransaction.Observation> observations = new ArrayList<>();
+        for (BahmniObservation groupMember : this.groupMembers) {
+            observations.add(groupMember.toETObservation());
         }
+        encounterTransactionObservation.setGroupMembers(observations);
         return this.encounterTransactionObservation;
     }
 
