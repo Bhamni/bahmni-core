@@ -20,8 +20,8 @@ public class DiseaseSummaryMapper {
     public static final String DATE_FORMAT = "yyyy-MM-dd";
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_FORMAT);
 
-    public Map<String, Map<String, ConceptValue>> mapObservations(Collection<BahmniObservation> bahmniObservations) {
-        Map<String, Map<String, ConceptValue>> result = new LinkedHashMap<>();
+    public Map<String, Map<String, List<ConceptValue>>> mapObservations(Collection<BahmniObservation> bahmniObservations) {
+        Map<String, Map<String, List<ConceptValue>>> result = new LinkedHashMap<>();
         if(bahmniObservations != null){
             for (BahmniObservation bahmniObservation : bahmniObservations) {
                 List<BahmniObservation> observationsfromConceptSet = new ArrayList<>();
@@ -29,31 +29,31 @@ public class DiseaseSummaryMapper {
                 for (BahmniObservation observation : observationsfromConceptSet) {
                     String visitStartDateTime = getDateAsString(observation.getVisitStartDateTime());
                     String conceptName = observation.getConcept().getShortName()==null ?  observation.getConcept().getName(): observation.getConcept().getShortName();
-                    addToResultTable(result, visitStartDateTime, conceptName, observation.getValue(), observation.isAbnormal(), false);
+                    addToResultTable(result, visitStartDateTime, conceptName, observation.getValue(), observation.isAbnormal(), false, false);
                 }
             }
         }
         return result;
     }
 
-    public Map<String, Map<String, ConceptValue>> mapDrugOrders(List<DrugOrder> drugOrders) throws IOException {
-        Map<String, Map<String, ConceptValue>> result = new LinkedHashMap<>();
+    public Map<String, Map<String, List<ConceptValue>>> mapDrugOrders(List<DrugOrder> drugOrders) throws IOException {
+        Map<String, Map<String, List<ConceptValue>>> result = new LinkedHashMap<>();
         for (DrugOrder drugOrder : drugOrders) {
             String visitStartDateTime = getDateAsString(drugOrder.getEncounter().getVisit().getStartDatetime());
             String conceptName = drugOrder.getConcept().getName().getName();
             String drugOrderValue = formattedDrugOrderValue(drugOrder);
-            addToResultTable(result,visitStartDateTime,conceptName, drugOrderValue,null,false);
+            addToResultTable(result,visitStartDateTime,conceptName, drugOrderValue,null,false, true);
         }
         return result;
     }
 
-    public Map<String, Map<String, ConceptValue>> mapLabResults(List<LabOrderResult> labOrderResults) {
-        Map<String, Map<String, ConceptValue>> result = new LinkedHashMap<>();
+    public Map<String, Map<String, List<ConceptValue>>> mapLabResults(List<LabOrderResult> labOrderResults) {
+        Map<String, Map<String, List<ConceptValue>>> result = new LinkedHashMap<>();
         for (LabOrderResult labOrderResult : labOrderResults) {
             String visitStartDateTime = getDateAsString(labOrderResult.getVisitStartTime());
             String conceptName = labOrderResult.getTestName();
             if(conceptName != null){
-                addToResultTable(result,visitStartDateTime,conceptName,labOrderResult.getResult(),labOrderResult.getAbnormal(),true);
+                addToResultTable(result,visitStartDateTime,conceptName,labOrderResult.getResult(),labOrderResult.getAbnormal(),true, false);
             }
         }
         return result;
@@ -106,14 +106,22 @@ public class DiseaseSummaryMapper {
         return simpleDateFormat.format(startDatetime);
     }
 
-    private void addToResultTable(Map<String, Map<String, ConceptValue>> result, String visitStartDateTime, String conceptName, Object value, Boolean abnormal,boolean replaceExisting) {
-        Map<String, ConceptValue> cellValue = getMapForKey(visitStartDateTime, result);
-        if(cellValue.containsKey(conceptName) && !replaceExisting) return;
-
+    private void addToResultTable(Map<String, Map<String, List<ConceptValue>>> result, String visitStartDateTime, String conceptName, Object value, Boolean abnormal, boolean replaceExisting, boolean appendToExisting) {
+        Map<String, List<ConceptValue>> cellValue = getMapForKey(visitStartDateTime, result);
+        List<ConceptValue> conceptValues = new ArrayList<>();
+        if(cellValue.containsKey(conceptName) && !replaceExisting){
+            if(appendToExisting){
+                conceptValues = cellValue.get(conceptName);
+            }
+            else {
+                return;
+            }
+        }
         ConceptValue conceptValue = new ConceptValue();
         conceptValue.setValue(getObsValue(value));
         conceptValue.setAbnormal(abnormal);
-        cellValue.put(conceptName, conceptValue);
+        conceptValues.add(conceptValue);
+        cellValue.put(conceptName, conceptValues);
         result.put(visitStartDateTime, cellValue);
     }
 
@@ -142,8 +150,8 @@ public class DiseaseSummaryMapper {
         }
     }
 
-    private Map<String, ConceptValue> getMapForKey(String visitStartDateTime, Map<String, Map<String, ConceptValue>> result) {
-        Map<String, ConceptValue> cellValues = result.get(visitStartDateTime);
-        return cellValues != null? cellValues: new LinkedHashMap<String,ConceptValue>();
+    private Map<String, List<ConceptValue>> getMapForKey(String visitStartDateTime, Map<String, Map<String, List<ConceptValue>>> result) {
+        Map<String, List<ConceptValue>> cellValues = result.get(visitStartDateTime);
+        return cellValues != null? cellValues: new LinkedHashMap<String,List<ConceptValue>>();
     }
 }

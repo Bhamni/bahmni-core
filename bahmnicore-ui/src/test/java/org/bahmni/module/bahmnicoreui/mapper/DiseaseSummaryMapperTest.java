@@ -45,21 +45,21 @@ public class DiseaseSummaryMapperTest {
     public void shouldMapObservationsToResponseFormat() throws ParseException {
 
         DiseaseSummaryMapper diseaseSummaryMapper = new DiseaseSummaryMapper();
-        Map<String, Map<String, ConceptValue>> obsTable = diseaseSummaryMapper.mapObservations(createBahmniObsList());
+        Map<String, Map<String, List<ConceptValue>>> obsTable = diseaseSummaryMapper.mapObservations(createBahmniObsList());
         assertNotNull(obsTable);
         assertEquals(3, obsTable.size());
-        Map<String, ConceptValue> firstDayValue = obsTable.get(date1);
+        Map<String, List<ConceptValue>> firstDayValue = obsTable.get(date1);
         assertEquals(2, firstDayValue.size());
-        assertEquals("101", firstDayValue.get("Temperature").getValue());
-        assertEquals("90", firstDayValue.get("Pulse").getValue());
+        assertEquals("101", firstDayValue.get("Temperature").get(0).getValue());
+        assertEquals("90", firstDayValue.get("Pulse").get(0).getValue());
 
-        Map<String, ConceptValue> secondDayValue = obsTable.get(date2);
+        Map<String, List<ConceptValue>> secondDayValue = obsTable.get(date2);
         assertEquals(1, secondDayValue.size());
-        assertEquals("100", secondDayValue.get("Pulse").getValue());
+        assertEquals("100", secondDayValue.get("Pulse").get(0).getValue());
 
-        Map<String, ConceptValue> thirdDayValue = obsTable.get(date3);
+        Map<String, List<ConceptValue>> thirdDayValue = obsTable.get(date3);
         assertEquals(1, thirdDayValue.size());
-        assertEquals("120", thirdDayValue.get("bp").getValue());
+        assertEquals("120", thirdDayValue.get("bp").get(0).getValue());
 
     }
 
@@ -71,64 +71,64 @@ public class DiseaseSummaryMapperTest {
         Date visit1 = simpleDateFormat.parse(date1);
         bahmniObservations.add(createBahmniObservation(visit1,"Pulse",new EncounterTransaction.Concept("uuid-pulse","very high pulse")));
 
-        Map<String, Map<String, ConceptValue>> obsTable = diseaseSummaryMapper.mapObservations(bahmniObservations);
+        Map<String, Map<String, List<ConceptValue>>> obsTable = diseaseSummaryMapper.mapObservations(bahmniObservations);
 
-        Map<String, ConceptValue> dayValue = obsTable.get(date1);
+        Map<String, List<ConceptValue>> dayValue = obsTable.get(date1);
         assertEquals(1, dayValue.size());
-        assertEquals("very high pulse", dayValue.get("Pulse").getValue());
+        assertEquals("very high pulse", dayValue.get("Pulse").get(0).getValue());
 
     }
 
     @Test
     public void shouldMapDrugOrders() throws ParseException, IOException {
         DiseaseSummaryMapper diseaseSummaryMapper = new DiseaseSummaryMapper();
-        Map<String, Map<String, ConceptValue>> drugOrderData = diseaseSummaryMapper.mapDrugOrders(mockDrugOrders(new String[]{"paracetamol", "2014-08-15"}, new String[]{"penicillin", "2014-09-11"}));
+        Map<String, Map<String, List<ConceptValue>>> drugOrderData = diseaseSummaryMapper.mapDrugOrders(mockDrugOrders(new String[]{"paracetamol", "2014-08-15"}, new String[]{"penicillin", "2014-09-11"}));
 
         assertNotNull(drugOrderData);
         assertEquals(2, drugOrderData.size());
 
-        Map<String, ConceptValue> firstDayValue = drugOrderData.get("2014-08-15");
+        Map<String, List<ConceptValue>> firstDayValue = drugOrderData.get("2014-08-15");
         assertEquals(1, firstDayValue.size());
-        assertEquals("paracetamol-500mg,10.0 mg,daily,SOS", firstDayValue.get("paracetamol").getValue());
+        assertEquals("paracetamol-500mg,10.0 mg,daily,SOS", firstDayValue.get("paracetamol").get(0).getValue());
 
-        Map<String, ConceptValue> secondDayValue = drugOrderData.get("2014-09-11");
+        Map<String, List<ConceptValue>> secondDayValue = drugOrderData.get("2014-09-11");
         assertEquals(1, secondDayValue.size());
-        assertEquals("penicillin-500mg,10.0 mg,daily,SOS", secondDayValue.get("penicillin").getValue());
+        assertEquals("penicillin-500mg,10.0 mg,daily,SOS", secondDayValue.get("penicillin").get(0).getValue());
     }
 
     @Test
     public void shouldMapDrugOrdersWithFlexibleDosing() throws ParseException, IOException {
         DiseaseSummaryMapper diseaseSummaryMapper = new DiseaseSummaryMapper();
-        Map<String, Map<String, ConceptValue>> drugOrderData = diseaseSummaryMapper.mapDrugOrders(mockDrugOrdersWithFlexibleDosing(new String[]{"paracetamol", "2014-08-15"}, new String[]{"penicillin", "2014-09-11"}));
+        Map<String, Map<String, List<ConceptValue>>> drugOrderData = diseaseSummaryMapper.mapDrugOrders(mockDrugOrdersWithFlexibleDosing(new String[]{"paracetamol", "2014-08-15"}, new String[]{"penicillin", "2014-09-11"}));
 
         assertNotNull(drugOrderData);
         assertEquals(2, drugOrderData.size());
 
-        Map<String, ConceptValue> firstDayValue = drugOrderData.get("2014-08-15");
+        Map<String, List<ConceptValue>> firstDayValue = drugOrderData.get("2014-08-15");
         assertEquals(1, firstDayValue.size());
-        assertEquals("paracetamol-500mg,10.0 mg,1-0-1,SOS", firstDayValue.get("paracetamol").getValue());
+        assertEquals("paracetamol-500mg,10.0 mg,1-0-1,SOS", firstDayValue.get("paracetamol").get(0).getValue());
 
-        Map<String, ConceptValue> secondDayValue = drugOrderData.get("2014-09-11");
+        Map<String, List<ConceptValue>> secondDayValue = drugOrderData.get("2014-09-11");
         assertEquals(1, secondDayValue.size());
-        assertEquals("penicillin-500mg,10.0 mg,1-0-1,SOS", secondDayValue.get("penicillin").getValue());
+        assertEquals("penicillin-500mg,10.0 mg,1-0-1,SOS", secondDayValue.get("penicillin").get(0).getValue());
     }
 
     @Test
     public void shouldMapDrugOrdersWithoutAnyExceptionsWhenThereIsNoData() throws ParseException, IOException {
         try{
             DiseaseSummaryMapper diseaseSummaryMapper = new DiseaseSummaryMapper();
-            Map<String, Map<String, ConceptValue>> drugOrderData = diseaseSummaryMapper.mapDrugOrders(mockDrugOrdersWithoutAnyData(new String[]{"paracetamol", "2014-08-15"}, new String[]{"penicillin", "2014-09-11"}));
+            Map<String, Map<String, List<ConceptValue>>> drugOrderData = diseaseSummaryMapper.mapDrugOrders(mockDrugOrdersWithoutAnyData(new String[]{"paracetamol", "2014-08-15"}, new String[]{"penicillin", "2014-09-11"}));
 
             assertNotNull(drugOrderData);
             assertEquals(2, drugOrderData.size());
 
-            Map<String, ConceptValue> firstDayValue = drugOrderData.get("2014-08-15");
+            Map<String, List<ConceptValue>> firstDayValue = drugOrderData.get("2014-08-15");
             assertEquals(1, firstDayValue.size());
-            assertEquals("", firstDayValue.get("paracetamol").getValue());
+            assertEquals("", firstDayValue.get("paracetamol").get(0).getValue());
 
-            Map<String, ConceptValue> secondDayValue = drugOrderData.get("2014-09-11");
+            Map<String, List<ConceptValue>> secondDayValue = drugOrderData.get("2014-09-11");
             assertEquals(1, secondDayValue.size());
-            assertEquals("", secondDayValue.get("penicillin").getValue());
+            assertEquals("", secondDayValue.get("penicillin").get(0).getValue());
         }catch (Exception e){
             throw new RuntimeException("Should not throw any exception when drug orders dont have strength,dosage and freequency",e);
         }
@@ -169,19 +169,19 @@ public class DiseaseSummaryMapperTest {
     @Test
     public void shouldMapLabOrders() throws ParseException {
         DiseaseSummaryMapper diseaseSummaryMapper = new DiseaseSummaryMapper();
-        Map<String, Map<String, ConceptValue>> labOrderData = diseaseSummaryMapper.mapLabResults(mockLabOrders());
+        Map<String, Map<String, List<ConceptValue>>> labOrderData = diseaseSummaryMapper.mapLabResults(mockLabOrders());
 
         assertNotNull(labOrderData);
         assertEquals(2, labOrderData.size());
 
-        Map<String, ConceptValue> firstDayValue = labOrderData.get("2014-07-22");
+        Map<String, List<ConceptValue>> firstDayValue = labOrderData.get("2014-07-22");
         assertEquals(1, firstDayValue.size());
-        assertEquals("120", firstDayValue.get("Blood glucose").getValue());
+        assertEquals("120", firstDayValue.get("Blood glucose").get(0).getValue());
 
-        Map<String, ConceptValue> secondDayValue = labOrderData.get("2014-07-23");
+        Map<String, List<ConceptValue>> secondDayValue = labOrderData.get("2014-07-23");
         assertEquals(2, secondDayValue.size());
-        assertEquals("140", secondDayValue.get("Blood glucose").getValue());
-        assertEquals("3.0", secondDayValue.get("serum creatinine").getValue());
+        assertEquals("140", secondDayValue.get("Blood glucose").get(0).getValue());
+        assertEquals("3.0", secondDayValue.get("serum creatinine").get(0).getValue());
 
     }
 

@@ -12,6 +12,7 @@ import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -34,7 +35,7 @@ public class BahmniDiseaseSummaryServiceImplIT extends BaseModuleContextSensitiv
 
     @org.junit.Before
     public void setUp() throws Exception {
-        bahmniDiseaseSummaryData = new BahmniDiseaseSummaryServiceImpl(patientService,labDiseaseSummaryAggregator, drugOrderDiseaseSummaryAggregator, obsDiseaseSummaryAggregator);
+        bahmniDiseaseSummaryData = new BahmniDiseaseSummaryServiceImpl(patientService, labDiseaseSummaryAggregator, drugOrderDiseaseSummaryAggregator, obsDiseaseSummaryAggregator);
         executeDataSet("diagnosisMetadata.xml");
         executeDataSet("dispositionMetadata.xml");
     }
@@ -45,21 +46,21 @@ public class BahmniDiseaseSummaryServiceImplIT extends BaseModuleContextSensitiv
 
         DiseaseDataParams diseaseDataParams = new DiseaseDataParams();
         diseaseDataParams.setNumberOfVisits(1);
-        ArrayList<String> obsConcepts = new ArrayList<String>(){{
+        ArrayList<String> obsConcepts = new ArrayList<String>() {{
             add("Blood Pressure");
             add("Weight");
         }};
 
         diseaseDataParams.setObsConcepts(obsConcepts);
         DiseaseSummaryData diseaseSummary = bahmniDiseaseSummaryData.getDiseaseSummary("86526ed5-3c11-11de-a0ba-001e378eb67a", diseaseDataParams);
-        Map<String, Map<String, ConceptValue>> obsTable = diseaseSummary.getTabularData();
+        Map<String, Map<String, List<ConceptValue>>> obsTable = diseaseSummary.getTabularData();
 
         assertNotNull(obsTable);
         assertEquals(1, obsTable.size());
 
-        Map<String, ConceptValue> obsInVisit = obsTable.get("2008-09-18");
+        Map<String, List<ConceptValue>> obsInVisit = obsTable.get("2008-09-18");
         assertEquals(1, obsInVisit.size());
-        assertEquals("120.0", obsInVisit.get("Weight").getValue());
+        assertEquals("120.0", obsInVisit.get("Weight").get(0).getValue());
 
     }
 
@@ -68,28 +69,28 @@ public class BahmniDiseaseSummaryServiceImplIT extends BaseModuleContextSensitiv
         executeDataSet("observationsTestData.xml");
 
         DiseaseDataParams diseaseDataParams = new DiseaseDataParams();
-        ArrayList<String> obsConcepts = new ArrayList<String>(){{
+        ArrayList<String> obsConcepts = new ArrayList<String>() {{
             add("Blood Pressure");
             add("Weight");
         }};
 
         diseaseDataParams.setObsConcepts(obsConcepts);
         DiseaseSummaryData diseaseSummary = bahmniDiseaseSummaryData.getDiseaseSummary("86526ed5-3c11-11de-a0ba-001e378eb67a", diseaseDataParams);
-        Map<String, Map<String, ConceptValue>> obsTable = diseaseSummary.getTabularData();
+        Map<String, Map<String, List<ConceptValue>>> obsTable = diseaseSummary.getTabularData();
 
         assertNotNull(obsTable);
         assertEquals(2, obsTable.size());
 
-        Map<String, ConceptValue> obsForVisit = obsTable.get("2008-09-18");
+        Map<String, List<ConceptValue>> obsForVisit = obsTable.get("2008-09-18");
         assertEquals(1, obsForVisit.size());
-        assertEquals("120.0", obsForVisit.get("Weight").getValue());
+        assertEquals("120.0", obsForVisit.get("Weight").get(0).getValue());
 
         obsForVisit = obsTable.get("2008-08-18");
         assertEquals(2, obsForVisit.size());
-        assertEquals("120.0", obsForVisit.get("Systolic").getValue());
-        assertTrue(obsForVisit.get("Systolic").getAbnormal());
-        assertEquals("40.0", obsForVisit.get("Diastolic").getValue());
-        assertTrue(obsForVisit.get("Diastolic").getAbnormal());
+        assertEquals("120.0", obsForVisit.get("Systolic").get(0).getValue());
+        assertTrue(obsForVisit.get("Systolic").get(0).getAbnormal());
+        assertEquals("40.0", obsForVisit.get("Diastolic").get(0).getValue());
+        assertTrue(obsForVisit.get("Diastolic").get(0).getAbnormal());
     }
 
     @Test
@@ -98,21 +99,21 @@ public class BahmniDiseaseSummaryServiceImplIT extends BaseModuleContextSensitiv
 
         DiseaseDataParams diseaseDataParams = new DiseaseDataParams();
         diseaseDataParams.setNumberOfVisits(1);
-        ArrayList<String> labConcepts = new ArrayList<String>(){{
+        ArrayList<String> labConcepts = new ArrayList<String>() {{
             add("PS for Malaria");
         }};
 
         diseaseDataParams.setLabConcepts(labConcepts);
         DiseaseSummaryData diseaseSummary = bahmniDiseaseSummaryData.getDiseaseSummary("75e04d42-3ca8-11e3-bf2b-0800271c1b75", diseaseDataParams);
-        Map<String, Map<String, ConceptValue>> labTable = diseaseSummary.getTabularData();
+        Map<String, Map<String, List<ConceptValue>>> labTable = diseaseSummary.getTabularData();
 
         assertNotNull(labTable);
         assertEquals(1, labTable.size());
 
-        Map<String, ConceptValue> labResultsInVisit = labTable.get("2013-09-26");
+        Map<String, List<ConceptValue>> labResultsInVisit = labTable.get("2013-09-26");
         assertNotNull(labResultsInVisit);
         assertEquals(1, labResultsInVisit.size());
-        assertEquals("new Result for PS Malaria", labResultsInVisit.get("PS for Malaria").getValue());
+        assertEquals("new Result for PS Malaria", labResultsInVisit.get("PS for Malaria").get(0).getValue());
 
     }
 
@@ -121,26 +122,26 @@ public class BahmniDiseaseSummaryServiceImplIT extends BaseModuleContextSensitiv
         executeDataSet("labOrderTestData.xml");
 
         DiseaseDataParams diseaseDataParams = new DiseaseDataParams();
-        ArrayList<String> labConcepts = new ArrayList<String>(){{
+        ArrayList<String> labConcepts = new ArrayList<String>() {{
             add("PS for Malaria");
         }};
 
         diseaseDataParams.setLabConcepts(labConcepts);
         DiseaseSummaryData diseaseSummary = bahmniDiseaseSummaryData.getDiseaseSummary("75e04d42-3ca8-11e3-bf2b-0800271c1b75", diseaseDataParams);
-        Map<String, Map<String, ConceptValue>> labTable = diseaseSummary.getTabularData();
+        Map<String, Map<String, List<ConceptValue>>> labTable = diseaseSummary.getTabularData();
 
         assertNotNull(labTable);
         assertEquals(2, labTable.size());
 
-        Map<String, ConceptValue> labResultsInVisit = labTable.get("2013-09-26");
+        Map<String, List<ConceptValue>> labResultsInVisit = labTable.get("2013-09-26");
         assertNotNull(labResultsInVisit);
         assertEquals(1, labResultsInVisit.size());
-        assertEquals("new Result for PS Malaria", labResultsInVisit.get("PS for Malaria").getValue());
+        assertEquals("new Result for PS Malaria", labResultsInVisit.get("PS for Malaria").get(0).getValue());
 
         labResultsInVisit = labTable.get("2005-09-26");
         assertNotNull(labResultsInVisit);
         assertEquals(1, labResultsInVisit.size());
-        assertEquals("almost dead of PS Malaria", labResultsInVisit.get("PS for Malaria").getValue());
+        assertEquals("almost dead of PS Malaria", labResultsInVisit.get("PS for Malaria").get(0).getValue());
     }
 
     @Test
@@ -149,21 +150,21 @@ public class BahmniDiseaseSummaryServiceImplIT extends BaseModuleContextSensitiv
 
         DiseaseDataParams diseaseDataParams = new DiseaseDataParams();
         diseaseDataParams.setNumberOfVisits(1);
-        ArrayList<String> drugConcepts = new ArrayList<String>(){{
+        ArrayList<String> drugConcepts = new ArrayList<String>() {{
             add("Calpol 250mg");
         }};
 
         diseaseDataParams.setDrugConcepts(drugConcepts);
         DiseaseSummaryData diseaseSummary = bahmniDiseaseSummaryData.getDiseaseSummary("75e04d42-3ca8-11e3-bf2b-080027175c1b", diseaseDataParams);
-        Map<String, Map<String, ConceptValue>> drugTable = diseaseSummary.getTabularData();
+        Map<String, Map<String, List<ConceptValue>>> drugTable = diseaseSummary.getTabularData();
 
         assertNotNull(drugTable);
         assertEquals(1, drugTable.size());
 
-        Map<String, ConceptValue> durgOrdersInVisit = drugTable.get("2012-12-12");
+        Map<String, List<ConceptValue>> durgOrdersInVisit = drugTable.get("2012-12-12");
         assertNotNull(durgOrdersInVisit);
         assertEquals(1, durgOrdersInVisit.size());
-        assertEquals("250mg,325.0,1/day x 7 days/week", durgOrdersInVisit.get("Calpol 250mg").getValue());
+        assertEquals("250mg,325.0,1/day x 7 days/week", durgOrdersInVisit.get("Calpol 250mg").get(0).getValue());
     }
 
 
@@ -172,29 +173,29 @@ public class BahmniDiseaseSummaryServiceImplIT extends BaseModuleContextSensitiv
         executeDataSet("drugOrderTestData.xml");
 
         DiseaseDataParams diseaseDataParams = new DiseaseDataParams();
-        ArrayList<String> drugConcepts = new ArrayList<String>(){{
+        ArrayList<String> drugConcepts = new ArrayList<String>() {{
             add("cetirizine 100mg");
             add("Calpol 250mg");
         }};
 
         diseaseDataParams.setDrugConcepts(drugConcepts);
         DiseaseSummaryData diseaseSummary = bahmniDiseaseSummaryData.getDiseaseSummary("75e04d42-3ca8-11e3-bf2b-080027175c1b", diseaseDataParams);
-        Map<String, Map<String, ConceptValue>> drugTable = diseaseSummary.getTabularData();
+        Map<String, Map<String, List<ConceptValue>>> drugTable = diseaseSummary.getTabularData();
 
         assertNotNull(drugTable);
         assertEquals(2, drugTable.size());
 
-        Map<String, ConceptValue> durgOrdersInVisit = drugTable.get("2012-12-12");
+        Map<String, List<ConceptValue>> durgOrdersInVisit = drugTable.get("2012-12-12");
         assertNotNull(durgOrdersInVisit);
         assertEquals(2, durgOrdersInVisit.size());
-        assertEquals("100mg,225.0,1/day x 7 days/week", durgOrdersInVisit.get("cetirizine 100mg").getValue());
-        assertEquals("250mg,325.0,1/day x 7 days/week", durgOrdersInVisit.get("Calpol 250mg").getValue());
+        assertEquals("100mg,225.0,1/day x 7 days/week", durgOrdersInVisit.get("cetirizine 100mg").get(0).getValue());
+        assertEquals("250mg,325.0,1/day x 7 days/week", durgOrdersInVisit.get("Calpol 250mg").get(0).getValue());
 
 
         durgOrdersInVisit = drugTable.get("2001-09-22");
         assertNotNull(durgOrdersInVisit);
         assertEquals(1, durgOrdersInVisit.size());
-        assertEquals("250mg,125.0,1/day x 7 days/week", durgOrdersInVisit.get("Calpol 250mg").getValue());
+        assertEquals("250mg,125.0,1/day x 7 days/week", durgOrdersInVisit.get("Calpol 250mg").get(0).getValue());
     }
 
 
@@ -203,7 +204,7 @@ public class BahmniDiseaseSummaryServiceImplIT extends BaseModuleContextSensitiv
         executeDataSet("observationsTestData.xml");
         DiseaseDataParams diseaseDataParams = new DiseaseDataParams();
         diseaseDataParams.setNumberOfVisits(3);
-        ArrayList<String> obsConcepts = new ArrayList<String>(){{
+        ArrayList<String> obsConcepts = new ArrayList<String>() {{
             add("Blood Pressure");
             add("Weight");
         }};
@@ -224,11 +225,11 @@ public class BahmniDiseaseSummaryServiceImplIT extends BaseModuleContextSensitiv
         executeDataSet("observationsTestData.xml");
         DiseaseDataParams diseaseDataParams = new DiseaseDataParams();
         diseaseDataParams.setNumberOfVisits(3);
-        ArrayList<String> obsConcepts = new ArrayList<String>(){{
+        ArrayList<String> obsConcepts = new ArrayList<String>() {{
             add("CodedConcept");
         }};
         diseaseDataParams.setObsConcepts(obsConcepts);
         DiseaseSummaryData diseaseSummary = bahmniDiseaseSummaryData.getDiseaseSummary("86526ed5-3c11-11de-a0ba-001e378eb67a", diseaseDataParams);
-        assertEquals("CCAnswer1", diseaseSummary.getTabularData().get("2008-09-18").get("CodedConcept").getValue());
+        assertEquals("CCAnswer1", diseaseSummary.getTabularData().get("2008-09-18").get("CodedConcept").get(0).getValue());
     }
 }
