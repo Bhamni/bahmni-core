@@ -37,16 +37,18 @@ public class BahmniObservationsController extends BaseRestController {
     public Collection<BahmniObservation> get(@RequestParam(value = "patientUuid", required = true) String patientUUID,
                                        @RequestParam(value = "concept", required = true) List<String> rootConceptNames,
                                        @RequestParam(value = "scope", required = false) String scope,
+                                       @RequestParam(value = "flatten", required = false) Boolean flatten,
                                        @RequestParam(value = "numberOfVisits", required = false) Integer numberOfVisits) {
 
         List<Concept> rootConcepts = new ArrayList<>();
+        flatten = (flatten == null)? true : flatten;
         for (String rootConceptName : rootConceptNames) {
             rootConcepts.add(conceptService.getConceptByName(rootConceptName));
         }
 
         Collection<BahmniObservation> observations;
         if (ObjectUtils.equals(scope, LATEST)) {
-            observations = bahmniObsService.getLatest(patientUUID, rootConcepts);
+            observations = bahmniObsService.getLatest(patientUUID, rootConcepts, flatten);
         } else {
             observations = bahmniObsService.observationsFor(patientUUID, rootConcepts, numberOfVisits);
         }

@@ -30,11 +30,11 @@ public class OMRSObsToBahmniObsMapper {
         this.observationTypeMatcher = observationTypeMatcher;
     }
 
-    public Collection<BahmniObservation> map(List<Obs> obsList, Collection<Concept> rootConcepts) {
+    public Collection<BahmniObservation> map(List<Obs> obsList, Collection<Concept> rootConcepts, Boolean flatten) {
         Collection<BahmniObservation> bahmniObservations = new ArrayList<>();
         for (Obs obs : obsList) {
             if(observationTypeMatcher.getObservationType(obs).equals(ObservationTypeMatcher.ObservationType.OBSERVATION)){
-                BahmniObservation bahmniObservation =map(obs);
+                BahmniObservation bahmniObservation = map(obs, flatten);
                 if(CollectionUtils.isNotEmpty(rootConcepts )){
                     bahmniObservation.setConceptSortWeight(ConceptSortWeightUtil.getSortWeightFor(bahmniObservation.getConcept().getName(), rootConcepts));
                 }
@@ -45,10 +45,18 @@ public class OMRSObsToBahmniObsMapper {
     }
 
     public BahmniObservation map(Obs obs) {
+        return map(obs, true);
+    }
+
+    public Collection<BahmniObservation> map(List<Obs> obsList, Collection<Concept> rootConcepts) {
+        return map(obsList, rootConcepts, true);
+    }
+
+    public BahmniObservation map(Obs obs, Boolean flatten) {
         EncounterDetails encounterDetails = new EncounterDetails(obs.getEncounter().getUuid(),obs.getEncounter().getEncounterDatetime(),obs.getEncounter().getVisit().getStartDatetime());
         for (EncounterProvider encounterProvider : obs.getEncounter().getEncounterProviders()) {
             encounterDetails.addProvider(bahmniProviderMapper.map(encounterProvider.getProvider()));
         }
-        return etObsToBahmniObsMapper.map(observationMapper.map(obs), encounterDetails, Arrays.asList(obs.getConcept()), true);
+        return etObsToBahmniObsMapper.map(observationMapper.map(obs), encounterDetails, Arrays.asList(obs.getConcept()), flatten);
     }
 }

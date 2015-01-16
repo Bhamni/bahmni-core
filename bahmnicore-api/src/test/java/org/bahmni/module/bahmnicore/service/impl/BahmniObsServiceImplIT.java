@@ -38,7 +38,7 @@ public class BahmniObsServiceImplIT extends BaseModuleWebContextSensitiveTest {
     @Test
     public void shouldReturnLatestObsForEachConcept() {
         Concept vitalsConcept = conceptService.getConceptByName("Vitals");
-        Collection<BahmniObservation> bahmniObservations = personObsService.getLatest("86526ed5-3c11-11de-a0ba-001e378eb67a", Arrays.asList(vitalsConcept));
+        Collection<BahmniObservation> bahmniObservations = personObsService.getLatest("86526ed5-3c11-11de-a0ba-001e378eb67a", Arrays.asList(vitalsConcept), true);
         BahmniObservation vitalObservation = bahmniObservations.iterator().next();
         Collection<BahmniObservation> vitalsGroupMembers = vitalObservation.getGroupMembers();
         assertEquals(2, vitalsGroupMembers.size());
