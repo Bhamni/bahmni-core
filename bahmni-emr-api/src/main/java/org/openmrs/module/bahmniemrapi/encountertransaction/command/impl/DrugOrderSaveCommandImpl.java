@@ -77,7 +77,7 @@ public class DrugOrderSaveCommandImpl implements EncounterDataPreSaveCommand {
             Date expectedStopDateForCurrentOrder = setExpectedStopDateForOrder(currentDateOrder, expectedStartDateForCurrentOrder);
 
             for (EncounterTransaction.DrugOrder order : orders) {
-                if(order!=currentDateOrder && order.getAction() != "DISCONTINUE" && DateUtils.isSameDay(order.getScheduledDate(), expectedStopDateForCurrentOrder)){
+                if(order!=currentDateOrder && order.getScheduledDate()!=null && order.getAction() != "DISCONTINUE" && DateUtils.isSameDay(order.getScheduledDate(), expectedStopDateForCurrentOrder)){
                     currentDateOrder.setScheduledDate(expectedStartDateForCurrentOrder);
                     currentDateOrder.setAutoExpireDate(expectedStopDateForCurrentOrder);
 
@@ -105,7 +105,7 @@ public class DrugOrderSaveCommandImpl implements EncounterDataPreSaveCommand {
 
     private EncounterTransaction.DrugOrder getCurrentOrderFromOrderList(Collection<EncounterTransaction.DrugOrder> orders) {
         for (EncounterTransaction.DrugOrder order : orders) {
-            if (order.getAction() != "DISCONTINUE") { // To detect orders with dateActivated = current date
+            if (order.getScheduledDate() == null && order.getAction() != "DISCONTINUE") { // To detect orders with dateActivated = current date
                 return order;
             }
         }
