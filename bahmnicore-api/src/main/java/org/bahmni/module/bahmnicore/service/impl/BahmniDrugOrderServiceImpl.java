@@ -175,6 +175,7 @@ public class BahmniDrugOrderServiceImpl implements BahmniDrugOrderService {
     }
 
     private Set<DrugOrder> checkOverlappingOrderAndUpdate(Set<DrugOrder> newDrugOrders, String patientUuid, Date orderDate) {
+        //TODO:Getting active Drug orders from the DB
         List<DrugOrder> activeDrugOrders = getActiveDrugOrders(patientUuid, orderDate);
         Iterator<DrugOrder> newDrugOrdersIterator = newDrugOrders.iterator();
 
@@ -182,11 +183,14 @@ public class BahmniDrugOrderServiceImpl implements BahmniDrugOrderService {
             DrugOrder newDrugOrder = newDrugOrdersIterator.next();
             for(DrugOrder activeDrugOrder: activeDrugOrders) {
                 if(newDrugOrder.hasSameOrderableAs(activeDrugOrder)) {
+                    //TODO:Getting active encounter from the active drug orders. Encounter object also will be a Hibernate Proxy Object
                     Encounter encounter = activeDrugOrder.getEncounter();
                     newDrugOrder.setEncounter(encounter);
+                    //TODO:Encounter Object gets dirty here, but is not flushed
                     encounter.addOrder(newDrugOrder);
                     int totalNumberOfDays = getNumberOfDays(activeDrugOrder) + getNumberOfDays(newDrugOrder);
                     newDrugOrder.setDateActivated(activeDrugOrder.getDateActivated());
+                    //TODO:Another DB call with a dirty Object with Hibernate Proxy still in memory. Should fail here.
                     setDuration(newDrugOrder, totalNumberOfDays);
                     newDrugOrder.setQuantity(activeDrugOrder.getQuantity() + newDrugOrder.getQuantity());
                     activeDrugOrder.setVoided(true);
