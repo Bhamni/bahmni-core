@@ -1,7 +1,9 @@
 package org.openmrs.module.bahmnicore.web.v1_0.controller;
 
-import java.util.Collection;
+import java.util.*;
+
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.bahmni.module.bahmnicore.contract.encounter.data.ConceptData;
 import org.bahmni.module.bahmnicore.contract.encounter.response.EncounterConfigResponse;
 import org.openmrs.Concept;
@@ -37,9 +39,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 @Controller
 @RequestMapping(value = "/rest/" + RestConstants.VERSION_1 + "/bahmnicore/bahmniencounter")
@@ -103,44 +102,23 @@ public class BahmniEncounterController extends BaseRestController {
         EncounterTransaction activeEncounter = emrEncounterService.getActiveEncounter(activeEncounterParameters);
         return bahmniEncounterTransactionMapper.map(activeEncounter);
     }
-    
+
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public List<BahmniEncounterTransaction> find(@RequestParam(value = "visitUuids", required = true) String[] visitUuids,
-                                                 @RequestParam(value = "includeAll", required = false) boolean includeAll,
-                                                 @RequestParam(value = "encounterDate", required = false) String encounterDate) {
+    public List<BahmniEncounterTransaction> find(EncounterSearchParameters encounterSearchParameters) {
         List<BahmniEncounterTransaction> bahmniEncounterTransactions = new ArrayList<>();
 
-        for (String visitUuid : visitUuids ) {
-            EncounterSearchParameters encounterSearchParameters = new EncounterSearchParameters();
-            encounterSearchParameters.setVisitUuid(visitUuid);
-            encounterSearchParameters.setEncounterDate(encounterDate);
-            encounterSearchParameters.setIncludeAll(includeAll);
-
-            checkForValidInput(encounterSearchParameters);
-            List<EncounterTransaction> encounterTransactions = emrEncounterService.find(encounterSearchParameters);
-            for (EncounterTransaction encounterTransaction : encounterTransactions) {
-                bahmniEncounterTransactions.add(bahmniEncounterTransactionMapper.map(encounterTransaction));
-            }
+        List<EncounterTransaction> encounterTransactions = null;
+        try {
+            encounterTransactions = emrEncounterService.find(encounterSearchParameters);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-
+        for (EncounterTransaction encounterTransaction : encounterTransactions) {
+            bahmniEncounterTransactions.add(bahmniEncounterTransactionMapper.map(encounterTransaction));
+        }
         return bahmniEncounterTransactions;
-    }
-
-    private void checkForValidInput(EncounterSearchParameters encounterSearchParameters) {
-        String visitUuid = encounterSearchParameters.getVisitUuid();
-        if (StringUtils.isBlank(visitUuid))
-            throw new InvalidInputException("Visit UUID cannot be empty.");
-
-        String encounterDate = encounterSearchParameters.getEncounterDate();
-        if (StringUtils.isNotBlank(encounterDate)){
-            try {
-                new SimpleDateFormat("yyyy-MM-dd").parse(encounterDate);
-            } catch (ParseException e) {
-                throw new InvalidInputException("Date format needs to be 'yyyy-MM-dd'. Incorrect Date:" + encounterDate + ".", e);
-            }
-        }
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -159,7 +137,7 @@ public class BahmniEncounterController extends BaseRestController {
 
     private void setUuidsForObservations(Collection<BahmniObservation> bahmniObservations) {
         for (BahmniObservation bahmniObservation : bahmniObservations) {
-            if (org.apache.commons.lang3.StringUtils.isBlank(bahmniObservation.getUuid())){
+            if (org.apache.commons.lang3.StringUtils.isBlank(bahmniObservation.getUuid())) {
                 bahmniObservation.setUuid(UUID.randomUUID().toString());
             }
         }

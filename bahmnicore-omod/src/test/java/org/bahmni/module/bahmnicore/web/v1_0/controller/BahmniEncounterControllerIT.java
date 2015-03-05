@@ -1,5 +1,6 @@
 package org.bahmni.module.bahmnicore.web.v1_0.controller;
 
+import org.bahmni.test.web.controller.BaseWebControllerTest;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -10,18 +11,22 @@ import org.openmrs.module.bahmnicore.web.v1_0.controller.BahmniEncounterControll
 import org.openmrs.module.bahmniemrapi.diagnosis.contract.BahmniDiagnosis;
 import org.openmrs.module.bahmniemrapi.diagnosis.contract.BahmniDiagnosisRequest;
 import org.openmrs.module.bahmniemrapi.encountertransaction.contract.BahmniEncounterTransaction;
+import org.openmrs.module.bahmniemrapi.laborder.contract.LabOrderResults;
 import org.openmrs.module.emrapi.diagnosis.Diagnosis;
 import org.openmrs.module.emrapi.encounter.domain.EncounterTransaction;
+import org.openmrs.module.webservices.rest.web.RestConstants;
 import org.openmrs.web.test.BaseModuleWebContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.Date;
 
 import static org.junit.Assert.*;
-@Ignore
 @org.springframework.test.context.ContextConfiguration(locations = {"classpath:TestingApplicationContext.xml"}, inheritLocations = true)
-public class BahmniEncounterControllerIT extends BaseModuleWebContextSensitiveTest {
+public class BahmniEncounterControllerIT extends BaseWebControllerTest {
     @Autowired
     private VisitService visitService;
     @Autowired
@@ -73,6 +78,13 @@ public class BahmniEncounterControllerIT extends BaseModuleWebContextSensitiveTe
         assertDiagnosis(bahmniDiagnosisAfterSecondSave.getFirstDiagnosis(), Diagnosis.Certainty.PRESUMED, Diagnosis.Order.SECONDARY, null, false, null);
         Context.flushSession();
         closeVisit(encounterTransaction.getVisitUuid());
+    }
+
+    @Test
+    public void shouldRetrieveStuff() throws Exception {
+        MockHttpServletRequest mockHttpServletRequest = newGetRequest("/rest/" + RestConstants.VERSION_1 + "/bahmnicore/bahmniencounter");
+        MockHttpServletResponse response = handle(mockHttpServletRequest);
+        Object labOrderResults = deserialize(response, Object.class);
     }
 
     @Test
