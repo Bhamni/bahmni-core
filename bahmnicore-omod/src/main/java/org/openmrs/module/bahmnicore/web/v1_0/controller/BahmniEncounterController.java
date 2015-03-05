@@ -115,9 +115,12 @@ public class BahmniEncounterController extends BaseRestController {
             e.printStackTrace();
         }
 
-        for (EncounterTransaction encounterTransaction : encounterTransactions) {
-            bahmniEncounterTransactions.add(bahmniEncounterTransactionMapper.map(encounterTransaction));
+        if (encounterTransactions != null) {
+            for (EncounterTransaction encounterTransaction : encounterTransactions) {
+                bahmniEncounterTransactions.add(bahmniEncounterTransactionMapper.map(encounterTransaction));
+            }
         }
+
         return bahmniEncounterTransactions;
     }
 

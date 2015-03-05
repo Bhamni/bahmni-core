@@ -81,13 +81,6 @@ public class BahmniEncounterControllerIT extends BaseWebControllerTest {
     }
 
     @Test
-    public void shouldRetrieveStuff() throws Exception {
-        MockHttpServletRequest mockHttpServletRequest = newGetRequest("/rest/" + RestConstants.VERSION_1 + "/bahmnicore/bahmniencounter");
-        MockHttpServletResponse response = handle(mockHttpServletRequest);
-        Object labOrderResults = deserialize(response, Object.class);
-    }
-
-    @Test
     @Ignore
     public void shouldUpdateDiagnosisFromAnotherVisit() throws Exception {
         BahmniEncounterTransaction encounterTransactionForFirstVisit = bahmniEncounterTransaction();
