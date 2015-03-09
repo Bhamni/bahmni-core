@@ -43,22 +43,33 @@ import java.text.SimpleDateFormat;
 @Controller
 @RequestMapping(value = "/rest/" + RestConstants.VERSION_1 + "/bahmnicore/bahmniencounter")
 public class BahmniEncounterController extends BaseRestController {
-    @Autowired
     private VisitService visitService;
-    @Autowired
     private ConceptService conceptService;
-    @Autowired
     private EncounterService encounterService;
-    @Autowired
     private OrderService orderService;
-    @Autowired
     private EmrEncounterService emrEncounterService;
-    @Autowired
     private EncounterTransactionMapper encounterTransactionMapper;
-    @Autowired
     private BahmniEncounterTransactionService bahmniEncounterTransactionService;
-    @Autowired
     private BahmniEncounterTransactionMapper bahmniEncounterTransactionMapper;
+
+    public BahmniEncounterController() {
+    }
+
+    @Autowired
+    public BahmniEncounterController(VisitService visitService, ConceptService conceptService,
+                                     EncounterService encounterService, OrderService orderService,
+                                     EmrEncounterService emrEncounterService, EncounterTransactionMapper encounterTransactionMapper,
+                                     BahmniEncounterTransactionService bahmniEncounterTransactionService,
+                                     BahmniEncounterTransactionMapper bahmniEncounterTransactionMapper) {
+        this.visitService = visitService;
+        this.conceptService = conceptService;
+        this.encounterService = encounterService;
+        this.orderService = orderService;
+        this.emrEncounterService = emrEncounterService;
+        this.encounterTransactionMapper = encounterTransactionMapper;
+        this.bahmniEncounterTransactionService = bahmniEncounterTransactionService;
+        this.bahmniEncounterTransactionMapper = bahmniEncounterTransactionMapper;
+    }
 
     @RequestMapping(method = RequestMethod.GET, value = "config")
     @ResponseBody
@@ -103,9 +114,9 @@ public class BahmniEncounterController extends BaseRestController {
         return bahmniEncounterTransactionMapper.map(activeEncounter);
     }
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.POST, value = "/find")
     @ResponseBody
-    public List<BahmniEncounterTransaction> find(EncounterSearchParameters encounterSearchParameters) {
+    public List<BahmniEncounterTransaction> find(@RequestBody EncounterSearchParameters encounterSearchParameters) {
         List<BahmniEncounterTransaction> bahmniEncounterTransactions = new ArrayList<>();
 
         List<EncounterTransaction> encounterTransactions = null;
@@ -115,10 +126,12 @@ public class BahmniEncounterController extends BaseRestController {
             e.printStackTrace();
         }
 
-        if (encounterTransactions != null) {
+        if (encounterTransactions != null && encounterTransactions.size() > 0) {
             for (EncounterTransaction encounterTransaction : encounterTransactions) {
                 bahmniEncounterTransactions.add(bahmniEncounterTransactionMapper.map(encounterTransaction));
             }
+        } else {
+            bahmniEncounterTransactions.add(bahmniEncounterTransactionMapper.map(new EncounterTransaction()));
         }
 
         return bahmniEncounterTransactions;

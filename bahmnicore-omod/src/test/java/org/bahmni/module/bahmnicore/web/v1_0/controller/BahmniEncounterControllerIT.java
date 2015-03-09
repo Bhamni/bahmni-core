@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import static org.junit.Assert.*;
+
 @org.springframework.test.context.ContextConfiguration(locations = {"classpath:TestingApplicationContext.xml"}, inheritLocations = true)
 public class BahmniEncounterControllerIT extends BaseWebControllerTest {
     @Autowired
@@ -38,7 +39,8 @@ public class BahmniEncounterControllerIT extends BaseWebControllerTest {
         executeDataSet("setup.xml");
     }
 
-    @Test @Ignore
+    @Test
+    @Ignore
     public void shouldSaveNewDiagnosisWithinTheSameEncounterSession() throws Exception {
         BahmniEncounterTransaction bahmniEncounterTransaction = bahmniEncounterTransaction();
         final String comments = "High fever and symptoms indicate Malaria";
