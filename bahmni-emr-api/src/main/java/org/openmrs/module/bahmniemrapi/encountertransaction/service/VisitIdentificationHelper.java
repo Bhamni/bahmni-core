@@ -26,7 +26,7 @@ public class VisitIdentificationHelper {
     }
 
     public Visit getVisitFor(Patient patient, String visitTypeForNewVisit, Date orderDate, Date visitStartDate, Date visitEndDate) {
-        Date nextDate = getNextDate(orderDate);
+        Date nextDate = getEndOfTheDay(orderDate);
         List<Visit> visits = visitService.getVisits(null, Arrays.asList(patient), null, null, null, nextDate, orderDate, null, null, true, false);
         if (matchingVisitsFound(visits)) {
             Visit matchingVisit = getVisit(orderDate, visits);
@@ -103,14 +103,13 @@ public class VisitIdentificationHelper {
         return visitTypes.isEmpty() ? null : visitTypes.get(0);
     }
 
-    private static Date getNextDate(Date date) {
+    private static Date getEndOfTheDay(Date date) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.HOUR_OF_DAY, 23);
+        cal.set(Calendar.MINUTE, 59);
+        cal.set(Calendar.SECOND, 59);
         cal.set(Calendar.MILLISECOND, 0);
-        cal.add(Calendar.DAY_OF_YEAR, 1);
         return cal.getTime();
     }
 }
