@@ -15,6 +15,8 @@ public class BahmniDrugOrder implements Comparable<BahmniDrugOrder>{
     private EncounterTransaction.Provider provider;
     private List<BahmniOrderAttribute> orderAttributes;
 
+    private String personName;
+
     public String getAction() {
         return drugOrder.getAction();
     }
@@ -125,6 +127,15 @@ public class BahmniDrugOrder implements Comparable<BahmniDrugOrder>{
 
     public void setOrderAttributes(List<BahmniOrderAttribute> orderAttributes) {
         this.orderAttributes = orderAttributes;
+    }
+
+    public String getPersonName()
+    {
+        return personName;
+    }
+
+    public void setPersonName(String personName) {
+        this.personName = personName;
     }
 
     @Override

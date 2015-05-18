@@ -33,6 +33,7 @@ public class BahmniDrugOrderMapper {
             bahmniDrugOrder.setDrugOrder(drugOrderMapper.mapDrugOrder(openMRSDrugOrder));
             bahmniDrugOrder.setVisit(openMRSDrugOrder.getEncounter().getVisit());
             bahmniDrugOrder.setProvider(providerMapper.map(openMRSDrugOrder.getOrderer()));
+            bahmniDrugOrder.setPersonName(openMRSDrugOrder.getCreator().getPersonName().toString());
             bahmniDrugOrders.add(bahmniDrugOrder);
         }
         if(CollectionUtils.isNotEmpty(orderAttributeObs)){
