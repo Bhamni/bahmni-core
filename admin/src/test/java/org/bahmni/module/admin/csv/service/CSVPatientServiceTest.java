@@ -206,8 +206,8 @@ public class CSVPatientServiceTest {
         PatientRow patientRow = new PatientRow();
 
         List<RelationshipRow> relationships = new ArrayList<RelationshipRow>() {{
-            add(new RelationshipRow("174311", "3", "2010-07-10", "2015-07-14"));
-            add(new RelationshipRow("174318", "5", "2010-07-10", "2015-07-14"));
+            add(new RelationshipRow("174315", "174311", "3", "2010-07-10", "2015-07-14"));
+            add(new RelationshipRow("174319", "174318", "5", "2010-07-10", "2015-07-14"));
         }};
         patientRow.relationships = relationships;
 
@@ -226,7 +226,7 @@ public class CSVPatientServiceTest {
         PatientRow patientRow = new PatientRow();
 
         List<RelationshipRow> relationships = new ArrayList<RelationshipRow>() {{
-            add(new RelationshipRow("174311", "3", "2010-07-10", "2015-07-14"));
+            add(new RelationshipRow("174315", "174311", "3", "2010-07-10", "2015-07-14"));
         }};
         patientRow.relationships = relationships;
 
@@ -248,7 +248,7 @@ public class CSVPatientServiceTest {
 
         final RelationshipRow relationshipRow = new RelationshipRow();
         relationshipRow.setPersonB("174311");
-        relationshipRow.setRelationshipTypeId("3");
+        relationshipRow.setRelationshipType("3");
 
         List<RelationshipRow> relationships = new ArrayList<RelationshipRow>() {{
             add(relationshipRow);

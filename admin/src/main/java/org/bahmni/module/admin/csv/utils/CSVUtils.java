@@ -1,12 +1,11 @@
 package org.bahmni.module.admin.csv.utils;
 
 import org.bahmni.csv.KeyValue;
-import org.openmrs.ConceptName;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -35,6 +34,13 @@ public class CSVUtils {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(ENCOUNTER_DATE_PATTERN);
         simpleDateFormat.setLenient(false);
         return simpleDateFormat.parse(dateString);
+    }
+
+    public static Date getTodayDate() throws ParseException {
+        DateFormat dateFormat = new SimpleDateFormat(ENCOUNTER_DATE_PATTERN);
+        Date date = new Date();
+        String dateString = dateFormat.format(date);
+        return getDateFromString(dateString);
     }
 
 }

@@ -98,7 +98,7 @@ public class CSVPatientService {
             relationship = new Relationship();
 
             try {
-                relationship.setRelationshipType(new RelationshipType(Integer.parseInt(relationshipRow.getRelationshipTypeId())));
+                relationship.setRelationshipType(new RelationshipType(Integer.parseInt(relationshipRow.getRelationshipType())));
             } catch (NumberFormatException e) {
                 throw new RuntimeException("Invalid relationship type id.");
             }
