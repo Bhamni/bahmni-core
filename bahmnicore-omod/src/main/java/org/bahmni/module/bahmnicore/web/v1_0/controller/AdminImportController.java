@@ -58,6 +58,7 @@ public class AdminImportController extends BaseRestController {
     private static final String CONCEPT_SET_FILES_DIRECTORY = "conceptset/";
     private static final String PATIENT_FILES_DIRECTORY = "patient/";
     private static final String REFERENCETERM_FILES_DIRECTORY = "referenceterms/";
+    private static final String RELATIONSHIP_FILES_DIRECTORY = "relationship/";
 
     @Autowired
     private EncounterPersister encounterPersister;
@@ -82,6 +83,9 @@ public class AdminImportController extends BaseRestController {
 
     @Autowired
     private ReferenceTermPersister referenceTermPersister;
+
+    @Autowired
+    private RelationshipPersister relationshipPersister;
 
     @Autowired
     private SessionFactory sessionFactory;
@@ -183,6 +187,19 @@ public class AdminImportController extends BaseRestController {
     public boolean uploadConceptSet(@RequestParam(value = "file") MultipartFile file) throws IOException {
         try {
             return importCsv(CONCEPT_SET_FILES_DIRECTORY, file, new DatabasePersister<>(conceptSetPersister), 1, false, ConceptSetRow.class);
+        } catch (Throwable e) {
+            logger.error("Could not upload file", e);
+            throw e;
+        }
+    }
+
+    @RequestMapping(value = baseUrl + "/relationship", method = RequestMethod.POST)
+    @ResponseBody
+    public boolean uploadRelationship(@RequestParam(value = "file") MultipartFile file) throws IOException {
+        try {
+            relationshipPersister.init(Context.getUserContext());
+            return importCsv(RELATIONSHIP_FILES_DIRECTORY, file, new DatabasePersister<>(relationshipPersister), 1, false, RelationshipRow.class);
+
         } catch (Throwable e) {
             logger.error("Could not upload file", e);
             throw e;

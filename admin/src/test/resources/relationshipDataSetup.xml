@@ -1,0 +1,5 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+    <global_property property="bahmni.relationshipTypeMap" property_value="{&quot;provider&quot;: [&quot;Doctor&quot;, &quot;Patient&quot;], &quot;patient&quot;: [&quot;Parent&quot;,&quot;Sibling&quot;,&quot;Child&quot;]}" uuid="4f55827e-26fe-102b-hycb-0017a47871b3"/>
+    <relationship_type relationship_type_id="10" a_is_to_b="Patient" b_is_to_a="Doctor" preferred="0" weight="0" description="Relationship from a primary care provider to the patient" creator="1" date_created="2007-05-04 09:59:22.0" retired="false" uuid="6d9002ea-a96b-4889-af8a-82d48c57a110"/>
+</dataset>

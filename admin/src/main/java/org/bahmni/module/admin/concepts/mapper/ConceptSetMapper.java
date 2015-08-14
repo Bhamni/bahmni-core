@@ -52,7 +52,7 @@ public class ConceptSetMapper {
     }
 
 
-//    private ConceptReferenceTerm getConceptReferenceTerm(ConceptSetRow conceptSetRow) {
+    //    private ConceptReferenceTerm getConceptReferenceTerm(ConceptSetRow conceptSetRow) {
 //        ConceptReferenceTerm conceptReferenceTerm = new ConceptReferenceTerm();
 //        conceptReferenceTerm.setReferenceTermCode(conceptSetRow.referenceTermCode);
 //        conceptReferenceTerm.setReferenceTermRelationship(conceptSetRow.referenceTermRelationship);

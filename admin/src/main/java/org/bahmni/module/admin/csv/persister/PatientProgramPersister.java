@@ -86,7 +86,7 @@ public class PatientProgramPersister implements EntityPersister<PatientProgramRo
     private String getErrorMessage(List<PatientProgram> patientPrograms) {
         PatientProgram existingProgram = patientPrograms.get(0);
         String errorMessage = "Patient already enrolled in " + existingProgram.getProgram().getName() + " from " + existingProgram.getDateEnrolled();
-        errorMessage += existingProgram.getDateCompleted() == null ? "" : " to " + existingProgram.getDateCompleted() ;
+        errorMessage += existingProgram.getDateCompleted() == null ? "" : " to " + existingProgram.getDateCompleted();
         return errorMessage;
     }
 
@@ -96,7 +96,7 @@ public class PatientProgramPersister implements EntityPersister<PatientProgramRo
 
     private Program getProgramByName(String programName) {
         for (Program program : programWorkflowService.getAllPrograms()) {
-            if(isNamed(program, programName)) {
+            if (isNamed(program, programName)) {
                 return program;
             }
         }
@@ -105,7 +105,7 @@ public class PatientProgramPersister implements EntityPersister<PatientProgramRo
 
     private boolean isNamed(Program program, String programName) {
         for (ConceptName conceptName : program.getConcept().getNames()) {
-            if(programName.equalsIgnoreCase(conceptName.getName())) {
+            if (programName.equalsIgnoreCase(conceptName.getName())) {
                 return true;
             }
         }

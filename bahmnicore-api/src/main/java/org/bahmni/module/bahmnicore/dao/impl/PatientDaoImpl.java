@@ -12,6 +12,7 @@ import org.hibernate.transform.Transformers;
 import org.hibernate.type.StandardBasicTypes;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
+import org.openmrs.RelationshipType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -193,6 +194,16 @@ public class PatientDaoImpl implements PatientDao {
                         " from PatientIdentifier pi " +
                         " where pi.identifier = :partialIdentifier ");
         querytoGetPatients.setString("partialIdentifier", partialIdentifier);
+        return querytoGetPatients.list();
+    }
+
+    @Override
+    public List<RelationshipType> getByAIsToB(String aIsToB) {
+        Query querytoGetPatients = sessionFactory.getCurrentSession().createQuery(
+                "select rt " +
+                        " from RelationshipType rt " +
+                        " where rt.aIsToB = :aIsToB ");
+        querytoGetPatients.setString("aIsToB", aIsToB);
         return querytoGetPatients.list();
     }
 

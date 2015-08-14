@@ -64,11 +64,12 @@ public class ConceptMapper {
 
     private void addConceptReferenceTerms(ConceptRow conceptRow, Concept concept) {
         ConceptReferenceTerm conceptReferenceTerm;
-        for(ConceptReferenceTermRow referenceTerm : conceptRow.getReferenceTerms()) {
+        for (ConceptReferenceTermRow referenceTerm : conceptRow.getReferenceTerms()) {
             conceptReferenceTerm = new ConceptReferenceTerm(referenceTerm.getReferenceTermCode(), referenceTerm.getReferenceTermRelationship(), referenceTerm.getReferenceTermSource());
             concept.getConceptReferenceTermsList().add(conceptReferenceTerm);
         }
     }
+
     //TODO need to change
     public ConceptRow map(Concept concept) {
         String name = concept.getUniqueName();

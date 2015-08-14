@@ -30,7 +30,7 @@ public class ConceptSetExporter {
 
     public ConceptRows exportConcepts(String conceptName) {
         Concepts conceptSet = conceptService.getConcept(conceptName);
-        if(conceptSet == null){
+        if (conceptSet == null) {
             throw new APIException("Concept " + conceptName + " not found");
         }
         ConceptRows conceptRows = conceptSetMapper.mapAll(conceptSet);

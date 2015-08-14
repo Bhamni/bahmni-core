@@ -12,6 +12,7 @@ import org.openmrs.module.emrapi.encounter.exception.ConceptNotFoundException;
 
 import java.text.ParseException;
 import java.util.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -60,7 +61,7 @@ public class ObservationMapper {
         for (EncounterTransaction.Observation observation : observations) {
             if (observation.getConcept().getName().equals(conceptNames.get(0))) {
                 conceptNames.remove(0);
-                if(conceptNames.size() == 0){
+                if (conceptNames.size() == 0) {
                     conceptNames.add(observation.getConcept().getName());
                     return existingObservation;
                 }
@@ -70,19 +71,20 @@ public class ObservationMapper {
         }
         return existingObservation;
     }
+
     private EncounterTransaction.Observation createObservation(List<String> conceptNames, Date encounterDate, KeyValue obsRow) throws ParseException {
-              Concept obsConcept = conceptCache.getConcept(conceptNames.get(0));
+        Concept obsConcept = conceptCache.getConcept(conceptNames.get(0));
         EncounterTransaction.Concept concept = new EncounterTransaction.Concept(obsConcept.getUuid(), obsConcept.getName().getName());
 
         EncounterTransaction.Observation observation = new EncounterTransaction.Observation();
         observation.setConcept(concept);
         observation.setObservationDateTime(encounterDate);
         if (conceptNames.size() == 1) {
-                        observation.setValue(getValue(obsRow, obsConcept));
-                    } else {
-                        conceptNames.remove(0);
-                        observation.addGroupMember(createObservation(conceptNames, encounterDate, obsRow));
-                    }
+            observation.setValue(getValue(obsRow, obsConcept));
+        } else {
+            conceptNames.remove(0);
+            observation.addGroupMember(createObservation(conceptNames, encounterDate, obsRow));
+        }
         return observation;
     }
 

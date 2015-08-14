@@ -8,7 +8,7 @@ public class ConceptRows {
     private List<ConceptSetRow> conceptSetRows;
 
     public List<ConceptRow> getConceptRows() {
-        return conceptRows == null? new ArrayList<ConceptRow>(): conceptRows;
+        return conceptRows == null ? new ArrayList<ConceptRow>() : conceptRows;
     }
 
     public void setConceptRows(List<ConceptRow> conceptRows) {
@@ -16,7 +16,7 @@ public class ConceptRows {
     }
 
     public List<ConceptSetRow> getConceptSetRows() {
-        return conceptSetRows == null? new ArrayList<ConceptSetRow>(): conceptSetRows;
+        return conceptSetRows == null ? new ArrayList<ConceptSetRow>() : conceptSetRows;
     }
 
     public void setConceptSetRows(List<ConceptSetRow> conceptSetRows) {
@@ -45,7 +45,7 @@ public class ConceptRows {
     private int getMaxSetMembers() {
         int maxSetMembers = 0;
         for (ConceptSetRow conceptSetRow : getConceptSetRows()) {
-            if(conceptSetRow.getChildren().size() > maxSetMembers){
+            if (conceptSetRow.getChildren().size() > maxSetMembers) {
                 maxSetMembers = conceptSetRow.getChildren().size();
             }
         }
@@ -55,7 +55,7 @@ public class ConceptRows {
     private int getMaxSynonyms() {
         int maxSynonyms = 0;
         for (ConceptRow conceptRow : getConceptRows()) {
-            if(conceptRow.getSynonyms().size() > maxSynonyms){
+            if (conceptRow.getSynonyms().size() > maxSynonyms) {
                 maxSynonyms = conceptRow.getSynonyms().size();
             }
         }
@@ -65,7 +65,7 @@ public class ConceptRows {
     private int getMaxAnswers() {
         int maxAnswers = 0;
         for (ConceptRow conceptRow : getConceptRows()) {
-            if(conceptRow.getAnswers().size() > maxAnswers){
+            if (conceptRow.getAnswers().size() > maxAnswers) {
                 maxAnswers = conceptRow.getAnswers().size();
             }
         }
@@ -75,7 +75,7 @@ public class ConceptRows {
     private int getMaxReferenceTerms() {
         int maxReferenceTerms = 0;
         for (ConceptRow conceptRow : getConceptRows()) {
-            if(conceptRow.getReferenceTerms().size() > maxReferenceTerms){
+            if (conceptRow.getReferenceTerms().size() > maxReferenceTerms) {
                 maxReferenceTerms = conceptRow.getReferenceTerms().size();
             }
         }
@@ -85,7 +85,7 @@ public class ConceptRows {
     private int getMaxConceptSetReferenceTerms() {
         int maxReferenceTerms = 0;
         for (ConceptSetRow conceptSetRow : getConceptSetRows()) {
-            if(conceptSetRow.referenceTerms.size() > maxReferenceTerms){
+            if (conceptSetRow.referenceTerms.size() > maxReferenceTerms) {
                 maxReferenceTerms = conceptSetRow.referenceTerms.size();
             }
         }

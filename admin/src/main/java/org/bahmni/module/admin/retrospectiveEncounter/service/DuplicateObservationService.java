@@ -1,6 +1,7 @@
 package org.bahmni.module.admin.retrospectiveEncounter.service;
 
 import java.util.Collection;
+
 import org.bahmni.module.admin.retrospectiveEncounter.domain.DuplicateObservationsMatcher;
 import org.openmrs.Patient;
 import org.openmrs.Visit;

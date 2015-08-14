@@ -3,7 +3,6 @@ package org.bahmni.module.admin.csv.service;
 import org.apache.commons.lang.StringUtils;
 import org.bahmni.csv.KeyValue;
 import org.bahmni.module.admin.csv.models.PatientRow;
-import org.bahmni.module.admin.csv.models.RelationshipRow;
 import org.openmrs.*;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
@@ -11,7 +10,6 @@ import org.openmrs.api.PatientService;
 import org.openmrs.api.PersonService;
 
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -60,63 +58,8 @@ public class CSVPatientService {
         patient.setPersonDateCreated(patientRow.getRegistrationDate());
 
         patientService.savePatient(patient);
-        saveRelationships(patientRow, patient);
 
         return patient;
-    }
-
-    private void saveRelationships(PatientRow patientRow, Patient patientA) throws ParseException {
-        List<Relationship> relationships = getRelationshipsFromPatientRow(patientRow, patientA);
-        for (Relationship relationship : relationships) {
-            personService.saveRelationship(relationship);
-        }
-    }
-
-    private List<Relationship> getRelationshipsFromPatientRow(PatientRow patientRow, Patient patientA) throws ParseException {
-        List<Relationship> relationships = new ArrayList<>();
-
-        Relationship relationship;
-        Patient patientB;
-        for (RelationshipRow relationshipRow : patientRow.relationships) {
-
-            if (StringUtils.isEmpty(relationshipRow.getPersonB())) {
-                continue;
-            }
-
-            List<Patient> patientsMatchedByIdentifier = patientService.getPatients(null, relationshipRow.getPersonB(), null, true);
-
-            if (null == patientsMatchedByIdentifier || patientsMatchedByIdentifier.size() == 0) {
-                throw new RuntimeException("PersonB not found.");
-            }
-
-            patientB = patientsMatchedByIdentifier.get(0);
-
-            if (null == patientB) {
-                throw new RuntimeException("PersonB not found.");
-            }
-
-            relationship = new Relationship();
-
-            try {
-                relationship.setRelationshipType(new RelationshipType(Integer.parseInt(relationshipRow.getRelationshipTypeId())));
-            } catch (NumberFormatException e) {
-                throw new RuntimeException("Invalid relationship type id.");
-            }
-
-            relationship.setPersonA(patientA);
-            relationship.setPersonB(patientB);
-
-            if (!StringUtils.isBlank(relationshipRow.getStartDate())) {
-                relationship.setStartDate(getDateFromString(relationshipRow.getStartDate()));
-            }
-
-            if (!StringUtils.isBlank(relationshipRow.getEndDate())) {
-                relationship.setEndDate(getDateFromString(relationshipRow.getEndDate()));
-            }
-
-            relationships.add(relationship);
-        }
-        return relationships;
     }
 
     private void addPersonAttributes(Patient patient, PatientRow patientRow) {

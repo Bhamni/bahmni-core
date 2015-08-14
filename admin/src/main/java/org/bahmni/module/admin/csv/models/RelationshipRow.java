@@ -1,42 +1,46 @@
 package org.bahmni.module.admin.csv.models;
 
-import org.apache.commons.lang3.StringUtils;
+import org.bahmni.csv.CSVEntity;
 import org.bahmni.csv.annotation.CSVHeader;
 
-public class RelationshipRow {
+public class RelationshipRow extends CSVEntity {
 
-    @CSVHeader(name = "Relationship.personB-registration-number")
+    @CSVHeader(name = "PersonA")
+    private String personA;
+
+    @CSVHeader(name = "PersonB")
     private String personB;
 
-    @CSVHeader(name = "Relationship.type-id")
-    private String relationshipTypeId;
+    @CSVHeader(name = "AIsToB")
+    private String aIsToB;
 
-    @CSVHeader(name = "Relationship.start-date")
+    @CSVHeader(name = "BIsToA")
+    private String bIsToA;
+
+    @CSVHeader(name = "StartDate")
     private String startDate;
 
-    @CSVHeader(name = "Relationship.end-date")
+    @CSVHeader(name = "EndDate")
     private String endDate;
 
-    public RelationshipRow() {
-    }
-
-    public RelationshipRow(String personB, String relationshipTypeId, String startDate, String endDate) {
+    public RelationshipRow(String personA, String personB, String aIsToB, String bIsToA, String startDate, String endDate) {
+        this.personA = personA;
         this.personB = personB;
-        this.relationshipTypeId = relationshipTypeId;
+        this.aIsToB = aIsToB;
+        this.bIsToA = bIsToA;
         this.startDate = startDate;
         this.endDate = endDate;
     }
 
-    public boolean isEmpty() {
-        return StringUtils.isBlank(personB) && StringUtils.isBlank(relationshipTypeId);
+    public RelationshipRow() {
     }
 
-    public String[] getRowValues() {
-        return new String[]{personB, relationshipTypeId, startDate, endDate};
+    public String getPersonA() {
+        return personA;
     }
 
-    public RelationshipRow getHeaders() {
-        return new RelationshipRow("Relationship.personB-registration-number", "Relationship.type-id","Relationship.start-date", "Relationship.end-date");
+    public void setPersonA(String personA) {
+        this.personA = personA;
     }
 
     public String getPersonB() {
@@ -47,20 +51,20 @@ public class RelationshipRow {
         this.personB = personB;
     }
 
-    public String getRelationshipTypeId() {
-        return relationshipTypeId;
+    public String getaIsToB() {
+        return aIsToB;
     }
 
-    public void setRelationshipTypeId(String relationshipTypeId) {
-        this.relationshipTypeId = relationshipTypeId;
+    public void setaIsToB(String aIsToB) {
+        this.aIsToB = aIsToB;
     }
 
-    public String getEndDate() {
-        return endDate;
+    public String getbIsToA() {
+        return bIsToA;
     }
 
-    public void setEndDate(String endDate) {
-        this.endDate = endDate;
+    public void setbIsToA(String bIsToA) {
+        this.bIsToA = bIsToA;
     }
 
     public String getStartDate() {
@@ -69,5 +73,13 @@ public class RelationshipRow {
 
     public void setStartDate(String startDate) {
         this.startDate = startDate;
+    }
+
+    public String getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
     }
 }

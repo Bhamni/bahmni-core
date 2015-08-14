@@ -72,7 +72,7 @@ public class ConceptRow extends CSVEntity {
         originalRow(aRow);
     }
 
-    public ConceptRow getHeaders(){
+    public ConceptRow getHeaders() {
         int synonymCount = 1, answerCount = 1;
         List<KeyValue> synonymHeaders = new ArrayList<>();
         List<KeyValue> answerHeaders = new ArrayList<>();
@@ -113,10 +113,10 @@ public class ConceptRow extends CSVEntity {
     }
 
     public String getUuid() {
-        try{
+        try {
             UUID uuid = UUID.fromString(this.uuid.trim());
             return uuid.toString();
-        } catch (Exception e){
+        } catch (Exception e) {
             return null;
         }
     }
@@ -186,17 +186,17 @@ public class ConceptRow extends CSVEntity {
     }
 
     private void addBlankReferenceTerms(int maxReferenceTerms) {
-        int counter  = this.getReferenceTerms().size();
-        while (counter <= maxReferenceTerms){
+        int counter = this.getReferenceTerms().size();
+        while (counter <= maxReferenceTerms) {
             this.referenceTerms.add(new ConceptReferenceTermRow(null, null, null));
             counter++;
         }
     }
 
     private void addBlankAnswers(int maxAnswers) {
-        int counter  = this.getAnswers().size();
+        int counter = this.getAnswers().size();
         this.answers = this.getAnswers();
-        while (counter <= maxAnswers){
+        while (counter <= maxAnswers) {
             this.answers.add(new KeyValue("answer", ""));
             counter++;
         }
@@ -205,7 +205,7 @@ public class ConceptRow extends CSVEntity {
     private void addBlankSynonyms(int maxSynonyms) {
         int counter = this.getSynonyms().size();
         this.synonyms = this.getSynonyms();
-        while (counter <= maxSynonyms){
+        while (counter <= maxSynonyms) {
             this.synonyms.add(new KeyValue("synonym", ""));
             counter++;
         }

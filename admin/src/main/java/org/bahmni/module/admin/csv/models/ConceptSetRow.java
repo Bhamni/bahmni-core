@@ -53,15 +53,15 @@ public class ConceptSetRow extends CSVEntity {
     }
 
     public String getUuid() {
-        try{
+        try {
             UUID uuid = UUID.fromString(this.uuid.trim());
             return uuid.toString();
-        } catch (Exception e){
+        } catch (Exception e) {
             return null;
         }
     }
 
-    public ConceptSetRow getHeaders(){
+    public ConceptSetRow getHeaders() {
         int childCount = 1;
         List<KeyValue> childHeaders = new ArrayList<>();
         for (KeyValue ignored : children) {
@@ -105,17 +105,17 @@ public class ConceptSetRow extends CSVEntity {
     }
 
     private void addBlankChildren(int maxSetMembers) {
-        int counter  = this.getChildren().size();
+        int counter = this.getChildren().size();
         this.children = this.getChildren();
-        while (counter <= maxSetMembers){
+        while (counter <= maxSetMembers) {
             this.children.add(new KeyValue("child", ""));
             counter++;
         }
     }
 
     private void addBlankReferenceTerms(int maxReferenceTerms) {
-        int counter  = this.referenceTerms.size();
-        while (counter <= maxReferenceTerms){
+        int counter = this.referenceTerms.size();
+        while (counter <= maxReferenceTerms) {
             this.referenceTerms.add(new ConceptReferenceTermRow(null, null, null));
             counter++;
         }

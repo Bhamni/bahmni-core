@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.bahmni.csv.KeyValue;
@@ -52,9 +53,9 @@ public class DiagnosisMapper {
         bahmniDiagnosisRequest.setCertainty(String.valueOf(Diagnosis.Certainty.CONFIRMED));
         bahmniDiagnosisRequest.setDiagnosisDateTime(encounterDate);
 
-        if(obsConcept == null){
+        if (obsConcept == null) {
             bahmniDiagnosisRequest.setFreeTextAnswer(diagnosis);
-        }else{
+        } else {
             EncounterTransaction.Concept diagnosisConcept = new EncounterTransaction.Concept(obsConcept.getUuid(), obsConcept.getName().getName());
             bahmniDiagnosisRequest.setCodedAnswer(diagnosisConcept);
         }
@@ -65,8 +66,8 @@ public class DiagnosisMapper {
     protected Concept getConcept(String diagnosis) {
         try {
             return conceptCache.getConcept(diagnosis);
-        }catch(ConceptNotFoundException cnfe){
-            log.error(cnfe.getMessage()+" Setting it as free text answer",cnfe);
+        } catch (ConceptNotFoundException cnfe) {
+            log.error(cnfe.getMessage() + " Setting it as free text answer", cnfe);
             return null;
         }
     }

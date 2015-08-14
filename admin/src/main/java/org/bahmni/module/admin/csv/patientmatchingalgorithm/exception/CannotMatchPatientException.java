@@ -7,7 +7,8 @@ import java.util.List;
 public class CannotMatchPatientException extends Exception {
     private String patientIds = "";
 
-    public CannotMatchPatientException() {}
+    public CannotMatchPatientException() {
+    }
 
     public CannotMatchPatientException(List<Patient> patients) {
         this.patientIds = getPatientIds(patients);

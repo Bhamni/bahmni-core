@@ -5,6 +5,7 @@ import org.bahmni.csv.KeyValue;
 import org.bahmni.csv.annotation.CSVHeader;
 import org.bahmni.csv.annotation.CSVRegexHeader;
 import org.bahmni.csv.annotation.CSVRepeatingHeaders;
+
 import static org.bahmni.module.admin.csv.utils.CSVUtils.getDateFromString;
 
 import java.text.ParseException;
@@ -31,7 +32,7 @@ public class LabResultsRow extends CSVEntity {
     public List<LabResultRow> getTestResults() {
         List<LabResultRow> labResultRows = new ArrayList<>();
         for (LabResultRow testResult : testResults) {
-            if(!testResult.isEmpty()) {
+            if (!testResult.isEmpty()) {
                 labResultRows.add(testResult);
             }
         }

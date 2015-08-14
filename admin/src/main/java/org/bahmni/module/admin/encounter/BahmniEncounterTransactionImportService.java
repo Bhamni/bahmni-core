@@ -16,6 +16,7 @@ import org.openmrs.module.emrapi.encounter.domain.EncounterTransaction;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -57,7 +58,7 @@ public class BahmniEncounterTransactionImportService {
             BahmniEncounterTransaction bahmniEncounterTransaction = new BahmniEncounterTransaction();
             bahmniEncounterTransaction.setPatientUuid(patient.getUuid());
             bahmniEncounterTransaction.setBahmniDiagnoses(allDiagnosis);
-            bahmniEncounterTransaction.setObservations(fromETObsToBahmniObs.create(allObservations,new AdditionalBahmniObservationFields(null,encounterRow.getEncounterDate(),null,null)));
+            bahmniEncounterTransaction.setObservations(fromETObsToBahmniObs.create(allObservations, new AdditionalBahmniObservationFields(null, encounterRow.getEncounterDate(), null, null)));
 
             bahmniEncounterTransaction.setEncounterDateTime(encounterRow.getEncounterDate());
             bahmniEncounterTransaction.setEncounterType(encounterType);

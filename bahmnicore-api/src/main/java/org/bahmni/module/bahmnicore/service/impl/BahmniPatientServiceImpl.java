@@ -6,15 +6,13 @@ import org.bahmni.module.bahmnicore.contract.patient.response.PatientConfigRespo
 import org.bahmni.module.bahmnicore.contract.patient.response.PatientResponse;
 import org.bahmni.module.bahmnicore.dao.PatientDao;
 import org.bahmni.module.bahmnicore.contract.patient.PatientSearchParameters;
-import org.bahmni.module.bahmnicore.datamigration.ExecutionMode;
 import org.bahmni.module.bahmnicore.mapper.PatientMapper;
-import org.bahmni.module.bahmnicore.model.BahmniPatient;
 import org.bahmni.module.bahmnicore.service.BahmniPatientService;
 import org.bahmni.module.bahmnicore.service.PatientImageService;
 import org.openmrs.Concept;
 import org.openmrs.Patient;
 import org.openmrs.PersonAttributeType;
-import org.openmrs.api.APIAuthenticationException;
+import org.openmrs.RelationshipType;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.PersonService;
@@ -72,6 +70,11 @@ public class BahmniPatientServiceImpl implements BahmniPatientService {
     @Override
     public List<Patient> get(String partialIdentifier, boolean shouldMatchExactPatientId) {
         return patientDao.getPatients(partialIdentifier, shouldMatchExactPatientId);
+    }
+
+    @Override
+    public List<RelationshipType> getByAIsToB(String aIsToB) {
+        return patientDao.getByAIsToB(aIsToB);
     }
 
 }
