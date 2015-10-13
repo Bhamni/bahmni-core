@@ -3187,6 +3187,14 @@
     </changeSet>
 
     <changeSet id="bahmni-core-201509231746" author="Swathi, Jaswanth" context="rel0.76">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="1">
+                SELECT count(*) FROM person_attribute_type WHERE name = 'Telephone Number'
+            </sqlCheck>
+            <sqlCheck expectedResult="0">
+                SELECT count(*) FROM person_attribute JOIN person_attribute_type ON person_attribute.person_attribute_type_id = person_attribute_type.person_attribute_type_id where name = 'Telephone Number'
+            </sqlCheck>
+        </preConditions>
         <comment>Deleting Telephone Number person attribute type</comment>
         <sql>
             DELETE FROM person_attribute_type WHERE name = 'Telephone Number';
@@ -3194,6 +3202,14 @@
     </changeSet>
 
     <changeSet id="bahmni-core-201509231749" author="Swathi, Jaswanth" context="rel0.76">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="1">
+                SELECT count(*) FROM person_attribute_type WHERE name = 'Unknown patient'
+            </sqlCheck>
+            <sqlCheck expectedResult="0">
+                SELECT count(*) FROM person_attribute JOIN person_attribute_type ON person_attribute.person_attribute_type_id = person_attribute_type.person_attribute_type_id where name = 'Unknown patient'
+            </sqlCheck>
+        </preConditions>
         <comment>Deleting Unknown patient person attribute type</comment>
         <sql>
             DELETE FROM person_attribute_type WHERE name = 'Unknown patient';
@@ -3358,4 +3374,155 @@
             INSERT INTO role_privilege (role, privilege) VALUES ('Consultation-Orders', 'Add Orders');
         </sql>
     </changeSet>
+
+    <changeSet id="bahmni-core-201509301203" author="Chethan, Sourav" context="rel0.76">
+        <sql>
+            set @concept_source_id = 0;
+            set @concept_reference_term_id = 0;
+            set @set_concept_id = 0;
+            set @bahmni_initial_diagnosis_concept_id = 0;
+            set @bahmni_diagnosis_revised_concept_id = 0;
+            set @bahmni_diagnosis_status_concept_id = 0;
+
+            select concept_source_id into @concept_source_id from concept_reference_source where name = "org.openmrs.module.emrapi";
+
+            select concept_reference_term_id into @concept_reference_term_id from concept_reference_term where code = 'Diagnosis Concept Set' and concept_source_id = @concept_source_id;
+
+            select concept_id into @set_concept_id from concept_reference_map where concept_reference_term_id = @concept_reference_term_id;
+
+            select concept_id into @bahmni_initial_diagnosis_concept_id from concept_name where name = 'Bahmni Initial Diagnosis' and concept_name_type='FULLY_SPECIFIED' ;
+
+            select concept_id into @bahmni_diagnosis_revised_concept_id from concept_name where name = 'Bahmni Diagnosis Revised' and concept_name_type='FULLY_SPECIFIED';
+
+            select concept_id into @bahmni_diagnosis_status_concept_id from concept_name where name = 'Bahmni Diagnosis Status' and concept_name_type='FULLY_SPECIFIED';
+
+            call add_concept_set_members (@set_concept_id,@bahmni_initial_diagnosis_concept_id,1);
+            call add_concept_set_members (@set_concept_id,@bahmni_diagnosis_revised_concept_id,1);
+            call add_concept_set_members (@set_concept_id,@bahmni_diagnosis_status_concept_id,1);
+
+        </sql>
+    </changeSet>
+
+    <changeSet id="bahmni-atomfeed-add-event-records-category-index" author="Achinta, Sudhakar" context="rel0.75">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT count(*) FROM INFORMATION_SCHEMA.STATISTICS WHERE TABLE_NAME = 'event_records' AND INDEX_NAME = 'event_records_category_idx'
+            </sqlCheck>
+        </preConditions>
+        <comment>Add index to the category column in event_records table for performance (if it is not already present)</comment>
+        <createIndex tableName="event_records" indexName="event_records_category_idx">
+            <column name="category"/>
+        </createIndex>
+    </changeSet>
+
+
+    <changeSet id="bahmni-registration-201507101741" author="Shan,Sourav" context="rel0.77">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">select count(*) from role where role='Registration'</sqlCheck>
+        </preConditions>
+        <comment>Add Registration Role</comment>
+        <sql>
+            INSERT INTO role (role, description) VALUES ('Registration', 'Will have access to all registration roles');
+        </sql>
+    </changeSet>
+
+    <changeSet id="bahmni-registration-201507101742" author="Shan,Sourav" context="rel0.77">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">select count(*) from role where role='Registration-Read'</sqlCheck>
+        </preConditions>
+        <comment>Add Registration Read Role</comment>
+        <sql>
+            INSERT INTO role (role, description) VALUES ('Registration-Read', 'Will have access to search patients');
+        </sql>
+    </changeSet>
+
+
+    <changeSet id="bahmni-registration-201507101744" author="Shan,Sourav" context="rel0.77">
+        <comment>Add privileges registration read</comment>
+        <sql>
+            INSERT INTO role_role(parent_role, child_role) VALUES ('Registration-Read', 'Registration');
+            INSERT INTO role_privilege (role, privilege) VALUES ('Registration-Read', 'View Patients');
+        </sql>
+    </changeSet>
+
+    <changeSet id="bahmni-registration-201507101747" author="Shan,Sourav" context="rel0.77">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">select count(*) from role where role='Registration-Write'</sqlCheck>
+        </preConditions>
+        <comment>Add Registration Write Role</comment>
+        <sql>
+            INSERT INTO role (role, description) VALUES ('Registration-Write', 'Will have access to update patient information');
+        </sql>
+    </changeSet>
+
+
+    <changeSet id="bahmni-registration-201507101748" author="Shan,Sourav" context="rel0.77">
+        <comment>Add privileges registration write</comment>
+        <sql>
+            INSERT INTO role_role(parent_role, child_role) VALUES ('Registration-Write', 'Registration');
+            INSERT INTO role_role(parent_role, child_role) VALUES ('Registration-Read', 'Registration-Write');
+            INSERT INTO role_privilege (role, privilege) VALUES ('Registration-Write', 'Add Patients');
+            INSERT INTO role_privilege (role, privilege) VALUES ('Registration-Write', 'Edit Patients');
+            INSERT INTO role_privilege (role, privilege) VALUES ('Registration-Write', 'Edit Patient Identifiers');
+        </sql>
+    </changeSet>
+
+
+    <changeSet id="bahmni-registration-201507101749" author="Shan,Sourav" context="rel0.77">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">select count(*) from role where role='Registration-Visit-Action'</sqlCheck>
+        </preConditions>
+        <comment>Add Registration Visit Action Role</comment>
+        <sql>
+            INSERT INTO role (role, description) VALUES ('Registration-Visit-Action', 'Will have access to open and close visit');
+        </sql>
+    </changeSet>
+
+
+    <changeSet id="bahmni-registration-201507101753" author="Shan,Sourav" context="rel0.77">
+        <comment>Add privileges registration visit action</comment>
+        <sql>
+            INSERT INTO role_role(parent_role, child_role) VALUES ('Registration-Visit-Action', 'Registration');
+            INSERT INTO role_role(parent_role, child_role) VALUES ('Registration-Write', 'Registration-Visit-Action');
+            INSERT INTO role_privilege (role, privilege) VALUES ('Registration-Visit-Action', 'Add Visits');
+            INSERT INTO role_privilege (role, privilege) VALUES ('Registration-Visit-Action', 'Delete Visits');
+            INSERT INTO role_privilege (role, privilege) VALUES ('Registration-Visit-Action', 'Edit Visits');
+        </sql>
+    </changeSet>
+
+    <changeSet id="bahmni-registration-201507101755" author="Shan,Sourav" context="rel0.77">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">select count(*) from role where role='Registration-Additional'</sqlCheck>
+        </preConditions>
+        <comment>Add role for additional actions for registration app.</comment>
+        <sql>
+            INSERT INTO role (role, description) VALUES ('Registration-Additional', 'Will have access to additional actions like encounter');
+        </sql>
+    </changeSet>
+
+
+    <changeSet id="bahmni-registration-201507101757" author="Shan,Sourav" context="rel0.77">
+        <comment>Add privileges for additional action required for registration app like encounter etc.</comment>
+        <sql>
+            INSERT INTO role_role(parent_role, child_role) VALUES ('Registration-Additional', 'Registration');
+            INSERT INTO role_privilege (role, privilege) VALUES ('Registration-Additional', 'Add Encounters');
+            INSERT INTO role_privilege (role, privilege) VALUES ('Registration-Additional', 'app:registration');
+            INSERT INTO role_privilege (role, privilege) VALUES ('Registration-Additional', 'Edit Encounters');
+            INSERT INTO role_privilege (role, privilege) VALUES ('Registration-Additional', 'Get Encounter Roles');
+            INSERT INTO role_privilege (role, privilege) VALUES ('Registration-Additional', 'Get Encounters');
+            INSERT INTO role_privilege (role, privilege) VALUES ('Registration-Additional', 'Get Patients');
+            INSERT INTO role_privilege (role, privilege) VALUES ('Registration-Additional', 'Get People');
+            INSERT INTO role_privilege (role, privilege) VALUES ('Registration-Additional', 'Get Visit Attribute Types');
+            INSERT INTO role_privilege (role, privilege) VALUES ('Registration-Additional', 'Get Visits');
+        </sql>
+    </changeSet>
+
+
+    <changeSet id="bahmni-registration-201507101808" author="Shan,Sourav" context="rel0.77">
+        <comment>Add patient listing role to registration</comment>
+        <sql>
+            INSERT INTO role_role(parent_role, child_role) VALUES ('Patient-Listing', 'Registration');
+        </sql>
+    </changeSet>
+
 </databaseChangeLog>

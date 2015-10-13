@@ -1,6 +1,7 @@
 package org.openmrs.module.bahmniemrapi.encountertransaction.impl;
 
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openmrs.*;
 import org.openmrs.api.*;
@@ -18,10 +19,7 @@ import org.openmrs.module.emrapi.encounter.domain.EncounterTransaction;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 @Transactional
 public class BahmniEncounterTransactionServiceImpl implements BahmniEncounterTransactionService {
@@ -119,7 +117,15 @@ public class BahmniEncounterTransactionServiceImpl implements BahmniEncounterTra
         EncounterSearchParametersBuilder searchParameters = new EncounterSearchParametersBuilder(encounterSearchParameters,
                 this.patientService, this.encounterService, this.locationService, this.providerService, this.visitService);
 
-        Encounter encounter = encounterSessionMatcher.findEncounter(null, mapEncounterParameters(searchParameters));
+        Visit visit = null;
+        if(! BahmniEncounterTransaction.isRetrospectiveEntry(searchParameters.getEndDate())){
+            List<Visit> visits = this.visitService.getActiveVisitsByPatient(searchParameters.getPatient());
+            if(CollectionUtils.isNotEmpty(visits)){
+                visit = visits.get(0);
+            }
+        }
+
+        Encounter encounter = encounterSessionMatcher.findEncounter(visit, mapEncounterParameters(searchParameters));
         if(encounter != null){
             return encounterTransactionMapper.map(encounter, encounterSearchParameters.getIncludeAll());
         }

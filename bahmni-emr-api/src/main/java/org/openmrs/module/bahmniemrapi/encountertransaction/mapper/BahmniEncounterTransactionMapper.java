@@ -7,6 +7,7 @@ import org.openmrs.api.EncounterService;
 import org.openmrs.api.PatientService;
 import org.openmrs.module.bahmniemrapi.accessionnote.mapper.AccessionNotesMapper;
 import org.openmrs.module.bahmniemrapi.diagnosis.contract.BahmniDiagnosisRequest;
+import org.openmrs.module.bahmniemrapi.diagnosis.helper.BahmniDiagnosisMetadata;
 import org.openmrs.module.bahmniemrapi.encountertransaction.contract.BahmniEncounterTransaction;
 import org.openmrs.module.bahmniemrapi.encountertransaction.contract.BahmniObservation;
 import org.openmrs.module.bahmniemrapi.encountertransaction.mapper.parameters.AdditionalBahmniObservationFields;
@@ -19,7 +20,7 @@ import java.util.List;
 @Component
 public class BahmniEncounterTransactionMapper {
     private AccessionNotesMapper accessionNotesMapper;
-    private BahmniDiagnosisMapper bahmniDiagnosisMapper;
+    private BahmniDiagnosisMetadata bahmniDiagnosisMetadata;
     private ObsRelationshipMapper obsRelationshipMapper;
     private PatientService patientService;
     private EncounterService encounterService;
@@ -27,13 +28,13 @@ public class BahmniEncounterTransactionMapper {
 
     @Autowired
     public BahmniEncounterTransactionMapper(AccessionNotesMapper accessionNotesMapper,
-                                            BahmniDiagnosisMapper bahmniDiagnosisMapper,
+                                            BahmniDiagnosisMetadata bahmniDiagnosisMetadata,
                                             ObsRelationshipMapper obsRelationshipMapper,
                                             PatientService patientService,
                                             EncounterService encounterService,
                                             ETObsToBahmniObsMapper fromETObsToBahmniObs) {
         this.accessionNotesMapper = accessionNotesMapper;
-        this.bahmniDiagnosisMapper = bahmniDiagnosisMapper;
+        this.bahmniDiagnosisMetadata = bahmniDiagnosisMetadata;
         this.obsRelationshipMapper = obsRelationshipMapper;
         this.patientService = patientService;
         this.encounterService = encounterService;
@@ -42,7 +43,7 @@ public class BahmniEncounterTransactionMapper {
 
     public BahmniEncounterTransaction map(EncounterTransaction encounterTransaction, boolean includeAll) {
         BahmniEncounterTransaction bahmniEncounterTransaction = new BahmniEncounterTransaction(encounterTransaction);
-        List<BahmniDiagnosisRequest> bahmniDiagnoses = bahmniDiagnosisMapper.map(encounterTransaction.getDiagnoses(), includeAll);
+        List<BahmniDiagnosisRequest> bahmniDiagnoses = bahmniDiagnosisMetadata.map(encounterTransaction.getDiagnoses(), includeAll);
         bahmniEncounterTransaction.setBahmniDiagnoses(bahmniDiagnoses);
         bahmniEncounterTransaction.setAccessionNotes(accessionNotesMapper.map(encounterTransaction));
         AdditionalBahmniObservationFields additionalBahmniObservationFields = new AdditionalBahmniObservationFields(encounterTransaction.getEncounterUuid(), encounterTransaction.getEncounterDateTime(), null,null);

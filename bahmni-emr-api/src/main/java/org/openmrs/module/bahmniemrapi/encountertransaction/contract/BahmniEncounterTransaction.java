@@ -224,6 +224,15 @@ public class BahmniEncounterTransaction {
         return encounterTransaction;
     }
 
+    public Map<String, Object> getExtensions() {
+        return encounterTransaction.getExtensions();
+    }
+
+    public EncounterTransaction setExtensions(Map<String, Object> extensions) {
+        encounterTransaction.setExtensions(extensions);
+        return encounterTransaction;
+    }
+
     public String getPatientId() {
         return patientId;
     }

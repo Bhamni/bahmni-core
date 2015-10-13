@@ -12,8 +12,12 @@ import org.openmrs.module.emrapi.encounter.domain.EncounterTransaction;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class BahmniEncounterTransactionTest {
     private final Date obsDate = new Date();
@@ -29,6 +33,7 @@ public class BahmniEncounterTransactionTest {
         bahmniEncounterTransaction = new BahmniEncounterTransaction();
         bahmniEncounterTransaction.setBahmniDiagnoses(createBahmniDiagnoses());
         bahmniEncounterTransaction.setObservations(createBahmniObservations());
+        bahmniEncounterTransaction.setExtensions(createExtensions());
         EncounterTransaction encounterTransaction = bahmniEncounterTransaction.toEncounterTransaction();
 
         assertEquals(2, encounterTransaction.getDiagnoses().size());
@@ -64,6 +69,17 @@ public class BahmniEncounterTransactionTest {
         assertEquals("obs-value2", observation2.getValue());
         assertEquals(true, observation2.getVoided());
         assertEquals("chumma", observation2.getVoidReason());
+
+        assertNotNull(encounterTransaction.getExtensions());
+        assertEquals(1, encounterTransaction.getExtensions().size());
+        assertTrue(encounterTransaction.getExtensions().containsKey("extension"));
+        assertEquals("Any Object Here", encounterTransaction.getExtensions().get("extension"));
+    }
+
+    private Map<String, Object> createExtensions() {
+        Map<String,Object> test = new HashMap<>();
+        test.put("extension", "Any Object Here");
+        return test;
     }
 
     @Test
