@@ -13,12 +13,13 @@ public class Concept extends ConceptCommon {
     private String units;
     private String hiNormal;
     private String lowNormal;
+    private String locale;
 
     public Concept() {
     }
 
-    public Concept(String uuid, String name, String conceptDescription, String conceptClass, String conceptShortname, Locale locale, List<ConceptReferenceTerm> conceptReferenceTermList, List<String> conceptSynonyms, List<String> conceptAnswers, String datatype) {
-        super(uuid, name, conceptDescription, conceptClass, conceptShortname, locale, conceptReferenceTermList, datatype);
+    public Concept(String uuid, String name, String conceptDescription, String conceptClass, String conceptShortname, String locale, List<ConceptReferenceTerm> conceptReferenceTermList, List<String> conceptSynonyms, List<String> conceptAnswers, String datatype) {
+        super(uuid, name, conceptDescription, conceptClass, conceptShortname, conceptReferenceTermList, datatype);
         this.answers = conceptAnswers;
         this.synonyms = conceptSynonyms;
     }
@@ -39,7 +40,14 @@ public class Concept extends ConceptCommon {
         this.synonyms = synonyms;
     }
 
+    public String getLocale() {
+		return locale;
+	}
 
+	public void setLocale(String locale) {
+		this.locale = locale;
+	}
+    
     public String getUnits() {
         return units;
     }

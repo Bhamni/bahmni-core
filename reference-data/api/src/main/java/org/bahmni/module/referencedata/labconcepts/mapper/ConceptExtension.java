@@ -60,7 +60,7 @@ public class ConceptExtension {
         return !setMember.isRetired();
     }
 
-    public static org.openmrs.Concept addConceptName(org.openmrs.Concept concept, ConceptName conceptName, Locale locale) {
+    public static org.openmrs.Concept addConceptName(org.openmrs.Concept concept, ConceptName conceptName, String locale) {
         if (conceptName.getName() == null) return concept;
         for (ConceptName name : concept.getNames()) {
             if (isFullySpecifiedName(conceptName) && isFullySpecifiedName(name) && !name.getName().equals(conceptName.getName())) {
@@ -68,7 +68,8 @@ public class ConceptExtension {
                 return concept;
             } else if (isShortName(conceptName) && isShortName(name) && !name.getName().equals(conceptName.getName())) {
                 name.setName(conceptName.getName());
-                name.setLocale(locale);
+                Locale l = new Locale(locale);
+                name.setLocale(l);
                 return concept;
             } else if (name.getName().equals(conceptName.getName())) {
                 return concept;

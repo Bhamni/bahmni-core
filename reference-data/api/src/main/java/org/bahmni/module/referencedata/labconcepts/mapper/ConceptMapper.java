@@ -27,7 +27,7 @@ public class ConceptMapper {
     }
 
     public org.openmrs.Concept map(Concept conceptData, ConceptClass conceptClass, ConceptDatatype conceptDatatype, List<ConceptAnswer> answers, org.openmrs.Concept existingConcept) {
-        org.openmrs.Concept concept = conceptCommonMapper.map(conceptData, conceptClass, existingConcept); // TODO
+        org.openmrs.Concept concept = conceptCommonMapper.map(conceptData, conceptClass, existingConcept);
         for (String conceptName : conceptData.getSynonyms()) {
             concept = addConceptName(concept, getConceptName(conceptName), conceptData.getLocale());
         }
@@ -53,7 +53,7 @@ public class ConceptMapper {
     public Concept map(org.openmrs.Concept concept) {
         String conceptDescription = null;
         String conceptShortname = null;
-        Locale locale = Context.getLocale();
+        String locale = Context.getLocale().toString();
         String name = concept.getName(Context.getLocale()).getName();
         ConceptDescription description = concept.getDescription(Context.getLocale());
         if (description != null) {

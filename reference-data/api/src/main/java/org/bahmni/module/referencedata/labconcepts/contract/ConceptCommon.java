@@ -3,7 +3,6 @@ package org.bahmni.module.referencedata.labconcepts.contract;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.validation.constraints.NotNull;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -11,23 +10,17 @@ import java.util.UUID;
 
 public class ConceptCommon {
     private String uniqueName;
-    private Locale locale;
     private String displayName;
     private String description;
     private String className;
     private String dataType;
     private List<ConceptReferenceTerm> conceptReferenceTermsList = new ArrayList<>();
     private String uuid;
+    private String locale;
 
-    public ConceptCommon(String uuid, String name, String conceptDescription, String conceptClass, String conceptShortname, Locale locale, List<ConceptReferenceTerm> conceptReferenceTermsList, String dataType) {
-        this.uuid = uuid;
-        this.uniqueName = name;
-        this.locale = locale;
-        this.description = conceptDescription;
-        this.className = conceptClass;
-        this.displayName = conceptShortname;
-        this.dataType = dataType;
-        this.conceptReferenceTermsList = conceptReferenceTermsList;
+    public ConceptCommon(String uuid, String name, String conceptDescription, String conceptClass, String conceptShortname, String locale, List<ConceptReferenceTerm> conceptReferenceTermsList, String dataType) {
+    	this( uuid,  name,  conceptDescription,  conceptClass,  conceptShortname, conceptReferenceTermsList, dataType);
+        this.locale = locale;        
     }
     
     public ConceptCommon(String uuid, String name, String conceptDescription, String conceptClass, String conceptShortname, List<ConceptReferenceTerm> conceptReferenceTermsList, String dataType) {
@@ -61,7 +54,15 @@ public class ConceptCommon {
         this.uniqueName = uniqueName;
     }
 
-    public String getDisplayName() {
+    public String getLocale() {
+		return locale;
+	}
+
+	public void setLocale(String locale) {
+		this.locale = locale;
+	}
+
+	public String getDisplayName() {
         return displayName;
     }
 
@@ -101,14 +102,4 @@ public class ConceptCommon {
     public void setUuid(String uuid) {
         this.uuid = uuid;
     }
-
-	public Locale getLocale() {
-		return locale;
-	}
-
-	public void setLocale(Locale locale) {
-		this.locale = locale;
-	}
-    
-    
 }
