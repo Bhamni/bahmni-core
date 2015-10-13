@@ -15,6 +15,7 @@ import org.openmrs.api.context.Context;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
 import static org.bahmni.module.admin.csv.utils.CSVUtils.getKeyValueList;
 
@@ -31,6 +32,7 @@ public class ConceptMapper {
         concept.setDataType(conceptRow.getDataType());
         concept.setDescription(conceptRow.getDescription());
         concept.setUniqueName(conceptRow.getName());
+        concept.setLocale(conceptRow.getLocale());
         concept.setDisplayName(conceptRow.getShortName());
         concept.setUnits(conceptRow.getUnits());
         concept.setHiNormal(conceptRow.getHiNormal());
@@ -88,6 +90,7 @@ public class ConceptMapper {
         String units = concept.getUnits();
         String hiNormal = concept.getHiNormal();
         String lowNormal = concept.getLowNormal();
-        return new ConceptRow(uuid, name, description, conceptClass, shortName, conceptDatatype, units, hiNormal, lowNormal, referenceTermRows, conceptSynonyms, conceptAnswers);
+        String locale = concept.getLocale().toString();
+        return new ConceptRow(uuid, name, description, conceptClass, shortName, locale, conceptDatatype, units, hiNormal, lowNormal, referenceTermRows, conceptSynonyms, conceptAnswers);
     }
 }

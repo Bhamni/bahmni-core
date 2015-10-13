@@ -9,6 +9,7 @@ import org.openmrs.api.context.Context;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
 import static org.bahmni.module.referencedata.labconcepts.mapper.ConceptExtension.addConceptName;
 import static org.bahmni.module.referencedata.labconcepts.mapper.ConceptExtension.getConceptName;
@@ -26,9 +27,9 @@ public class ConceptMapper {
     }
 
     public org.openmrs.Concept map(Concept conceptData, ConceptClass conceptClass, ConceptDatatype conceptDatatype, List<ConceptAnswer> answers, org.openmrs.Concept existingConcept) {
-        org.openmrs.Concept concept = conceptCommonMapper.map(conceptData, conceptClass, existingConcept);
+        org.openmrs.Concept concept = conceptCommonMapper.map(conceptData, conceptClass, existingConcept); // TODO
         for (String conceptName : conceptData.getSynonyms()) {
-            concept = addConceptName(concept, getConceptName(conceptName));
+            concept = addConceptName(concept, getConceptName(conceptName), conceptData.getLocale());
         }
         if (conceptDatatype.isNumeric()) {
             concept = conceptNumericMapper.map(concept, conceptData, existingConcept);
@@ -52,6 +53,7 @@ public class ConceptMapper {
     public Concept map(org.openmrs.Concept concept) {
         String conceptDescription = null;
         String conceptShortname = null;
+        Locale locale = Context.getLocale();
         String name = concept.getName(Context.getLocale()).getName();
         ConceptDescription description = concept.getDescription(Context.getLocale());
         if (description != null) {
@@ -74,7 +76,7 @@ public class ConceptMapper {
         }
 
         String uuid = concept.getUuid();
-        return new Concept(uuid, name, conceptDescription, conceptClass, conceptShortname, referenceTerms, conceptSynonyms, conceptAnswers, conceptDatatype);
+        return new Concept(uuid, name, conceptDescription, conceptClass, conceptShortname, locale, referenceTerms, conceptSynonyms, conceptAnswers, conceptDatatype);
     }
 
     private List<String> getAnswers(org.openmrs.Concept concept) {

@@ -10,6 +10,7 @@ import org.bahmni.csv.annotation.CSVRepeatingHeaders;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 import static org.bahmni.module.admin.csv.utils.CSVUtils.getStringArray;
@@ -29,6 +30,10 @@ public class ConceptRow extends CSVEntity {
 
     @CSVHeader(name = "shortname")
     public String shortName;
+    
+    @CSVHeader(name = "locale", optional = true)
+    public Locale locale;
+
 
     @CSVRepeatingHeaders(names = {"reference-term-source", "reference-term-code", "reference-term-relationship"}, type = ConceptReferenceTermRow.class)
     public List<ConceptReferenceTermRow> referenceTerms = new ArrayList<>();
@@ -51,12 +56,23 @@ public class ConceptRow extends CSVEntity {
     @CSVHeader(name = "Low Normal", optional = true)
     public String lowNormal;
 
-    public ConceptRow(String uuid, String name, String description, String conceptClass, String shortName, String dataType, String units, String hiNormal, String lowNormal, List<ConceptReferenceTermRow> referenceTermRows, List<KeyValue> synonyms, List<KeyValue> answers) {
+    
+    public Locale getLocale() {
+		return locale;
+	}
+
+	public void setLocale(Locale locale) {
+		this.locale = locale;
+	}
+
+	public ConceptRow(String uuid, String name, String description, String conceptClass, String shortName, String locale, String dataType, String units, String hiNormal, String lowNormal, List<ConceptReferenceTermRow> referenceTermRows, List<KeyValue> synonyms, List<KeyValue> answers) {
         this.uuid = uuid;
         this.name = name;
         this.description = description;
         this.conceptClass = conceptClass;
         this.shortName = shortName;
+        Locale l = new Locale(locale);
+        this.locale = l;
         this.dataType = dataType;
         this.synonyms = synonyms;
         this.answers = answers;
@@ -90,7 +106,7 @@ public class ConceptRow extends CSVEntity {
         }
 
         //TODO FIX reference terms
-        return new ConceptRow("uuid", "name", "description", "class", "shortname", "datatype", "units", "High Normal", "Low Normal", referenceTermHeaders, synonymHeaders, answerHeaders);
+        return new ConceptRow("uuid", "name", "description", "class", "shortname", "locale", "datatype", "units", "High Normal", "Low Normal", referenceTermHeaders, synonymHeaders, answerHeaders);
     }
 
     public ConceptRow() {
@@ -169,7 +185,7 @@ public class ConceptRow extends CSVEntity {
         addBlankSynonyms(maxSynonyms);
         addBlankAnswers(maxAnswers);
         addBlankReferenceTerms(maxReferenceTerms);
-        String[] aRow = {uuid, name, description, conceptClass, shortName, dataType, units, hiNormal, lowNormal};
+        String[] aRow = {uuid, name, description, conceptClass, shortName, locale.toString(), dataType, units, hiNormal, lowNormal};
         String[] synonymsRow = getStringArray(synonyms);
         String[] answersRow = getStringArray(answers);
         aRow = ArrayUtils.addAll(aRow, ArrayUtils.addAll(synonymsRow, answersRow));

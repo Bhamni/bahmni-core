@@ -4,6 +4,7 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Concept extends ConceptCommon {
@@ -16,8 +17,8 @@ public class Concept extends ConceptCommon {
     public Concept() {
     }
 
-    public Concept(String uuid, String name, String conceptDescription, String conceptClass, String conceptShortname, List<ConceptReferenceTerm> conceptReferenceTermList, List<String> conceptSynonyms, List<String> conceptAnswers, String datatype) {
-        super(uuid, name, conceptDescription, conceptClass, conceptShortname, conceptReferenceTermList, datatype);
+    public Concept(String uuid, String name, String conceptDescription, String conceptClass, String conceptShortname, Locale locale, List<ConceptReferenceTerm> conceptReferenceTermList, List<String> conceptSynonyms, List<String> conceptAnswers, String datatype) {
+        super(uuid, name, conceptDescription, conceptClass, conceptShortname, locale, conceptReferenceTermList, datatype);
         this.answers = conceptAnswers;
         this.synonyms = conceptSynonyms;
     }

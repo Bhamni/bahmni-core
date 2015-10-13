@@ -12,6 +12,7 @@ import org.openmrs.api.context.Context;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class ConceptExtension {
     public static String getDescription(Concept concept) {
@@ -59,7 +60,7 @@ public class ConceptExtension {
         return !setMember.isRetired();
     }
 
-    public static org.openmrs.Concept addConceptName(org.openmrs.Concept concept, ConceptName conceptName) {
+    public static org.openmrs.Concept addConceptName(org.openmrs.Concept concept, ConceptName conceptName, Locale locale) {
         if (conceptName.getName() == null) return concept;
         for (ConceptName name : concept.getNames()) {
             if (isFullySpecifiedName(conceptName) && isFullySpecifiedName(name) && !name.getName().equals(conceptName.getName())) {
@@ -67,6 +68,7 @@ public class ConceptExtension {
                 return concept;
             } else if (isShortName(conceptName) && isShortName(name) && !name.getName().equals(conceptName.getName())) {
                 name.setName(conceptName.getName());
+                name.setLocale(locale);
                 return concept;
             } else if (name.getName().equals(conceptName.getName())) {
                 return concept;
