@@ -198,6 +198,19 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
+    public List<Order> getAllOrders(Patient patient, List<OrderType> orderTypes) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Order.class);
+        criteria.add(Restrictions.eq("patient", patient));
+        if (orderTypes != null && orderTypes.size() > 0) {
+            criteria.add(Restrictions.in("orderType", orderTypes));
+        }
+        criteria.add(Restrictions.eq("voided", false));
+        criteria.add(Restrictions.ne("action", Order.Action.DISCONTINUE));
+        criteria.addOrder(org.hibernate.criterion.Order.asc("orderId"));
+        return criteria.list();
+    }
+
+    @Override
     public List<Order> getAllOrders(Patient patient, List<OrderType> orderTypes, Integer offset, Integer limit) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Order.class);
         criteria.add(Restrictions.eq("patient", patient));

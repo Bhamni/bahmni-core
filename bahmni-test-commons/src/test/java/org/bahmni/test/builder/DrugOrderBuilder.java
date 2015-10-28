@@ -106,7 +106,9 @@ public class DrugOrderBuilder {
     public DrugOrderBuilder withFrequency(String frequency) {
         final Concept frequencyConcept = new Concept();
         frequencyConcept.setFullySpecifiedName(new ConceptName(frequency, Locale.getDefault()));
-        order.setFrequency(new OrderFrequency() {{setConcept(frequencyConcept);}});
+        order.setFrequency(new OrderFrequency() {{
+            setConcept(frequencyConcept);
+        }});
         return this;
     }
 
@@ -133,6 +135,16 @@ public class DrugOrderBuilder {
         personObj.setNames(personNames);
         User user = new User(personObj);
         order.setCreator(user);
+        return this;
+    }
+
+    public DrugOrderBuilder withConcept(Concept ibeprofen) {
+        order.setConcept(ibeprofen);
+        return this;
+    }
+
+    public DrugOrderBuilder withOrderAction(Order.Action action) {
+        order.setAction(action);
         return this;
     }
 }

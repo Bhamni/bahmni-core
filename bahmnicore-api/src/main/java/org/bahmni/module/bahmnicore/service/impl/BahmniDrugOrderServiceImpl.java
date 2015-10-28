@@ -11,28 +11,8 @@ import org.bahmni.module.bahmnicore.model.BahmniFeedDrugOrder;
 import org.bahmni.module.bahmnicore.service.BahmniDrugOrderService;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
-import org.openmrs.CareSetting;
-import org.openmrs.Concept;
-import org.openmrs.Drug;
-import org.openmrs.DrugOrder;
-import org.openmrs.Duration;
-import org.openmrs.Encounter;
-import org.openmrs.EncounterRole;
-import org.openmrs.EncounterType;
-import org.openmrs.Order;
-import org.openmrs.OrderFrequency;
-import org.openmrs.OrderType;
-import org.openmrs.Patient;
-import org.openmrs.Provider;
-import org.openmrs.User;
-import org.openmrs.Visit;
-import org.openmrs.api.ConceptService;
-import org.openmrs.api.EncounterService;
-import org.openmrs.api.OrderService;
-import org.openmrs.api.PatientService;
-import org.openmrs.api.ProviderService;
-import org.openmrs.api.UserService;
-import org.openmrs.api.VisitService;
+import org.openmrs.*;
+import org.openmrs.api.*;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.bahmniemrapi.drugorder.contract.BahmniOrderAttribute;
 import org.openmrs.module.bahmniemrapi.drugorder.dosinginstructions.FlexibleDosingInstructions;
@@ -44,11 +24,7 @@ import org.openmrs.module.emrapi.utils.HibernateLazyLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class BahmniDrugOrderServiceImpl implements BahmniDrugOrderService {
@@ -114,12 +90,12 @@ public class BahmniDrugOrderServiceImpl implements BahmniDrugOrderService {
         return getDrugOrders(orders);
     }
 
-    private List<DrugOrder> getDrugOrders(List<Order> orders){
+    private List<DrugOrder> getDrugOrders(List<Order> orders) {
         HibernateLazyLoader hibernateLazyLoader = new HibernateLazyLoader();
         List<DrugOrder> drugOrders = new ArrayList<>();
-        for(Order order: orders){
+        for (Order order : orders) {
             order = hibernateLazyLoader.load(order);
-            if(order instanceof DrugOrder) {
+            if (order instanceof DrugOrder) {
                 drugOrders.add((DrugOrder) order);
             }
         }
@@ -139,7 +115,7 @@ public class BahmniDrugOrderServiceImpl implements BahmniDrugOrderService {
 
     @Override
     public List<DrugOrder> getPrescribedDrugOrdersForConcepts(Patient patient, Boolean includeActiveVisit, List<Visit> visits, List<Concept> concepts) {
-        if(concepts.isEmpty() || concepts == null){
+        if (concepts.isEmpty() || concepts == null) {
             return new ArrayList<>();
         }
         return orderDao.getPrescribedDrugOrdersForConcepts(patient, includeActiveVisit, visits, concepts);
@@ -158,9 +134,16 @@ public class BahmniDrugOrderServiceImpl implements BahmniDrugOrderService {
         return response;
     }
 
+    @Override
+    public List<Order> getAllDrugOrders(String patientUuid) {
+        Patient patientByUuid = openmrsPatientService.getPatientByUuid(patientUuid);
+        OrderType orderTypeByUuid = orderService.getOrderTypeByUuid(OrderType.DRUG_ORDER_TYPE_UUID);
+        return orderDao.getAllOrders(patientByUuid, Arrays.asList(orderTypeByUuid));
+    }
+
     private List<EncounterTransaction.Concept> fetchOrderAttributeConcepts() {
         Concept orderAttributesConceptSet = conceptService.getConceptByName(BahmniOrderAttribute.ORDER_ATTRIBUTES_CONCEPT_SET_NAME);
-        if(orderAttributesConceptSet != null){
+        if (orderAttributesConceptSet != null) {
             List<EncounterTransaction.Concept> etOrderAttributeConcepts = new ArrayList<>();
             List<Concept> orderAttributes = orderAttributesConceptSet.getSetMembers();
             for (Concept orderAttribute : orderAttributes) {

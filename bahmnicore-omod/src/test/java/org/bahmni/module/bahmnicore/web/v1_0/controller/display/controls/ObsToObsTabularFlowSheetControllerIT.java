@@ -13,14 +13,12 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 public class ObsToObsTabularFlowSheetControllerIT extends BaseIntegrationTest {
-    @Autowired
-    private ObsToObsTabularFlowSheetController obsToObsPivotTableController;
 
     @Before
     public void setUp() throws Exception {
-        executeDataSet("flowSheetTableDataSet.xml");
-        executeDataSet("flowSheetDataSetWithMultipleLevelConcepts.xml");
-        executeDataSet("flowSheetTableDataSetForConceptDetails.xml");
+        executeDataSet("obstoobsflowsheet/flowSheetTableDataSet.xml");
+        executeDataSet("obstoobsflowsheet/flowSheetDataSetWithMultipleLevelConcepts.xml");
+        executeDataSet("obstoobsflowsheet/flowSheetTableDataSetForConceptDetails.xml");
     }
 
     @Test

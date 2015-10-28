@@ -30,4 +30,6 @@ public interface OrderDao {
     Order getOrderByUuid(String orderUuid);
 
     List<Order> getOrdersForVisitUuid(String visitUuid, String orderTypeUuid);
+
+    List<Order> getAllOrders(Patient patientByUuid, List<OrderType> orderTypes);
 }

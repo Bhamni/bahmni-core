@@ -1,6 +1,6 @@
 package org.bahmni.module.bahmnicore.service;
 
-import org.bahmni.module.bahmnicore.contract.drugorder.*;
+import org.bahmni.module.bahmnicore.contract.drugorder.DrugOrderConfigResponse;
 import org.bahmni.module.bahmnicore.model.BahmniFeedDrugOrder;
 import org.openmrs.*;
 
@@ -9,6 +9,7 @@ import java.util.List;
 
 public interface BahmniDrugOrderService {
     void add(String patientId, Date orderDate, List<BahmniFeedDrugOrder> bahmniDrugOrders, String systemUserName, String visitTypeName);
+
     List getActiveDrugOrders(String patientUuid);
 
     List<DrugOrder> getPrescribedDrugOrders(String patientUuid, Boolean includeActiveVisit, Integer numberOfVisit);
@@ -18,4 +19,6 @@ public interface BahmniDrugOrderService {
     List<DrugOrder> getPrescribedDrugOrdersForConcepts(Patient patient, Boolean includeActiveVisit, List<Visit> visits, List<Concept> concepts);
 
     DrugOrderConfigResponse getConfig();
+
+    List<Order> getAllDrugOrders(String patientUuid);
 }
