@@ -103,10 +103,13 @@ public class ObsToObsTabularFlowSheetControllerIT extends BaseIntegrationTest {
         PivotTable pivotTable = deserialize(handle(newGetRequest("/rest/v1/bahmnicore/observations/flowSheet",
                 new Parameter("patientUuid", "1a246ed5-3c11-11de-a0ba-001edlaeb67a"),
                 new Parameter("conceptSet", "Vitals"),
-                new Parameter("groupByConcept", "Temperature Data")
+                new Parameter("groupByConcept", "Temperature Data"),
+                new Parameter("conceptNames", "Temperature Data")
         )), PivotTable.class);
 
         List<PivotRow> rows = pivotTable.getRows();
+        assertEquals(1, pivotTable.getHeaders().size());
+        System.out.println(pivotTable.getHeaders());
         assertEquals(1, rows.size());
         assertEquals("98.0", rows.get(0).getValue("Temperature Data").getValueAsString());
         assertTrue(rows.get(0).getValue("Temperature Data").isAbnormal());

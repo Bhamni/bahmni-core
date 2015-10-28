@@ -5,10 +5,7 @@ import org.openmrs.module.bahmniemrapi.builder.BahmniObservationBuilder;
 import org.openmrs.module.bahmniemrapi.encountertransaction.contract.BahmniObservation;
 import org.openmrs.module.bahmniemrapi.pivottable.contract.PivotTable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -24,7 +21,10 @@ public class BahmniObservationsToTabularViewMapperTest {
         ArrayList<BahmniObservation> bahmniObservations = new ArrayList<>();
         bahmniObservations.add(vitals);
 
-        PivotTable pivotTable = bahmniObservationsToTabularViewMapper.constructTable("WEIGHT", null, bahmniObservations);
+        HashSet<String> conceptNames = new HashSet<>();
+        conceptNames.add("HEIGHT");
+        conceptNames.add("WEIGHT");
+        PivotTable pivotTable = bahmniObservationsToTabularViewMapper.constructTable("WEIGHT", conceptNames, bahmniObservations);
 
         assertNotNull(pivotTable);
         assertEquals(1, pivotTable.getRows().size());
@@ -34,22 +34,21 @@ public class BahmniObservationsToTabularViewMapperTest {
     }
 
     @Test
-    public void shouldReturnObservationsInTabularFormatForOnlyTheConceptNamesArePassedAndGroupByConcept() throws Exception {
+    public void shouldReturnObservationsInTabularFormatForOnlyTheConceptNamesArePassed() throws Exception {
         BahmniObservation height = new BahmniObservationBuilder().withConcept("HEIGHT", false).withValue(170).build();
         BahmniObservation weight = new BahmniObservationBuilder().withConcept("WEIGHT", false).withValue(80).build();
         BahmniObservation vitals = new BahmniObservationBuilder().withConcept("Vitals", true).withGroupMember(height).withGroupMember(weight).build();
         ArrayList<BahmniObservation> bahmniObservations = new ArrayList<>();
         bahmniObservations.add(vitals);
 
-        List<String> conceptNames = new ArrayList<>();
+        Set<String> conceptNames = new HashSet<>();
         conceptNames.add("HEIGHT");
         PivotTable pivotTable = bahmniObservationsToTabularViewMapper.constructTable("WEIGHT", conceptNames, bahmniObservations);
 
         assertNotNull(pivotTable);
         assertEquals(1, pivotTable.getRows().size());
-        assertArrayEquals(new String[]{"WEIGHT", "HEIGHT"}, pivotTable.getHeaders().toArray());
+        assertArrayEquals(new String[]{"HEIGHT"}, pivotTable.getHeaders().toArray());
         assertEquals(170, pivotTable.getRows().get(0).getValue("HEIGHT").getValue());
-        assertEquals(80, pivotTable.getRows().get(0).getValue("WEIGHT").getValue());
     }
 
     @Test
@@ -63,11 +62,17 @@ public class BahmniObservationsToTabularViewMapperTest {
         ArrayList<BahmniObservation> bahmniObservations = new ArrayList<>();
         bahmniObservations.add(vitals);
 
-        PivotTable pivotTable = bahmniObservationsToTabularViewMapper.constructTable("WEIGHT", null, bahmniObservations);
+        HashSet<String> conceptNames = new HashSet<>();
+        conceptNames.add("HEIGHT");
+        conceptNames.add("WEIGHT");
+        conceptNames.add("Systolic");
+        conceptNames.add("Diastolic");
+
+        PivotTable pivotTable = bahmniObservationsToTabularViewMapper.constructTable("WEIGHT", conceptNames, bahmniObservations);
 
         assertNotNull(pivotTable);
         assertEquals(1, pivotTable.getRows().size());
-        assertArrayEquals(new String[]{"WEIGHT", "Diastolic", "Systolic", "HEIGHT"}, pivotTable.getHeaders().toArray());
+        assertArrayEquals(new String[]{"WEIGHT", "Systolic", "HEIGHT", "Diastolic"}, pivotTable.getHeaders().toArray());
         assertEquals(170, pivotTable.getRows().get(0).getValue("HEIGHT").getValue());
         assertEquals(80, pivotTable.getRows().get(0).getValue("WEIGHT").getValue());
         assertEquals(120, pivotTable.getRows().get(0).getValue("Systolic").getValue());
@@ -87,7 +92,11 @@ public class BahmniObservationsToTabularViewMapperTest {
         bahmniObservations.add(vitals);
         bahmniObservations.add(secondVitals);
 
-        PivotTable pivotTable = bahmniObservationsToTabularViewMapper.constructTable("WEIGHT", null, bahmniObservations);
+        HashSet<String> conceptNames = new HashSet<>();
+        conceptNames.add("HEIGHT");
+        conceptNames.add("WEIGHT");
+
+        PivotTable pivotTable = bahmniObservationsToTabularViewMapper.constructTable("WEIGHT", conceptNames, bahmniObservations);
 
         assertNotNull(pivotTable);
         assertEquals(2, pivotTable.getRows().size());

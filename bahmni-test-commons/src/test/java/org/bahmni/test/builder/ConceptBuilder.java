@@ -156,4 +156,8 @@ public class ConceptBuilder {
         return this;
     }
 
+    public ConceptBuilder withSet(boolean b) {
+        concept.setSet(b);
+        return this;
+    }
 }

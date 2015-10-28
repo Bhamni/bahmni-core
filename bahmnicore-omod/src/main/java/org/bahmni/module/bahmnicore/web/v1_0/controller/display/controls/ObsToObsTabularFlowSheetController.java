@@ -1,5 +1,6 @@
 package org.bahmni.module.bahmnicore.web.v1_0.controller.display.controls;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.bahmni.module.bahmnicore.service.BahmniObsService;
 import org.bahmni.module.bahmnicore.web.v1_0.mapper.BahmniObservationsToTabularViewMapper;
@@ -19,12 +20,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Controller
 @RequestMapping(value = "/rest/" + RestConstants.VERSION_1 + "/bahmnicore/observations/flowSheet")
 public class ObsToObsTabularFlowSheetController {
 
+    public static final String CONCEPT_DETAILS = "Concept Details";
     private BahmniObsService bahmniObsService;
     private ConceptService conceptService;
     private BahmniObservationsToTabularViewMapper bahmniObservationsToTabularViewMapper;
@@ -58,7 +62,35 @@ public class ObsToObsTabularFlowSheetController {
 
         Collection<BahmniObservation> bahmniObservations = bahmniObsService.observationsFor(patientUuid, rootConcept, childConcept, numberOfVisits);
 
-        return bahmniObservationsToTabularViewMapper.constructTable(groupByConcept, conceptNames, bahmniObservations);
+        Set<String> leafConcepts = new HashSet<>();
+        if (CollectionUtils.isEmpty(conceptNames)) {
+            getAllLeafConcepts(rootConcept, leafConcepts);
+        } else {
+            getSpecifiedLeafConcepts(rootConcept, conceptNames, leafConcepts);
+        }
+        leafConcepts.add(groupByConcept);
+
+        return bahmniObservationsToTabularViewMapper.constructTable(groupByConcept, leafConcepts, bahmniObservations);
+    }
+
+    private void getSpecifiedLeafConcepts(Concept rootConcept, List<String> conceptNames, Set<String> leafConcepts) {
+        for (Concept concept : rootConcept.getSetMembers()) {
+            if (conceptNames.contains(concept.getName().getName())) {
+                getAllLeafConcepts(concept, leafConcepts);
+            } else {
+                getSpecifiedLeafConcepts(concept, conceptNames, leafConcepts);
+            }
+        }
+    }
+
+    private void getAllLeafConcepts(Concept rootConcept, Set<String> leafConcepts) {
+        if (!rootConcept.isSet() || rootConcept.getConceptClass().getName().equals(CONCEPT_DETAILS)) {
+            leafConcepts.add(rootConcept.getName().getName());
+        } else {
+            for (Concept concept : rootConcept.getSetMembers()) {
+                getAllLeafConcepts(concept, leafConcepts);
+            }
+        }
     }
 
     private void validate(String conceptSet, String groupByConcept, Concept rootConcept, Concept childConcept) {
