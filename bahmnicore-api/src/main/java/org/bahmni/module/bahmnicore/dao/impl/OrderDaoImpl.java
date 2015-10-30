@@ -1,5 +1,6 @@
 package org.bahmni.module.bahmnicore.dao.impl;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.bahmni.module.bahmnicore.contract.orderTemplate.OrderTemplateJson;
 import org.bahmni.module.bahmnicore.dao.OrderDao;
@@ -10,13 +11,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.classic.Session;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.openmrs.Concept;
-import org.openmrs.DrugOrder;
-import org.openmrs.Obs;
-import org.openmrs.Order;
-import org.openmrs.OrderType;
-import org.openmrs.Patient;
-import org.openmrs.Visit;
+import org.openmrs.*;
 import org.openmrs.module.emrapi.CareSettingType;
 import org.openmrs.module.emrapi.encounter.domain.EncounterTransaction;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +19,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Component
 public class OrderDaoImpl implements OrderDao {
@@ -195,6 +187,23 @@ public class OrderDaoImpl implements OrderDao {
             visitIds.add(visit.getId());
         }
         return visitIds;
+    }
+
+    @Override
+    public List<Order> getAllOrders(Patient patient, List<OrderType> orderTypes, Set<Concept> conceptsForDrugs) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Order.class);
+        criteria.add(Restrictions.eq("patient", patient));
+        if (orderTypes != null && orderTypes.size() > 0) {
+            criteria.add(Restrictions.in("orderType", orderTypes));
+        }
+        if (CollectionUtils.isNotEmpty(conceptsForDrugs)) {
+            criteria.add(Restrictions.in("concept", conceptsForDrugs));
+        }
+        criteria.add(Restrictions.eq("voided", false));
+        criteria.add(Restrictions.isNotNull("dose"));
+        criteria.add(Restrictions.ne("action", Order.Action.DISCONTINUE));
+        criteria.addOrder(org.hibernate.criterion.Order.asc("orderId"));
+        return criteria.list();
     }
 
     @Override

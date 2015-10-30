@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+    <person person_id="4000" gender="M" dead="false" creator="1" birthdate_estimated="0"
+            date_created="2008-08-15 15:57:09.0" voided="false" void_reason="For test purposes"
+            uuid="1a246ed5-3c11-11de-a0ba-001djxseb67a"/>
+
+    <patient patient_id="4000" creator="1" date_created="2005-09-22 00:00:00.0" changed_by="1"
+             date_changed="2008-08-18 12:29:59.0" voided="false" void_reason=""/>
+
+    <person_name person_name_id="4000" preferred="true" person_id="4000" prefix="Mr." given_name="Horatio"
+                 middle_name="Test" family_name="Banka" family_name_suffix="Esq." creator="1"
+                 date_created="2005-09-22 00:00:00.0" voided="false" void_reason=""
+                 uuid="399ecx7b-6482-487d-94ce-c07bbsqn3dda"/>
+
+    <visit visit_id="4000" date_started="2014-12-22 00:00:00" date_created="2014-12-22 00:00:00" patient_id="4000"
+           visit_type_id="67" date_stopped="2014-12-30 00:00:00" creator="1" uuid="adf4fns41-a41a-4ad6-12f5-2f5askzacf5a"
+           voided="0"/>
+    <encounter encounter_id="4000" encounter_type="1000" patient_id="4000" visit_id="4000" location_id="1"
+               encounter_datetime="2014-12-22 15:00:00.0" creator="1" date_created="2014-12-22 14:09:05.0"
+               voided="false" uuid="bb0awn767-707a-4629-9850-f1529wnv3ab0"/>
+
+    <drug drug_id="4000" concept_id="1000" dosage_form="51" name="Ibuprofen-100mg" combination="true" creator="1"
+          date_created="2005-02-24 00:00:00.0" retired="false" uuid="4sc0mz94-26fe-102b-8lsb-0017azd871b2"/>
+    <drug drug_id="4001" concept_id="1001" dosage_form="51" name="Crocin-800mg" combination="true" creator="1"
+          date_created="2005-02-24 00:00:00.0" retired="false" uuid="42sm0uba-26fe-102b-80cb-0017vj787vxb2"/>
+    <drug drug_id="4002" concept_id="1002" dosage_form="51" name="Paracetamol 250 mg" combination="true" creator="1"
+          date_created="2005-02-24 00:00:00.0" retired="false" uuid="42smbefa-26fe-102b-80cb-0017bepw71b2"/>
+
+    <orders order_id="4000" order_type_id="1" encounter_id="4000" urgency="ROUTINE" concept_id="1000" orderer="1"
+            care_setting="1" order_action="NEW" order_number="1" date_activated="2005-09-23 08:00:00"
+            auto_expire_date="2005-09-30 00:00:00.0" creator="1" date_created="2005-09-23 08:00:00" voided="false"
+            patient_id="4000" uuid="6d0avb16-707a-4629-9850-f1520sdvibab0" date_stopped="2005-09-23 08:00:00"/>
+    <orders order_id="4002" order_type_id="1" encounter_id="4000" urgency="ROUTINE" concept_id="1000" orderer="1"
+            care_setting="1" order_action="DISCONTINUE" order_number="1" date_activated="2005-09-23 08:00:00"
+            auto_expire_date="2005-09-23 08:00:00" creator="1" date_created="2008-08-23 12:20:22.0" voided="false"
+            patient_id="4000" uuid="6d0awb16-707a-4629-9850-fmd206csibab0" previous_order_id="4000"/>
+    <orders order_id="4003" order_type_id="1" encounter_id="4000" urgency="ROUTINE" concept_id="1001" orderer="1"
+            care_setting="1" order_action="NEW" order_number="1" date_activated="2005-09-23 09:00:00"
+            auto_expire_date="2005-09-25 00:00:00.0" creator="1" date_created="2008-08-19 12:22:22.0" voided="false"
+            patient_id="4000" uuid="6d0ne116-707a-4629-9850-f152zjskilob0"/>
+    <orders order_id="4004" order_type_id="1" encounter_id="4000" urgency="ROUTINE" concept_id="1002" orderer="1"
+            care_setting="1" order_action="NEW" order_number="1" date_activated="2005-09-24 09:00:00"
+            auto_expire_date="2005-09-28 00:00:00.0" creator="1" date_created="2008-08-19 12:22:22.0" voided="false"
+            patient_id="4000" uuid="6d0ne116-707a-4629-9850-f1bzjskilob0"/>
+
+    <drug_order order_id="4000" drug_inventory_id="1000"
+                dosing_type="org.openmrs.module.bahmniemrapi.drugorder.dosinginstructions.FlexibleDosingInstructions"
+                dosing_instructions="{&quot;dose&quot;: &quot;5.0&quot;, &quot;doseUnits&quot;: &quot;Tablet&quot;}"
+                duration="6" duration_units="27" dispense_as_written="true" as_needed="false" dose="1000.0"
+                frequency="2"/>
+    <drug_order order_id="4002" drug_inventory_id="1000"
+                dosing_type="org.openmrs.module.bahmniemrapi.drugorder.dosinginstructions.FlexibleDosingInstructions"
+                dosing_instructions="{&quot;dose&quot;: &quot;5.0&quot;, &quot;doseUnits&quot;: &quot;Tablet&quot;}"
+                duration="6" duration_units="27" dispense_as_written="true" as_needed="false" dose="500.0"
+                frequency="2"/>
+    <drug_order order_id="4003" drug_inventory_id="1001"
+                dosing_type="org.openmrs.module.bahmniemrapi.drugorder.dosinginstructions.FlexibleDosingInstructions"
+                dosing_instructions="{&quot;dose&quot;: &quot;5.0&quot;, &quot;doseUnits&quot;: &quot;Tablet&quot;}"
+                duration="6" duration_units="27" dispense_as_written="true" as_needed="false" dose="450.0"
+                frequency="2"/>
+    <drug_order order_id="4004" drug_inventory_id="1002"
+                dosing_type="org.openmrs.module.bahmniemrapi.drugorder.dosinginstructions.FlexibleDosingInstructions"
+                dosing_instructions="{&quot;dose&quot;: &quot;5.0&quot;, &quot;doseUnits&quot;: &quot;Tablet&quot;}"
+                duration="6" duration_units="27" dispense_as_written="true" as_needed="false" dose="40.0"
+                frequency="2"/>
+
+</dataset>
