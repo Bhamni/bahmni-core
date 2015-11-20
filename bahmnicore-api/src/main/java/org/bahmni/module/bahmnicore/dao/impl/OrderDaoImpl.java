@@ -60,8 +60,8 @@ public class OrderDaoImpl implements OrderDao {
         List<Integer> visitWithDrugOrderIds = getVisitIds(getVisitsWithActiveOrders(patient, "DrugOrder", includeActiveVisit, numberOfVisits));
         if (!visitWithDrugOrderIds.isEmpty()) {
             Query query = currentSession.createQuery("select d1 from DrugOrder d1, Encounter e, Visit v where d1.encounter = e and e.visit = v and v.visitId in (:visitIds) " +
-                    "and d1.voided = false and d1.action != :discontinued and " +
-                    "not exists (select d2 from DrugOrder d2 where d2.voided = false and d2.action = :revised and d2.encounter = d1.encounter and d2.previousOrder = d1)" +
+                    "and d1.voided = false and " +
+                    "not exists (select d2 from DrugOrder d2 where d2.voided = false and d2.action in (:revised, :discontinued)  and d2.encounter = d1.encounter and d2.previousOrder = d1)" +
                     "order by d1.dateActivated desc");
             query.setParameterList("visitIds", visitWithDrugOrderIds);
             query.setParameter("discontinued", Order.Action.DISCONTINUE);
@@ -76,8 +76,8 @@ public class OrderDaoImpl implements OrderDao {
         if (visitUuids != null && visitUuids.size() != 0) {
             Session currentSession = getCurrentSession();
             Query query = currentSession.createQuery("select d1 from DrugOrder d1, Encounter e, Visit v where d1.encounter = e and e.visit = v and v.uuid in (:visitUuids) " +
-                    "and d1.voided = false and d1.action != :discontinued and " +
-                    "not exists (select d2 from DrugOrder d2 where d2.voided = false and d2.action = :revised and d2.encounter = d1.encounter and d2.previousOrder = d1)" +
+                    "and d1.voided = false  and " +
+                    "not exists (select d2 from DrugOrder d2 where d2.voided = false and d2.action in (:revised, :discontinued)  and d2.encounter = d1.encounter and d2.previousOrder = d1)" +
                     "order by d1.dateActivated desc");
             query.setParameterList("visitUuids", visitUuids);
             query.setParameter("discontinued", Order.Action.DISCONTINUE);
@@ -94,8 +94,8 @@ public class OrderDaoImpl implements OrderDao {
         if (!visitWithDrugOrderIds.isEmpty()) {
 
             Query query = currentSession.createQuery("select d1 from DrugOrder d1, Encounter e, Visit v where d1.encounter = e and e.visit = v and v.visitId in (:visitIds) and d1.drug.concept in (:concepts)" +
-                    "and d1.voided = false and d1.action != :discontinued and " +
-                    "not exists (select d2 from DrugOrder d2 where d2.voided = false and d2.action = :revised and d2.encounter = d1.encounter and d2.previousOrder = d1)" +
+                    "and d1.voided = false and  " +
+                    "not exists (select d2 from DrugOrder d2 where d2.voided = false and d2.action in (:revised, :discontinued) and d2.encounter = d1.encounter and d2.previousOrder = d1)" +
                     "order by d1.dateActivated desc");
             query.setParameterList("visitIds", visitWithDrugOrderIds);
             query.setParameterList("concepts", concepts);
