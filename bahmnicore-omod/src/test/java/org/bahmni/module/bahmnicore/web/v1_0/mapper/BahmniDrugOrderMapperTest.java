@@ -77,7 +77,7 @@ public class BahmniDrugOrderMapperTest {
         List<DrugOrder> drugOrderList = new ArrayList<>();
         drugOrderList.add(drugOrder1);
 
-        List<BahmniDrugOrder> mappedDrugOrders = new BahmniDrugOrderMapper(providerMapper, new OrderAttributesMapper()).mapToResponse(drugOrderList, null);
+        List<BahmniDrugOrder> mappedDrugOrders = new BahmniDrugOrderMapper(providerMapper, new OrderAttributesMapper()).mapToResponse(drugOrderList, null, );
         assertEquals(1, mappedDrugOrders.size());
         BahmniDrugOrder mappedOrder = mappedDrugOrders.get(0);
         EncounterTransaction.DosingInstructions dosingInstructions = mappedOrder.getDosingInstructions();
@@ -128,7 +128,7 @@ public class BahmniDrugOrderMapperTest {
         List<DrugOrder> drugOrderList = new ArrayList<>();
         drugOrderList.add(drugOrder1);
 
-        List<BahmniDrugOrder> mappedDrugOrders = new BahmniDrugOrderMapper(providerMapper, new OrderAttributesMapper()).mapToResponse(drugOrderList, null);
+        List<BahmniDrugOrder> mappedDrugOrders = new BahmniDrugOrderMapper(providerMapper, new OrderAttributesMapper()).mapToResponse(drugOrderList, null, );
         assertEquals(1, mappedDrugOrders.size());
         BahmniDrugOrder mappedOrder = mappedDrugOrders.get(0);
 

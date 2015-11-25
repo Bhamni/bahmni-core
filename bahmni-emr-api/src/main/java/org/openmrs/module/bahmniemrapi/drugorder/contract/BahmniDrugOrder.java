@@ -143,6 +143,14 @@ public class BahmniDrugOrder implements Comparable<BahmniDrugOrder>{
         this.creatorName = creatorName;
     }
 
+    public void setOrderReasonConcept(EncounterTransaction.Concept concept ) {
+        this.drugOrder.setOrderReasonConcept(concept);
+
+    }
+    public void  setOrderReasonText(String orderReasonText) {
+        this.drugOrder.setOrderReasonText(orderReasonText);
+    }
+
     @Override
     public boolean equals(Object otherOrder){
         if(otherOrder == null)                return false;

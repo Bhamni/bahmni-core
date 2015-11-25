@@ -161,4 +161,24 @@ public class BahmniDrugOrderControllerIT extends BaseIntegrationTest {
         assertEquals("2005-09-23 00:00:00.0", drugOrder5.getEffectiveStopDate().toString());
     }
 
+    @Test
+    public void shouldReturnOrdersWithOrderReasonConceptAndText() throws Exception {
+        executeDataSet("discontinuedDrugOrder.xml");
+        Map<String, Collection<BahmniDrugOrder>> drugOrders = bahmniDrugOrderController.getVisitWisePrescribedAndOtherActiveOrders("75e04d42-3ca8-11e3-bf2b-0800271c1b75", 2, true, new ArrayList(Arrays.asList("8244fcd2-f20f-11e3-b47b-c6959a4485cd","317295fa-f208-11e3-b47b-c6959a4485cd")));
+        assertEquals(1, drugOrders.keySet().size());
+
+        assertEquals(2, drugOrders.get("visitDrugOrders").size());
+//        Iterator<BahmniDrugOrder> drugOrderIterator = drugOrders.get("visitDrugOrders").iterator();
+//        assertEquals("", drugOrderIterator.next().getUuid());
+//        assertEquals("92c1bdef-72d4-77d9-8a1f-80411ac66abe", drugOrderIterator.next().getUuid());
+//
+//        assertEquals(0, drugOrders.get("Other Active DrugOrders").size());
+//
+//        drugOrders = bahmniDrugOrderController.getVisitWisePrescribedAndOtherActiveOrders("1a246ed5-3c11-11de-a0ba-001ed98eb67a", 2, false, new ArrayList());
+//        assertEquals(1, drugOrders.keySet().size());
+//        assertNull(drugOrders.get("Other Active DrugOrders"));
+
+    }
+
+
 }

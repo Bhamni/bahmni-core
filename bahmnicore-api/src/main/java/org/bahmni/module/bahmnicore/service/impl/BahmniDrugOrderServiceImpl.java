@@ -134,6 +134,11 @@ public class BahmniDrugOrderServiceImpl implements BahmniDrugOrderService {
     }
 
     @Override
+    public DrugOrder getDiscontinuedDrugOrder(DrugOrder drugOrder) {
+        return  orderDao.getDiscontinuedDrugOrder(drugOrder);
+    }
+
+    @Override
     public List<DrugOrder> getPrescribedDrugOrdersForConcepts(Patient patient, Boolean includeActiveVisit, List<Visit> visits, List<Concept> concepts) {
         if(concepts.isEmpty() || concepts == null){
             return new ArrayList<>();

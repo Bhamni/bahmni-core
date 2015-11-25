@@ -6,6 +6,7 @@ import org.openmrs.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public interface BahmniDrugOrderService {
@@ -15,6 +16,8 @@ public interface BahmniDrugOrderService {
     List<DrugOrder> getPrescribedDrugOrders(String patientUuid, Boolean includeActiveVisit, Integer numberOfVisit);
 
     List<DrugOrder> getPrescribedDrugOrders(List<String> visitUuids);
+
+    DrugOrder getDiscontinuedDrugOrder(DrugOrder drugOrder);
 
     List<DrugOrder> getPrescribedDrugOrdersForConcepts(Patient patient, Boolean includeActiveVisit, List<Visit> visits, List<Concept> concepts);
 

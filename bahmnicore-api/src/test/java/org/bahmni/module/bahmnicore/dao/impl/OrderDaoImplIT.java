@@ -1,6 +1,7 @@
 package org.bahmni.module.bahmnicore.dao.impl;
 
 import org.bahmni.module.bahmnicore.BaseIntegrationTest;
+import org.bahmni.module.bahmnicore.dao.VisitDao;
 import org.bahmni.module.bahmnicore.service.OrderService;
 import org.junit.Test;
 import org.openmrs.*;
@@ -215,6 +216,20 @@ public class OrderDaoImplIT extends BaseIntegrationTest {
         Order firstOrder = Context.getOrderService().getOrder(15);
         Order secondOrder = Context.getOrderService().getOrder(16);
         assertThat(allOrdersForVisits, hasItems(firstOrder, secondOrder));
+    }
+
+    @Test
+    public void shouldGetOrderReasonConceptAndReasonForPrescribedOrdersWhichAreStopped() throws Exception {
+        executeDataSet("patientWithStoppedOrders.xml");
+
+        Order firstOrder = Context.getOrderService().getOrder(16);
+        Order secondOrder = Context.getOrderService().getOrder(18);
+        Order discontinuedOrder = orderDao.getDiscontinuedDrugOrder((DrugOrder)firstOrder);
+        assertThat(discontinuedOrder.getOrderReasonNonCoded(), is("Bleeding"));
+        assertThat(discontinuedOrder.getOrderReason().getName().getName(),is("BLOOD"));
+
+        discontinuedOrder = orderDao.getDiscontinuedDrugOrder((DrugOrder) secondOrder);
+        assertThat(discontinuedOrder.getOrderReasonNonCoded(), is("vomiting"));
     }
 
 

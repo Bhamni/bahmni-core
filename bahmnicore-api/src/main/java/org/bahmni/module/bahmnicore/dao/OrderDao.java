@@ -18,6 +18,8 @@ public interface OrderDao {
 
     List<DrugOrder> getPrescribedDrugOrders(List<String> visitUuids);
 
+    DrugOrder getDiscontinuedDrugOrder(DrugOrder drugOrder);
+
     List<DrugOrder> getPrescribedDrugOrdersForConcepts(Patient patient, Boolean includeActiveVisit, List<Visit> visits, List<Concept> conceptIds);
 
     Collection<EncounterTransaction.DrugOrder> getDrugOrderForRegimen(String regimenName);

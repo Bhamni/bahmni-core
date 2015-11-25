@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 public class BahmniDrugOrderMapper {
 
@@ -22,7 +23,7 @@ public class BahmniDrugOrderMapper {
         this.orderAttributesMapper = orderAttributesMapper;
     }
 
-    public List<BahmniDrugOrder> mapToResponse(List<DrugOrder> activeDrugOrders, Collection<BahmniObservation> orderAttributeObs) throws IOException {
+    public List<BahmniDrugOrder> mapToResponse(List<DrugOrder> activeDrugOrders, Collection<BahmniObservation> orderAttributeObs, Map<DrugOrder, DrugOrder> drugOrderMap) throws IOException {
 
         OrderMapper drugOrderMapper = new OrderMapper1_12();
 
@@ -34,6 +35,7 @@ public class BahmniDrugOrderMapper {
             bahmniDrugOrder.setVisit(openMRSDrugOrder.getEncounter().getVisit());
             bahmniDrugOrder.setProvider(providerMapper.map(openMRSDrugOrder.getOrderer()));
             bahmniDrugOrder.setCreatorName(openMRSDrugOrder.getCreator().getPersonName().toString());
+            bahmniDrugOrder.setOrderReasonText(drugOrderMap.get(openMRSDrugOrder).getOrderReasonNonCoded());
             bahmniDrugOrders.add(bahmniDrugOrder);
         }
         if(CollectionUtils.isNotEmpty(orderAttributeObs)){

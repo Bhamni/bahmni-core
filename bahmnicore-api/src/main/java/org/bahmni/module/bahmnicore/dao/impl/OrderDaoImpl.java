@@ -88,6 +88,17 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
+    public DrugOrder getDiscontinuedDrugOrder(DrugOrder drugOrder) {
+        Session currentSession = getCurrentSession();
+
+        Query query = currentSession.createQuery("select d1 from DrugOrder d1 where d1.action = :discontinued and  d1.previousOrder = :drugOrder");
+        query.setParameter("discontinued", Order.Action.DISCONTINUE);
+        query.setParameter("drugOrder", drugOrder);
+        return  (DrugOrder) query.uniqueResult();
+
+    }
+
+    @Override
     public List<DrugOrder> getPrescribedDrugOrdersForConcepts(Patient patient, Boolean includeActiveVisit, List<Visit> visits, List<Concept> concepts) {
         Session currentSession = getCurrentSession();
         List<Integer> visitWithDrugOrderIds = getVisitIds(visits);
