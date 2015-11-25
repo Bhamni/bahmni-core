@@ -3438,22 +3438,9 @@
         </sql>
     </changeSet>
 
-    <changeSet id="bahmni-core-201511251218" author="Jaya, Sravanthi">
-        <preConditions onFail="MARK_RAN">
-            <sqlCheck expectedResult="0">
-                SELECT COUNT(*) FROM global_property where property = 'drugOrder.drugOther'
-            </sqlCheck>
-        </preConditions>
-        <comment>Add drug other global property</comment>
-        <sql>
-            insert into global_property ('property', 'property_value', 'description', 'uuid')
-            values ('drugOrder.drugOther', '', 'Specifies the uuid of the concept which represents drug other non coded', uuid());
-        </sql>
-    </changeSet>
-
     <changeSet id="bahmni-core-201511180201" author="Swathi">
         <preConditions onFail="MARK_RAN">
-            <sqlCheck expectedResult="1">select count(*) from global_property where property='drugOrder.drugOther'</sqlCheck>
+            <sqlCheck expectedResult="0">select count(*) from global_property where property='drugOrder.drugOther' and property_value not like ""  and property_value is not NULL</sqlCheck>
         </preConditions>
         <comment>Setting 'DrugOther' concept uuid as value for 'drugOrder.drugOther' globalProperty.</comment>
         <sql>
