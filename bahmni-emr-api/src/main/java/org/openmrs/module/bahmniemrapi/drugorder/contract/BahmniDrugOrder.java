@@ -94,6 +94,14 @@ public class BahmniDrugOrder implements Comparable<BahmniDrugOrder>{
         return drugOrder.getOrderType();
     }
 
+    public String getOrderGroupUuid() {
+        return drugOrder.getOrderGroup().getUuid();
+    }
+
+    public String getOrderSetUuid() {
+        return drugOrder.getOrderGroup().getOrderSet() != null ? drugOrder.getOrderGroup().getOrderSet().getUuid() : "";
+    }
+
     public Date getScheduledDate() {
         return drugOrder.getScheduledDate();
     }
