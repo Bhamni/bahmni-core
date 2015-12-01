@@ -1,31 +1,37 @@
 package org.openmrs.module.bahmniemrapi.encountertransaction.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 
+import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.*;
 import org.openmrs.api.EncounterService;
+import org.openmrs.api.OrderService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.VisitService;
-import org.openmrs.api.impl.PatientServiceImpl;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.bahmniemrapi.BaseIntegrationTest;
 import org.openmrs.module.bahmniemrapi.encountertransaction.contract.BahmniEncounterTransaction;
 import org.openmrs.module.bahmniemrapi.encountertransaction.contract.BahmniObservation;
 import org.openmrs.module.bahmniemrapi.encountertransaction.service.BahmniEncounterTransactionService;
 import org.openmrs.module.bahmniemrapi.encountertransaction.service.VisitIdentificationHelper;
 import org.openmrs.module.bahmniemrapi.obsrelation.contract.ObsRelationship;
+import org.openmrs.module.emrapi.CareSettingType;
+import org.openmrs.module.emrapi.encounter.DrugMapper;
 import org.openmrs.module.emrapi.encounter.domain.EncounterTransaction;
-import org.openmrs.test.BaseModuleContextSensitiveTest;
-import org.openmrs.web.test.BaseModuleWebContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.Assert.*;
@@ -41,12 +47,145 @@ public class BahmniEncounterTransactionServiceImplIT extends BaseIntegrationTest
     @Autowired
     private PatientService patientService;
 
+    @Autowired
+    private OrderService orderService;
+
+    @Autowired
+    @Qualifier("drugMapper")
+    private DrugMapper drugMapper;
+
     @Before
     public void setUp() throws Exception {
         executeDataSet("diagnosisMetadata.xml");
         executeDataSet("dispositionMetadata.xml");
         executeDataSet("obsRelationshipDataset.xml");
         executeDataSet("visitAttributeDataSet.xml");
+        executeDataSet("drugOrderTestData.xml");
+    }
+
+    @Test
+    public void shouldSaveFutureDrugOrdersInEncounterTransaction(){
+        Date obsDate = new Date();
+        String obsUuid = UUID.randomUUID().toString();
+        String visitUuid = "4e663d66-6b78-11e0-93c3-18a905e044dc";
+        String patientUuid = "da7f524f-27ce-4bb2-86d6-6d1d05312bd5";
+
+        Patient patient = patientService.getPatientByUuid(patientUuid);
+        List<Order> originalOrders = orderService.getActiveOrders(patient,
+                orderService.getOrderTypeByName("Drug Order"), orderService.getCareSettingByName("OUTPATIENT"), null);
+
+        EncounterTransaction.Provider provider = new EncounterTransaction.Provider();
+        provider.setUuid(Context.getProviderService().getProvider(1).getUuid());
+        Set<EncounterTransaction.Provider> providerSet = new HashSet<EncounterTransaction.Provider>();
+        providerSet.add(provider);
+
+        BahmniObservation bahmniObservation = createBahmniObservation(obsUuid, "obs-value", createConcept("96408258-000b-424e-af1a-403919332938", "FAVORITE FOOD, NON-CODED"), obsDate, null);
+        BahmniEncounterTransaction bahmniEncounterTransaction = new BahmniEncounterTransaction();
+        bahmniEncounterTransaction.addObservation(bahmniObservation);
+        bahmniEncounterTransaction.setVisitTypeUuid("c0c579b0-8e59-401d-8a4a-976a0b183593");
+        bahmniEncounterTransaction.setProviders(providerSet);
+
+        bahmniEncounterTransaction.setEncounterTypeUuid("07000be2-26b6-4cce-8b40-866d8435b613");
+        bahmniEncounterTransaction.setPatientUuid(patientUuid);
+        bahmniEncounterTransaction.setVisitUuid(visitUuid);
+
+        List<EncounterTransaction.DrugOrder> drugOrders = new ArrayList<>();
+        drugOrders.add(createETDrugOrder("1ce527b5-d6de-43f0-bc62-4616abacd77e",null,null, new DateTime().plusDays(2).toDate()));
+        bahmniEncounterTransaction.setDrugOrders(drugOrders);
+
+        BahmniEncounterTransaction encounterTransaction = bahmniEncounterTransactionService.save(bahmniEncounterTransaction);
+
+        List<Order> latestOrders = orderService.getActiveOrders(patient, orderService.getOrderTypeByName("Drug Order"),
+                orderService.getCareSettingByName("OUTPATIENT"),null);
+        Assert.assertEquals(originalOrders.size() + 1,latestOrders.size());
+        Assert.assertEquals(Order.Action.NEW, latestOrders.get(originalOrders.size()).getAction());
+        Assert.assertEquals(1,encounterTransaction.getDrugOrders().size());
+    }
+
+    @Test
+    public void shouldSavePastDrugOrdersInEncounterTransaction(){
+        Date obsDate = new Date();
+        String obsUuid = UUID.randomUUID().toString();
+        String visitUuid = "4e663d66-6b78-11e0-93c3-18a905e044dc";
+        String patientUuid = "da7f524f-27ce-4bb2-86d6-6d1d05312bd5";
+
+        Patient patient = patientService.getPatientByUuid(patientUuid);
+        List<Order> originalOrders = orderService.getActiveOrders(patient,
+                orderService.getOrderTypeByName("Drug Order"), orderService.getCareSettingByName("OUTPATIENT"), null);
+
+
+
+        EncounterTransaction.Provider provider = new EncounterTransaction.Provider();
+        provider.setUuid(Context.getProviderService().getProvider(1).getUuid());
+        Set<EncounterTransaction.Provider> providerSet = new HashSet<EncounterTransaction.Provider>();
+        providerSet.add(provider);
+
+        BahmniObservation bahmniObservation = createBahmniObservation(obsUuid, "obs-value", createConcept("96408258-000b-424e-af1a-403919332938", "FAVORITE FOOD, NON-CODED"), obsDate, null);
+        BahmniEncounterTransaction bahmniEncounterTransaction = new BahmniEncounterTransaction();
+        bahmniEncounterTransaction.addObservation(bahmniObservation);
+        bahmniEncounterTransaction.setVisitTypeUuid("c0c579b0-8e59-401d-8a4a-976a0b183593");
+        bahmniEncounterTransaction.setProviders(providerSet);
+
+        bahmniEncounterTransaction.setEncounterTypeUuid("07000be2-26b6-4cce-8b40-866d8435b613");
+        bahmniEncounterTransaction.setPatientUuid(patientUuid);
+        bahmniEncounterTransaction.setVisitUuid(visitUuid);
+
+        Date pastScheduledDateForDrugOrder = new DateTime().minusDays(2).toDate();
+
+        List<EncounterTransaction.DrugOrder> drugOrders = new ArrayList<>();
+        drugOrders.add(createETDrugOrder("1ce527b5-d6de-43f0-bc62-4616abacd77e", null, null, pastScheduledDateForDrugOrder));
+        bahmniEncounterTransaction.setDrugOrders(drugOrders);
+
+        BahmniEncounterTransaction encounterTransaction = bahmniEncounterTransactionService.save(bahmniEncounterTransaction);
+
+        List<Order> latestOrders = orderService.getActiveOrders(patient, orderService.getOrderTypeByName("Drug Order"),
+                orderService.getCareSettingByName("OUTPATIENT"),null);
+        Assert.assertEquals(originalOrders.size() + 1, latestOrders.size());
+        Assert.assertEquals(Order.Action.NEW, latestOrders.get(originalOrders.size()).getAction());
+        Assert.assertEquals(0, encounterTransaction.getDrugOrders().size());
+
+        //Ensure that two encounters are created.
+        List<Encounter> encounters = encounterService.getEncounters(patient, null, pastScheduledDateForDrugOrder, null, null,
+                null, null, null, null, false);
+
+        Assert.assertEquals(2,encounters.size());
+        Assert.assertEquals(1, encounters.get(0).getOrders().size());
+        Assert.assertEquals(0, encounters.get(1).getOrders().size());
+    }
+
+
+    private EncounterTransaction.DrugOrder createETDrugOrder(String drugUuid,String action,String previousOrderUuid,Date scheduledDate){
+        EncounterTransaction.Drug encounterTransactionDrug = new EncounterTransaction.Drug();
+        encounterTransactionDrug.setUuid(drugUuid);
+
+        EncounterTransaction.DrugOrder drugOrder = new EncounterTransaction.DrugOrder();
+        drugOrder.setCareSetting(CareSettingType.OUTPATIENT);
+        drugOrder.setAction(action);
+        drugOrder.setOrderType("Drug Order");
+        drugOrder.setPreviousOrderUuid(previousOrderUuid);
+        drugOrder.setDrug(encounterTransactionDrug);
+        drugOrder.setDosingInstructionType(
+                "org.openmrs.module.bahmniemrapi.drugorder.dosinginstructions.FlexibleDosingInstructions");
+        drugOrder.setDuration(10);
+        drugOrder.setDurationUnits("Days");
+
+        drugOrder.setScheduledDate(scheduledDate);
+        drugOrder.setDateActivated(null);
+        drugOrder.setVoided(false);
+
+        EncounterTransaction.DosingInstructions dosingInstructions = new EncounterTransaction.DosingInstructions();
+        dosingInstructions.setAdministrationInstructions("{\"instructions\":\"As directed\"}");
+        dosingInstructions.setAsNeeded(false);
+        dosingInstructions.setDose(new Double(1));
+        dosingInstructions.setDoseUnits("tab (s)");
+        dosingInstructions.setFrequency("1/day x 7 days/week");
+        dosingInstructions.setNumberOfRefills(0);
+        dosingInstructions.setQuantity(new Double(10));
+        dosingInstructions.setQuantityUnits(Context.getConceptService().getConcept(51).getName().getName());
+        dosingInstructions.setRoute("UNKNOWN");
+        drugOrder.setDosingInstructions(dosingInstructions);
+
+        return drugOrder;
     }
 
     @Test
@@ -56,7 +195,8 @@ public class BahmniEncounterTransactionServiceImplIT extends BaseIntegrationTest
         String visitUuid = "4e663d66-6b78-11e0-93c3-18a905e044dc";
         String patientUuid = "da7f524f-27ce-4bb2-86d6-6d1d05312bd5";
 
-        BahmniObservation bahmniObservation = createBahmniObservation(obsUuid, "obs-value", createConcept("96408258-000b-424e-af1a-403919332938", "FAVORITE FOOD, NON-CODED"), obsDate, null);
+        BahmniObservation bahmniObservation = createBahmniObservation(obsUuid, "obs-value",
+                createConcept("96408258-000b-424e-af1a-403919332938", "FAVORITE FOOD, NON-CODED"), obsDate, null);
         BahmniEncounterTransaction bahmniEncounterTransaction = new BahmniEncounterTransaction();
         bahmniEncounterTransaction.addObservation(bahmniObservation);
         bahmniEncounterTransaction.setVisitTypeUuid("c0c579b0-8e59-401d-8a4a-976a0b183593");
@@ -91,7 +231,8 @@ public class BahmniEncounterTransactionServiceImplIT extends BaseIntegrationTest
         bahmniEncounterTransaction.setEncounterTypeUuid("02c533ab-b74b-4ee4-b6e5-ffb6d09a0ad1");
         bahmniEncounterTransaction.setVisitType(visitType);
 
-        BahmniEncounterTransaction savedEncounterTransaction = bahmniEncounterTransactionService.save(bahmniEncounterTransaction);
+        BahmniEncounterTransaction savedEncounterTransaction = bahmniEncounterTransactionService.save(
+                bahmniEncounterTransaction);
 
 
         assertNotNull(visitIdentificationHelper.hasActiveVisit(patientByUuid));
@@ -276,9 +417,9 @@ public class BahmniEncounterTransactionServiceImplIT extends BaseIntegrationTest
         assertEquals(targetObs.getValue(), savedSrcObs.getTargetObsRelation().getTargetObs().getValue());
         assertEquals(targetObs.getUuid(), savedSrcObs.getTargetObsRelation().getTargetObs().getUuid());
         assertEquals(targetConcept.getUuid(), savedSrcObs.getTargetObsRelation().getTargetObs().getConceptUuid());
-        assertEquals(targetObs.getObservationDateTime(), savedSrcObs.getTargetObsRelation().getTargetObs().getObservationDateTime());
+        assertEquals(targetObs.getObservationDateTime(),
+                savedSrcObs.getTargetObsRelation().getTargetObs().getObservationDateTime());
     }
-
     private BahmniObservation getObservationByConceptUuid(Collection<BahmniObservation> bahmniObservations, String conceptUuid) {
         for (BahmniObservation bahmniObservation : bahmniObservations) {
             if (conceptUuid.equals(bahmniObservation.getConceptUuid())){
