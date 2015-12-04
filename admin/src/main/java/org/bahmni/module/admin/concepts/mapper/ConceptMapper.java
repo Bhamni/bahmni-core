@@ -32,6 +32,7 @@ public class ConceptMapper {
         concept.setDescription(conceptRow.getDescription());
         concept.setUniqueName(conceptRow.getName());
         concept.setDisplayName(conceptRow.getShortName());
+        concept.setLocale(conceptRow.getLocale());
         concept.setUnits(conceptRow.getUnits());
         concept.setHiNormal(conceptRow.getHiNormal());
         concept.setLowNormal(conceptRow.getLowNormal());
@@ -88,6 +89,7 @@ public class ConceptMapper {
         String units = concept.getUnits();
         String hiNormal = concept.getHiNormal();
         String lowNormal = concept.getLowNormal();
-        return new ConceptRow(uuid, name, description, conceptClass, shortName, conceptDatatype, units, hiNormal, lowNormal, referenceTermRows, conceptSynonyms, conceptAnswers);
+        String locale = concept.getLocale().toString();
+        return new ConceptRow(uuid, name, description, conceptClass, shortName, locale, conceptDatatype, units, hiNormal, lowNormal, referenceTermRows, conceptSynonyms, conceptAnswers);
     }
 }

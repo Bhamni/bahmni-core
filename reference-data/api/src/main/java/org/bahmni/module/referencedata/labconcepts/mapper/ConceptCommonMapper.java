@@ -15,9 +15,9 @@ public class ConceptCommonMapper {
             concept = existingConcept;
         }
         String displayName = conceptCommon.getDisplayName();
-        concept = addConceptName(concept, getConceptName(conceptCommon.getUniqueName(), ConceptNameType.FULLY_SPECIFIED));
+        concept = addConceptName(concept, getConceptName(conceptCommon.getUniqueName(), ConceptNameType.FULLY_SPECIFIED), conceptCommon.getLocale());
         if (displayName != null) {
-            concept = addConceptName(concept, getConceptName(conceptCommon.getDisplayName(), ConceptNameType.SHORT));
+            concept = addConceptName(concept, getConceptName(conceptCommon.getDisplayName(), ConceptNameType.SHORT), conceptCommon.getLocale());
         }
 
         if (!StringUtils.isBlank(conceptCommon.getDescription()) && concept.getDescription() != null) {

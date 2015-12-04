@@ -23,7 +23,7 @@ public class DrugMapper {
 
         org.openmrs.Drug conceptDrug = drugMetaDataMapper.map(drugMetaData);
         conceptDrug.setName(drug.getName());
-        ConceptExtension.addConceptName(conceptDrug.getConcept(), getConceptName(drug.getGenericName(), ConceptNameType.FULLY_SPECIFIED));
+        ConceptExtension.addConceptName(conceptDrug.getConcept(), getConceptName(drug.getGenericName(), ConceptNameType.FULLY_SPECIFIED), conceptDrug.getConcept().getName().getLocale().toString());
         conceptDrug.setCombination(drug.isCombination());
         conceptDrug.setStrength(drug.getStrength());
         conceptDrug.setMaximumDailyDose(drug.doubleMaximumDose());
