@@ -1,6 +1,7 @@
 package org.bahmni.module.bahmnicore.web.v1_0.controller;
 
 import org.bahmni.module.bahmnicore.service.BahmniObsService;
+import org.bahmni.module.bahmnicore.web.v1_0.controller.display.controls.BahmniObservationsController;
 import org.bahmni.test.builder.VisitBuilder;
 import org.junit.Before;
 import org.junit.Test;

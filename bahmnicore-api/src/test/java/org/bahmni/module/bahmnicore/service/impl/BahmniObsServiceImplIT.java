@@ -41,7 +41,8 @@ public class BahmniObsServiceImplIT extends BaseIntegrationTest {
     @Test
     public void shouldReturnLatestObsForEachConcept() {
         Concept vitalsConcept = conceptService.getConceptByName("Vitals");
-        Collection<BahmniObservation> bahmniObservations = personObsService.getLatest("86526ed5-3c11-11de-a0ba-001e378eb67a", Arrays.asList(vitalsConcept),3, null, false, null);
+        Collection<BahmniObservation> bahmniObservations = personObsService.getLatest("86526ed5-3c11-11de-a0ba-001e378eb67a",
+                Arrays.asList(vitalsConcept), 3, null, false, null, null, null);
         BahmniObservation vitalObservation = bahmniObservations.iterator().next();
         Collection<BahmniObservation> vitalsGroupMembers = vitalObservation.getGroupMembers();
         assertEquals(2, vitalsGroupMembers.size());
@@ -57,13 +58,14 @@ public class BahmniObsServiceImplIT extends BaseIntegrationTest {
     public void shouldReturnLatestObsForEachConceptForSpecifiedNumberOfVisits() {
         Concept sittingConcept = conceptService.getConceptByName("Vitals");
         //Latest limited by last two visits.
-        Collection<BahmniObservation> bahmniObservations = personObsService.getLatest("86526ed5-3c11-11de-a0ba-001e378eb67a", Arrays.asList(sittingConcept),1, null, false, null);
+        Collection<BahmniObservation> bahmniObservations = personObsService.getLatest("86526ed5-3c11-11de-a0ba-001e378eb67a",
+                Arrays.asList(sittingConcept), 1, null, false, null, null, null);
         assertEquals(0, bahmniObservations.size());
-        bahmniObservations = personObsService.getLatest("86526ed5-3c11-11de-a0ba-001e378eb67a", Arrays.asList(sittingConcept),2, null, false, null);
+        bahmniObservations = personObsService.getLatest("86526ed5-3c11-11de-a0ba-001e378eb67a", Arrays.asList(sittingConcept), 2, null, false, null, null, null);
         assertEquals(1, bahmniObservations.size());
 
         BahmniObservation sittingObservation = bahmniObservations.iterator().next();
-        assertEquals("Vitals",sittingObservation.getConcept().getName());
+        assertEquals("Vitals", sittingObservation.getConcept().getName());
     }
 
     @Test
@@ -78,7 +80,7 @@ public class BahmniObsServiceImplIT extends BaseIntegrationTest {
     }
 
     @Test
-    public void shouldReturnLatestObsFromAllEncountersInVisit(){
+    public void shouldReturnLatestObsFromAllEncountersInVisit() {
         Concept concept = conceptService.getConcept("100");
         Visit visit = visitService.getVisitByUuid("e10186d8-1c8e-11e4-bb80-f18add123456");
         Collection<BahmniObservation> latestObsByVisit = personObsService.getLatestObsByVisit(visit, Arrays.asList(concept), null, false);
@@ -92,7 +94,8 @@ public class BahmniObsServiceImplIT extends BaseIntegrationTest {
     @Test
     public void return_orphaned_obs_for_patient() throws Exception {
         Concept bloodPressureConcept = new ConceptBuilder().withName("Blood Pressure").build();
-        Collection<BahmniObservation> obsForConceptSet = personObsService.observationsFor("86526ed5-3c11-11de-a0ba-001e378eb67a", Arrays.asList(bloodPressureConcept), null, null, false, null);
+        Collection<BahmniObservation> obsForConceptSet = personObsService.observationsFor("86526ed5-3c11-11de-a0ba-001e378eb67a",
+                Arrays.asList(bloodPressureConcept), null, null, false, null, null, null);
         assertEquals(1, obsForConceptSet.size());
         Collection<BahmniObservation> bloodPressureMembers = obsForConceptSet.iterator().next().getGroupMembers();
         Iterator<BahmniObservation> bloodPressureMembersIterator = bloodPressureMembers.iterator();
@@ -105,7 +108,7 @@ public class BahmniObsServiceImplIT extends BaseIntegrationTest {
 
     @Test
     public void shouldReturnObsForAllConceptForGivenVisit() {
-        List<BahmniObservation> bahmniObservations = (List<BahmniObservation>) personObsService.getObservationForVisit("ad41fb41-a41a-4ad6-8835-2f59099acf5b",null, null, false, null);
+        List<BahmniObservation> bahmniObservations = (List<BahmniObservation>) personObsService.getObservationForVisit("ad41fb41-a41a-4ad6-8835-2f59099acf5b", null, null, false, null);
         assertEquals(2, bahmniObservations.size());
         assertEquals(2, bahmniObservations.get(0).getGroupMembers().size());
         assertEquals(1, bahmniObservations.get(1).getGroupMembers().size());
@@ -113,7 +116,8 @@ public class BahmniObsServiceImplIT extends BaseIntegrationTest {
 
     @Test
     public void shouldReturnObsForGivenConceptForGivenVisitWithoutTakingObservationNamesCaseIntoAccount() {
-        Collection<BahmniObservation> bahmniObservations = personObsService.getObservationForVisit("ad41fb41-a41a-4ad6-8835-2f59099acf5b", Arrays.asList("SYSTOlic", "Diastolic"),null, false, null);
+        Collection<BahmniObservation> bahmniObservations =
+                personObsService.getObservationForVisit("ad41fb41-a41a-4ad6-8835-2f59099acf5b", Arrays.asList("SYSTOlic", "Diastolic"), null, false, null);
         assertEquals(2, bahmniObservations.size());
     }
 }

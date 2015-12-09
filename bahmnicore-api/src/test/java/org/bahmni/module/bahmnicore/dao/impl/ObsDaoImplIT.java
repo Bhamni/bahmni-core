@@ -32,14 +32,14 @@ public class ObsDaoImplIT extends BaseIntegrationTest {
         List<Obs> obsList = obsDao.getLatestObsForConceptSetByVisit("86526ed5-3c11-11de-a0ba-001e378eb67a", "Breast Cancer Intake", 901);
         assertEquals(2, obsList.size());
         for (Obs obs : obsList) {
-            assertEquals("for concept : " + obs.getConcept().getName().getName(), latestObsForConcept(obs.getConcept().getId()), obs.getId());
+            assertEquals("for concept : " + obs.getConcept().getName().getName(), conceptToObsMap.get(obs.getConcept().getId()), obs.getId());
         }
     }
 
     @Test
     public void shouldNotRetrieveIfObservationMadeInADifferentTemplate() {
         List<Obs> obsList = obsDao.getLatestObsForConceptSetByVisit("86526ed5-3c11-11de-a0ba-001e378eb67a", "Breast Cancer Progress", 901);
-        assertEquals(1, obsList.size());
+        assertEquals(2, obsList.size());
     }
 
     @Test
@@ -57,7 +57,4 @@ public class ObsDaoImplIT extends BaseIntegrationTest {
         assertEquals(0, obsDao.getObsForOrder("some-random-uuid").size());
     }
 
-    private Integer latestObsForConcept(Integer id) {
-        return conceptToObsMap.get(id);
-    }
 }

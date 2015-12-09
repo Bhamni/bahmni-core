@@ -14,4 +14,7 @@ public interface VisitDao {
     List<Encounter> getAdmitAndDischargeEncounters(Integer visitId);
 
     List<Visit> getVisitsByPatient(Patient patient, int numberOfVisits);
+
+    List<Integer> getVisitIdsFor(String patientUuid, Integer numberOfVisits);
+
 }

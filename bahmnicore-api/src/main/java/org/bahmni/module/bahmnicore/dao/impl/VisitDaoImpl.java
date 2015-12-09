@@ -68,4 +68,18 @@ public class VisitDaoImpl implements VisitDao {
 
         return visits;
     }
+
+    public List<Integer> getVisitIdsFor(String patientUuid, Integer numberOfVisits) {
+        Query queryToGetVisitIds = sessionFactory.getCurrentSession().createQuery(
+                "select v.visitId " +
+                        " from Visit as v " +
+                        " where v.patient.uuid = :patientUuid " +
+                        " and v.voided = false " +
+                        "order by v.startDatetime desc");
+        queryToGetVisitIds.setString("patientUuid", patientUuid);
+        if (numberOfVisits != null) {
+            queryToGetVisitIds.setMaxResults(numberOfVisits);
+        }
+        return queryToGetVisitIds.list();
+    }
 }

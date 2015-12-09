@@ -42,7 +42,7 @@ public class ObsDiseaseSummaryAggregator {
     private Collection<BahmniObservation> fetchBahmniObservations(Patient patient, DiseaseDataParams queryParams, List<Concept> concepts) {
         if (StringUtils.isBlank(queryParams.getVisitUuid())) {
             if (!concepts.isEmpty()) {
-                return bahmniObsService.observationsFor(patient.getUuid(), concepts, queryParams.getNumberOfVisits(), null, false, null);
+                return bahmniObsService.observationsFor(patient.getUuid(), concepts, queryParams.getNumberOfVisits(), null, false, null, null, null);
             }
             return Collections.EMPTY_LIST;
         }

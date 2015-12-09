@@ -163,7 +163,7 @@ public class BahmniDrugOrderController extends BaseRestController {
         Map<String,DrugOrder> drugOrderMap = drugOrderService.getDiscontinuedDrugOrders(activeDrugOrders);
         logger.info(activeDrugOrders.size() + " active drug orders found");
         try {
-            Collection<BahmniObservation> orderAttributeObs = bahmniObsService.observationsFor(patientUuid, getOrdAttributeConcepts(), null, null, false, null);
+            Collection<BahmniObservation> orderAttributeObs = bahmniObsService.observationsFor(patientUuid, getOrdAttributeConcepts(), null, null, false, null, null, null);
             return new BahmniDrugOrderMapper(new BahmniProviderMapper(), getOrderAttributesMapper(), conceptMapper).mapToResponse(activeDrugOrders, orderAttributeObs, drugOrderMap);
         } catch (IOException e) {
             logger.error("Could not parse dosing instructions", e);
@@ -177,7 +177,7 @@ public class BahmniDrugOrderController extends BaseRestController {
         logger.info(drugOrders.size() + " prescribed drug orders found");
 
         try {
-            Collection<BahmniObservation> orderAttributeObs = bahmniObsService.observationsFor(patientUuid, getOrdAttributeConcepts(), null, null, false, null);
+            Collection<BahmniObservation> orderAttributeObs = bahmniObsService.observationsFor(patientUuid, getOrdAttributeConcepts(), null, null, false, null, null, null);
             return new BahmniDrugOrderMapper(new BahmniProviderMapper(), getOrderAttributesMapper(),conceptMapper).mapToResponse(drugOrders, orderAttributeObs, drugOrderMap);
         } catch (IOException e) {
             logger.error("Could not parse drug order", e);
@@ -191,7 +191,7 @@ public class BahmniDrugOrderController extends BaseRestController {
         logger.info(drugOrders.size() + " prescribed drug orders found");
 
         try {
-            Collection<BahmniObservation> orderAttributeObs = bahmniObsService.observationsFor(patientUuid, getOrdAttributeConcepts(), null, null, false, null);
+            Collection<BahmniObservation> orderAttributeObs = bahmniObsService.observationsFor(patientUuid, getOrdAttributeConcepts(), null, null, false, null, null, null);
             return new BahmniDrugOrderMapper(new BahmniProviderMapper(), getOrderAttributesMapper(),conceptMapper).mapToResponse(drugOrders, orderAttributeObs, drugOrderMap);
         } catch (IOException e) {
             logger.error("Could not parse drug order", e);

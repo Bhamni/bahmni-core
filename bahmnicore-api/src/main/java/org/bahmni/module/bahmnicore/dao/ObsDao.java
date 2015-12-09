@@ -1,9 +1,11 @@
 package org.bahmni.module.bahmnicore.dao;
 
+import org.bahmni.module.bahmnicore.dao.impl.ObsDaoImpl;
 import org.openmrs.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 public interface ObsDao {
@@ -11,23 +13,16 @@ public interface ObsDao {
 
     List<Concept> getNumericConceptsForPerson(String personUUID);
 
-    List<Obs> getObsFor(String patientUuid, List<String> conceptName, Integer numberOfVisits, List<String> obsIgnoreList, Boolean filterOutOrderObs, Order order);
+    List<Obs> getObsFor(String patientUuid, Concept rootConcept, Concept childConcept, List<Integer> visitIdsFor);
 
     List<Obs> getLatestObsFor(String patientUuid, String conceptName, Integer limit);
 
-    List<Obs> getInitialObsFor(String patientUuid, String conceptName, Integer numberOfVisits, Integer limit, List<String> obsIgnoreList, Boolean filterOutOrderObs, Order order);
-
-    List<Obs> getInitialObsByVisit(Visit visit, String conceptName, Integer limit, List<String> obsIgnoreList, Boolean filterObsWithOrders);
-
-    List<Obs> getLatestObsFor(String patientUuid, String conceptName, Integer numberOfVisits, Integer limit, List<String> obsIgnoreList, Boolean filterOutOrderObs, Order order);
-
     List<Obs> getLatestObsForConceptSetByVisit(String patientUuid, String conceptNames, Integer visitId);
-
-    List<Obs> getLatestObsByVisit(Visit visit, String conceptName, Integer limit, List<String> obsIgnoreList, Boolean filterOutOrderObs);
 
     List<Obs> getObsForOrder(String orderUuid);
 
     List<Obs> getObsForVisits(List<Person> persons, ArrayList<Encounter> visit, List<Concept> conceptsForNames, Collection<Concept> obsIgnoreList, Boolean filterOutOrders, Order order);
 
-    List<Obs> getObsFor(String patientUuid, Concept rootConcept, Concept childConcept, Integer numberOfVisits);
+    List<Obs> getObsByPatientAndVisit(String patientUuid, List<String> conceptNames, List<Integer> listOfVisitIds, Integer limit, ObsDaoImpl.OrderBy sortOrder, List<String> obsIgnoreList, Boolean filterOutOrderObs, Order order, Date startDate, Date endDate);
+
 }
