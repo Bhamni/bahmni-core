@@ -1,6 +1,7 @@
 package org.bahmni.module.bahmnicore.dao.impl;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.bahmni.module.bahmnicore.contract.orderTemplate.OrderTemplateJson;
 import org.bahmni.module.bahmnicore.dao.OrderDao;
@@ -55,20 +56,34 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
-    public List<DrugOrder> getPrescribedDrugOrders(Patient patient, Boolean includeActiveVisit, Integer numberOfVisits) {
+    public List<DrugOrder> getPrescribedDrugOrders(Patient patient, Boolean includeActiveVisit, Integer numberOfVisits, Date startDate, Date endDate) {
         Session currentSession = getCurrentSession();
         List<Integer> visitWithDrugOrderIds = getVisitIds(getVisitsWithActiveOrders(patient, "DrugOrder", includeActiveVisit, numberOfVisits));
-        if (!visitWithDrugOrderIds.isEmpty()) {
-            Query query = currentSession.createQuery("select d1 from DrugOrder d1, Encounter e, Visit v where d1.encounter = e and e.visit = v and v.visitId in (:visitIds) " +
-                    "and d1.voided = false and d1.action != :discontinued and " +
-                    "not exists (select d2 from DrugOrder d2 where d2.voided = false and d2.action = :revised and d2.encounter = d1.encounter and d2.previousOrder = d1)" +
-                    "order by d1.dateActivated desc");
-            query.setParameterList("visitIds", visitWithDrugOrderIds);
-            query.setParameter("discontinued", Order.Action.DISCONTINUE);
-            query.setParameter("revised", Order.Action.REVISE);
-            return (List<DrugOrder>) query.list();
+        if (visitWithDrugOrderIds.isEmpty()) {
+            return new ArrayList<>();
         }
-        return new ArrayList<>();
+        StringBuilder queryString = new StringBuilder("select d1 " +
+            "from DrugOrder d1, Encounter e, Visit v " +
+            "where d1.encounter = e and e.visit = v and v.visitId in (:visitIds) " +
+            "and d1.voided = false and d1.action != :discontinued " +
+            "and not exists " +
+            "(select d2 from DrugOrder d2 where d2.voided = false and d2.action = :revised and d2.encounter = d1.encounter and d2.previousOrder = d1)");
+
+        if (startDate != null) {
+            queryString.append(" and d1.dateActivated >= :startDate ");
+        }
+        if (endDate != null) {
+            queryString.append(" and d1.dateActivated <= :endDate ");
+        }
+        queryString.append(" order by d1.dateActivated desc");
+
+        Query query = currentSession.createQuery(queryString.toString());
+        query.setParameterList("visitIds", visitWithDrugOrderIds);
+        query.setParameter("discontinued", Order.Action.DISCONTINUE);
+        query.setParameter("revised", Order.Action.REVISE);
+        if (startDate != null) query.setParameter("startDate", startDate);
+        if (endDate != null) query.setParameter("endDate", endDate);
+        return query.list();
     }
 
     @Override
@@ -76,9 +91,9 @@ public class OrderDaoImpl implements OrderDao {
         if (visitUuids != null && visitUuids.size() != 0) {
             Session currentSession = getCurrentSession();
             Query query = currentSession.createQuery("select d1 from DrugOrder d1, Encounter e, Visit v where d1.encounter = e and e.visit = v and v.uuid in (:visitUuids) " +
-                    "and d1.voided = false and d1.action != :discontinued and " +
-                    "not exists (select d2 from DrugOrder d2 where d2.voided = false and d2.action = :revised and d2.encounter = d1.encounter and d2.previousOrder = d1)" +
-                    "order by d1.dateActivated desc");
+                "and d1.voided = false and d1.action != :discontinued and " +
+                "not exists (select d2 from DrugOrder d2 where d2.voided = false and d2.action = :revised and d2.encounter = d1.encounter and d2.previousOrder = d1)" +
+                "order by d1.dateActivated desc");
             query.setParameterList("visitUuids", visitUuids);
             query.setParameter("discontinued", Order.Action.DISCONTINUE);
             query.setParameter("revised", Order.Action.REVISE);
@@ -94,9 +109,9 @@ public class OrderDaoImpl implements OrderDao {
         if (!visitWithDrugOrderIds.isEmpty()) {
 
             Query query = currentSession.createQuery("select d1 from DrugOrder d1, Encounter e, Visit v where d1.encounter = e and e.visit = v and v.visitId in (:visitIds) and d1.drug.concept in (:concepts)" +
-                    "and d1.voided = false and d1.action != :discontinued and " +
-                    "not exists (select d2 from DrugOrder d2 where d2.voided = false and d2.action = :revised and d2.encounter = d1.encounter and d2.previousOrder = d1)" +
-                    "order by d1.dateActivated desc");
+                "and d1.voided = false and d1.action != :discontinued and " +
+                "not exists (select d2 from DrugOrder d2 where d2.voided = false and d2.action = :revised and d2.encounter = d1.encounter and d2.previousOrder = d1)" +
+                "order by d1.dateActivated desc");
             query.setParameterList("visitIds", visitWithDrugOrderIds);
             query.setParameterList("concepts", concepts);
             query.setParameter("discontinued", Order.Action.DISCONTINUE);
@@ -144,7 +159,7 @@ public class OrderDaoImpl implements OrderDao {
         Session currentSession = getCurrentSession();
         String includevisit = includeActiveVisit == null || includeActiveVisit == false ? "and v.stopDatetime is not null and v.stopDatetime < :now" : "";
         Query queryVisitsWithDrugOrders = currentSession.createQuery("select v from " + orderType + " o, Encounter e, Visit v where o.encounter = e.encounterId and e.visit = v.visitId and v.patient = (:patientId) " +
-                "and o.voided = false and o.dateStopped = null and o.action != :discontinued " + includevisit + " group by v.visitId order by v.startDatetime desc");
+            "and o.voided = false and o.dateStopped = null and o.action != :discontinued " + includevisit + " group by v.visitId order by v.startDatetime desc");
         queryVisitsWithDrugOrders.setParameter("patientId", patient);
         queryVisitsWithDrugOrders.setParameter("discontinued", Order.Action.DISCONTINUE);
         if (includeActiveVisit == null || includeActiveVisit == false) {
@@ -160,7 +175,7 @@ public class OrderDaoImpl implements OrderDao {
         Session currentSession = getCurrentSession();
         String includevisit = includeActiveVisit == null || includeActiveVisit == false ? "and v.stopDatetime is not null and v.stopDatetime < :now" : "";
         Query queryVisitsWithDrugOrders = currentSession.createQuery("select v from " + orderType + " o, Encounter e, Visit v where o.encounter = e.encounterId and e.visit = v.visitId and v.patient = (:patientId) " +
-                "and o.voided = false and o.dateStopped = null " + includevisit + " group by v.visitId order by v.startDatetime desc");
+            "and o.voided = false and o.dateStopped = null " + includevisit + " group by v.visitId order by v.startDatetime desc");
         queryVisitsWithDrugOrders.setParameter("patientId", patient);
         if (includeActiveVisit == null || includeActiveVisit == false) {
             queryVisitsWithDrugOrders.setParameter("now", new Date());
@@ -178,9 +193,9 @@ public class OrderDaoImpl implements OrderDao {
     @Override
     public List<Visit> getVisitsForUUids(String[] visitUuids) {
         return getCurrentSession()
-                .createQuery("from Visit v where v.uuid in (:visitUuids)")
-                .setParameterList("visitUuids", visitUuids)
-                .list();
+            .createQuery("from Visit v where v.uuid in (:visitUuids)")
+            .setParameterList("visitUuids", visitUuids)
+            .list();
     }
 
     private Session getCurrentSession() {
@@ -226,9 +241,9 @@ public class OrderDaoImpl implements OrderDao {
         }
         Session currentSession = getCurrentSession();
         Query queryVisitsWithDrugOrders = currentSession.createQuery(" select o from Order o where o.encounter.encounterId in\n" +
-                "(select e.encounterId from Encounter e where e.visit in (:visits) group by e.visit.visitId )\n" +
-                "and o.dateStopped = null and o.voided = false and o.orderType = (:orderTypeId) " +
-                "and o.action != :discontinued order by o.dateActivated desc");
+            "(select e.encounterId from Encounter e where e.visit in (:visits) group by e.visit.visitId )\n" +
+            "and o.dateStopped = null and o.voided = false and o.orderType = (:orderTypeId) " +
+            "and o.action != :discontinued order by o.dateActivated desc");
         queryVisitsWithDrugOrders.setParameter("discontinued", Order.Action.DISCONTINUE);
         queryVisitsWithDrugOrders.setParameter("orderTypeId", orderType);
         queryVisitsWithDrugOrders.setParameterList("visits", visits);
@@ -248,8 +263,8 @@ public class OrderDaoImpl implements OrderDao {
     public List<Order> getOrdersForVisitUuid(String visitUuid, String orderTypeUuid) {
         Session currentSession = getCurrentSession();
         Query queryVisitsWithDrugOrders = currentSession.createQuery(" select o from Order o where o.encounter.encounterId in\n" +
-                "(select e.encounterId from Encounter e where e.visit.uuid =:visitUuid)\n" +
-                "and o.voided = false and o.dateStopped = null and o.orderType.uuid = (:orderTypeUuid) and  o.action != :discontinued order by o.dateActivated desc");
+            "(select e.encounterId from Encounter e where e.visit.uuid =:visitUuid)\n" +
+            "and o.voided = false and o.dateStopped = null and o.orderType.uuid = (:orderTypeUuid) and  o.action != :discontinued order by o.dateActivated desc");
         queryVisitsWithDrugOrders.setParameter("orderTypeUuid", orderTypeUuid);
         queryVisitsWithDrugOrders.setParameter("discontinued", Order.Action.DISCONTINUE);
         queryVisitsWithDrugOrders.setParameter("visitUuid", visitUuid);
@@ -260,7 +275,7 @@ public class OrderDaoImpl implements OrderDao {
     public List<Order> getAllOrders(Patient patientByUuid, OrderType drugOrderType, Set<Concept> conceptsForDrugs) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Order.class);
         criteria.add(Restrictions.eq("patient", patientByUuid));
-        if (CollectionUtils.isNotEmpty(conceptsForDrugs)){
+        if (CollectionUtils.isNotEmpty(conceptsForDrugs)) {
             criteria.add(Restrictions.in("concept", conceptsForDrugs));
         }
         criteria.add(Restrictions.eq("orderType", drugOrderType));
@@ -275,7 +290,7 @@ public class OrderDaoImpl implements OrderDao {
     @Override
     public Map<String, DrugOrder> getDiscontinuedDrugOrders(List<DrugOrder> drugOrders) {
 
-        if(drugOrders == null || drugOrders.size()==0)
+        if (drugOrders == null || drugOrders.size() == 0)
             return new HashMap<>();
 
         Session currentSession = getCurrentSession();
@@ -283,12 +298,12 @@ public class OrderDaoImpl implements OrderDao {
         Query query = currentSession.createQuery("select d1 from DrugOrder d1 where d1.action = :discontinued and  d1.previousOrder in :drugOrderList");
         query.setParameter("discontinued", Order.Action.DISCONTINUE);
         query.setParameterList("drugOrderList", drugOrders);
-        List<DrugOrder> discontinuedDrugOrders=query.list();
+        List<DrugOrder> discontinuedDrugOrders = query.list();
 
-        Map<String,DrugOrder> discontinuedDrugOrderMap=new HashMap<>();
-       for(DrugOrder discontinuedDrugOrder: discontinuedDrugOrders){
-           discontinuedDrugOrderMap.put(discontinuedDrugOrder.getPreviousOrder().getOrderNumber(),discontinuedDrugOrder);
-       }
+        Map<String, DrugOrder> discontinuedDrugOrderMap = new HashMap<>();
+        for (DrugOrder discontinuedDrugOrder : discontinuedDrugOrders) {
+            discontinuedDrugOrderMap.put(discontinuedDrugOrder.getPreviousOrder().getOrderNumber(), discontinuedDrugOrder);
+        }
 
         return discontinuedDrugOrderMap;
     }

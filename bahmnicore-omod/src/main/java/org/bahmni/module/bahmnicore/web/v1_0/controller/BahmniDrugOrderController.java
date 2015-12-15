@@ -26,6 +26,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Controller
@@ -66,20 +68,24 @@ public class BahmniDrugOrderController extends BaseRestController {
 
     @RequestMapping(value = baseUrl + "/prescribedAndActive", method = RequestMethod.GET)
     @ResponseBody
-    public Map<String, Collection<BahmniDrugOrder>> getVisitWisePrescribedAndOtherActiveOrders(@RequestParam(value = "patientUuid") String patientUuid,
-                                                                                               @RequestParam(value = "numberOfVisits", required = false) Integer numberOfVisits,
-                                                                                               @RequestParam(value = "getOtherActive", required = false) Boolean getOtherActive,
-                                                                                               @RequestParam(value = "visitUuids", required = false) List visitUuids) {
+    public Map<String, Collection<BahmniDrugOrder>> getVisitWisePrescribedAndOtherActiveOrders(
+                            @RequestParam(value = "patientUuid") String patientUuid,
+                            @RequestParam(value = "numberOfVisits", required = false) Integer numberOfVisits,
+                            @RequestParam(value = "getOtherActive", required = false) Boolean getOtherActive,
+                            @RequestParam(value = "visitUuids", required = false) List visitUuids,
+                            @RequestParam(value = "startDate", required = false) String startDate,
+                            @RequestParam(value = "endDate", required = false) String endDate) throws ParseException {
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+        Date end_date=null;
+        Date start_date=null;
+
+        if(startDate!=null) start_date = simpleDateFormat.parse(startDate);
+        if(endDate!=null) end_date = simpleDateFormat.parse(endDate);
 
         Map<String, Collection<BahmniDrugOrder>> visitWiseOrders = new HashMap<>();
 
-
-        List<BahmniDrugOrder> prescribedOrders;
-        if (visitUuids != null && visitUuids.size() != 0) {
-            prescribedOrders = getPrescribedDrugOrders(patientUuid, visitUuids);
-        } else {
-            prescribedOrders = getPrescribedOrders(patientUuid, true, numberOfVisits);
-        }
+        List<BahmniDrugOrder> prescribedOrders = getPrescribedOrders(visitUuids, patientUuid, true, numberOfVisits, start_date, end_date);
         visitWiseOrders.put("visitDrugOrders", prescribedOrders);
 
         if (Boolean.TRUE.equals(getOtherActive)) {
@@ -96,9 +102,8 @@ public class BahmniDrugOrderController extends BaseRestController {
     public List<BahmniDrugOrder> getPrescribedDrugOrders(@RequestParam(value = "patientUuid") String patientUuid,
                                                          @RequestParam(value = "includeActiveVisit", required = false) Boolean includeActiveVisit,
                                                          @RequestParam(value = "numberOfVisits", required = false) Integer numberOfVisits) {
-        return getPrescribedOrders(patientUuid, includeActiveVisit, numberOfVisits);
+        return getPrescribedOrders(null, patientUuid, includeActiveVisit, numberOfVisits, null, null);
     }
-
 
     @RequestMapping(value = baseUrl + "/drugOrderDetails", method = RequestMethod.GET)
     @ResponseBody
@@ -160,36 +165,18 @@ public class BahmniDrugOrderController extends BaseRestController {
 
     private List<BahmniDrugOrder> getActiveOrders(String patientUuid) {
         List<DrugOrder> activeDrugOrders = drugOrderService.getActiveDrugOrders(patientUuid);
-        Map<String,DrugOrder> drugOrderMap = drugOrderService.getDiscontinuedDrugOrders(activeDrugOrders);
         logger.info(activeDrugOrders.size() + " active drug orders found");
-        try {
-            Collection<BahmniObservation> orderAttributeObs = bahmniObsService.observationsFor(patientUuid, getOrdAttributeConcepts(), null, null, false, null, null, null);
-            return new BahmniDrugOrderMapper(new BahmniProviderMapper(), getOrderAttributesMapper(), conceptMapper).mapToResponse(activeDrugOrders, orderAttributeObs, drugOrderMap);
-        } catch (IOException e) {
-            logger.error("Could not parse dosing instructions", e);
-            throw new RuntimeException("Could not parse dosing instructions", e);
-        }
+        return getBahmniDrugOrders(patientUuid,activeDrugOrders);
     }
 
-    private List<BahmniDrugOrder> getPrescribedOrders(String patientUuid, Boolean includeActiveVisit, Integer numberOfVisits) {
-        List<DrugOrder> drugOrders = drugOrderService.getPrescribedDrugOrders(patientUuid, includeActiveVisit, numberOfVisits);
-        Map<String, DrugOrder> drugOrderMap = drugOrderService.getDiscontinuedDrugOrders(drugOrders);
-        logger.info(drugOrders.size() + " prescribed drug orders found");
-
-        try {
-            Collection<BahmniObservation> orderAttributeObs = bahmniObsService.observationsFor(patientUuid, getOrdAttributeConcepts(), null, null, false, null, null, null);
-            return new BahmniDrugOrderMapper(new BahmniProviderMapper(), getOrderAttributesMapper(),conceptMapper).mapToResponse(drugOrders, orderAttributeObs, drugOrderMap);
-        } catch (IOException e) {
-            logger.error("Could not parse drug order", e);
-            throw new RuntimeException("Could not parse drug order", e);
-        }
+    private List<BahmniDrugOrder> getPrescribedOrders(List<String> visitUuids, String patientUuid, Boolean includeActiveVisit, Integer numberOfVisits, Date startDate, Date endDate) {
+        List<DrugOrder> prescribedDrugOrders = drugOrderService.getPrescribedDrugOrders(visitUuids, patientUuid, includeActiveVisit, numberOfVisits, startDate, endDate);
+        logger.info(prescribedDrugOrders.size() + " prescribed drug orders found");
+        return getBahmniDrugOrders(patientUuid, prescribedDrugOrders);
     }
 
-    private List<BahmniDrugOrder> getPrescribedDrugOrders(String patientUuid, List visitUuids) {
-        List<DrugOrder> drugOrders = drugOrderService.getPrescribedDrugOrders(visitUuids);
+    private List<BahmniDrugOrder> getBahmniDrugOrders(String patientUuid, List<DrugOrder> drugOrders) {
         Map<String, DrugOrder> drugOrderMap = drugOrderService.getDiscontinuedDrugOrders(drugOrders);
-        logger.info(drugOrders.size() + " prescribed drug orders found");
-
         try {
             Collection<BahmniObservation> orderAttributeObs = bahmniObsService.observationsFor(patientUuid, getOrdAttributeConcepts(), null, null, false, null, null, null);
             return new BahmniDrugOrderMapper(new BahmniProviderMapper(), getOrderAttributesMapper(),conceptMapper).mapToResponse(drugOrders, orderAttributeObs, drugOrderMap);

@@ -1,5 +1,6 @@
 package org.bahmni.module.bahmnicore.service.impl;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.bahmni.module.bahmnicore.contract.drugorder.ConceptData;
@@ -123,14 +124,13 @@ public class BahmniDrugOrderServiceImpl implements BahmniDrugOrderService {
     }
 
     @Override
-    public List<DrugOrder> getPrescribedDrugOrders(String patientUuid, Boolean includeActiveVisit, Integer numberOfVisits) {
-        Patient patient = openmrsPatientService.getPatientByUuid(patientUuid);
-        return orderDao.getPrescribedDrugOrders(patient, includeActiveVisit, numberOfVisits);
-    }
-
-    @Override
-    public List<DrugOrder> getPrescribedDrugOrders(List<String> visitUuids) {
-        return orderDao.getPrescribedDrugOrders(visitUuids);
+    public List<DrugOrder> getPrescribedDrugOrders(List<String> visitUuids, String patientUuid, Boolean includeActiveVisit, Integer numberOfVisits, Date startDate, Date endDate) {
+        if(CollectionUtils.isNotEmpty(visitUuids)) {
+            return orderDao.getPrescribedDrugOrders(visitUuids);
+        } else {
+            Patient patient = openmrsPatientService.getPatientByUuid(patientUuid);
+            return orderDao.getPrescribedDrugOrders(patient, includeActiveVisit, numberOfVisits, startDate, endDate);
+        }
     }
 
     public Map<String,DrugOrder> getDiscontinuedDrugOrders(List<DrugOrder> drugOrders){

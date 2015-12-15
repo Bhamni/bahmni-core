@@ -3,15 +3,12 @@ package org.bahmni.module.bahmnicore.dao;
 import org.openmrs.*;
 import org.openmrs.module.emrapi.encounter.domain.EncounterTransaction;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public interface OrderDao {
     List<Order> getCompletedOrdersFrom(List<Order> orders);
 
-    List<DrugOrder> getPrescribedDrugOrders(Patient patient, Boolean includeActiveVisit, Integer numberOfVisits);
+    List<DrugOrder> getPrescribedDrugOrders(Patient patient, Boolean includeActiveVisit, Integer numberOfVisits, Date startDate, Date endDate);
 
     List<Visit> getVisitsWithActiveOrders(Patient patient, String orderType, Boolean includeActiveVisit, Integer numberOfVisits);
 
