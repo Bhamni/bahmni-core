@@ -108,7 +108,7 @@ public class BahmniDrugOrderController extends BaseRestController {
     @RequestMapping(value = baseUrl + "/drugOrderDetails", method = RequestMethod.GET)
     @ResponseBody
     public List<BahmniDrugOrder> getDrugOrderDetails(@RequestParam(value = "patientUuid") String patientUuid,
-                                                         @RequestParam(value = "drugNames", required = false) List<String> drugNames) {
+                                                         @RequestParam(value = "drugNames", required = false) List<String> drugNames) throws ParseException {
         Set<Concept> conceptsForDrugs = getConceptsForDrugs(drugNames);
         List<DrugOrder> drugOrders = new ArrayList<>();
 
@@ -116,7 +116,7 @@ public class BahmniDrugOrderController extends BaseRestController {
             return new ArrayList<>();
         }
 
-        List<Order> allDrugOrders = drugOrderService.getAllDrugOrders(patientUuid, conceptsForDrugs);
+        List<Order> allDrugOrders = drugOrderService.getAllDrugOrders(patientUuid, conceptsForDrugs, null, null);
         for (Order allDrugOrder : allDrugOrders) {
             drugOrders.add((DrugOrder) allDrugOrder);
         }

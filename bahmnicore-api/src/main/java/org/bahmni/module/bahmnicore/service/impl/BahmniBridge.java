@@ -1,7 +1,5 @@
 package org.bahmni.module.bahmnicore.service.impl;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
 import org.bahmni.module.bahmnicore.dao.ObsDao;
 import org.bahmni.module.bahmnicore.dao.OrderDao;
 import org.bahmni.module.bahmnicore.service.BahmniDrugOrderService;
@@ -19,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.text.ParseException;
 import java.util.*;
 
 /**
@@ -176,8 +175,8 @@ public class BahmniBridge {
      *
      * @return
      */
-    public Date getStartDateOfTreatment() {
-        List<Order> allDrugOrders = bahmniDrugOrderService.getAllDrugOrders(patientUuid, null);
+    public Date getStartDateOfTreatment() throws ParseException {
+        List<Order> allDrugOrders = bahmniDrugOrderService.getAllDrugOrders(patientUuid, null, null, null);
         sortOders(allDrugOrders);
         return allDrugOrders.get(0).getScheduledDate() !=null ? allDrugOrders.get(0).getScheduledDate() : allDrugOrders.get(0).getDateActivated();
     }

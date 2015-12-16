@@ -1,7 +1,6 @@
 package org.bahmni.module.bahmnicore.dao.impl;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.bahmni.module.bahmnicore.contract.orderTemplate.OrderTemplateJson;
 import org.bahmni.module.bahmnicore.dao.OrderDao;
@@ -272,7 +271,7 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
-    public List<Order> getAllOrders(Patient patientByUuid, OrderType drugOrderType, Set<Concept> conceptsForDrugs) {
+    public List<Order> getAllOrders(Patient patientByUuid, OrderType drugOrderType, Set<Concept> conceptsForDrugs, Date startDate, Date endDate) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Order.class);
         criteria.add(Restrictions.eq("patient", patientByUuid));
         if (CollectionUtils.isNotEmpty(conceptsForDrugs)) {
@@ -282,6 +281,8 @@ public class OrderDaoImpl implements OrderDao {
         criteria.add(Restrictions.eq("voided", false));
         criteria.add(Restrictions.ne("action", Order.Action.DISCONTINUE));
         criteria.addOrder(org.hibernate.criterion.Order.asc("orderId"));
+        if(startDate != null) criteria.add(Restrictions.ge("dateActivated", startDate));
+        if(endDate != null) criteria.add(Restrictions.le("dateActivated", endDate));
 
         return criteria.list();
 

@@ -88,7 +88,7 @@ public class BahmniBridgeTest {
         Order order2 = new Order();
         order2.setDateActivated(now);
         allDrugOrders.add(order2);
-        PowerMockito.when(bahmniDrugOrderService.getAllDrugOrders(patientUuid, null)).thenReturn(allDrugOrders);
+        PowerMockito.when(bahmniDrugOrderService.getAllDrugOrders(patientUuid, null, null, null)).thenReturn(allDrugOrders);
 
         Assert.assertEquals(now, bahmniBridge.getStartDateOfTreatment());
 
@@ -105,7 +105,7 @@ public class BahmniBridgeTest {
         order2.setScheduledDate(addDays(now, 2));
         order2.setDateActivated(now);
         allDrugOrders.add(order2);
-        PowerMockito.when(bahmniDrugOrderService.getAllDrugOrders(patientUuid, null)).thenReturn(allDrugOrders);
+        PowerMockito.when(bahmniDrugOrderService.getAllDrugOrders(patientUuid, null, null, null)).thenReturn(allDrugOrders);
 
         Assert.assertEquals(addDays(now, 2), bahmniBridge.getStartDateOfTreatment());
 

@@ -45,6 +45,8 @@ import org.openmrs.module.emrapi.utils.HibernateLazyLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -159,10 +161,17 @@ public class BahmniDrugOrderServiceImpl implements BahmniDrugOrderService {
     }
 
     @Override
-    public List<Order> getAllDrugOrders(String patientUuid, Set<Concept> conceptsForDrugs) {
+    public List<Order> getAllDrugOrders(String patientUuid, Set<Concept> conceptsForDrugs, String startDateStr, String endDateStr) throws ParseException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+        Date startDate=null;
+        Date endDate=null;
+
+        if(StringUtils.isNotEmpty(startDateStr)) startDate = simpleDateFormat.parse(startDateStr);
+        if(StringUtils.isNotEmpty(endDateStr)) endDate = simpleDateFormat.parse(endDateStr);
+
         Patient patientByUuid = openmrsPatientService.getPatientByUuid(patientUuid);
         OrderType orderTypeByUuid = orderService.getOrderTypeByUuid(OrderType.DRUG_ORDER_TYPE_UUID);
-        return orderDao.getAllOrders(patientByUuid, orderTypeByUuid, conceptsForDrugs);
+        return orderDao.getAllOrders(patientByUuid, orderTypeByUuid, conceptsForDrugs, startDate, endDate);
     }
 
     private List<EncounterTransaction.Concept> fetchOrderAttributeConcepts() {

@@ -44,13 +44,13 @@ public class DrugOGramControllerTest {
     @Test
     public void shouldFetchDrugsAsRegimen() throws Exception {
         ArrayList<Order> drugOrders = new ArrayList<>();
-        when(bahmniDrugOrderService.getAllDrugOrders("patientUuid", null)).thenReturn(drugOrders);
+        when(bahmniDrugOrderService.getAllDrugOrders("patientUuid", null, null, null)).thenReturn(drugOrders);
         TreatmentRegimen expected = new TreatmentRegimen();
         when(drugOrderToTreatmentRegimenMapper.map(drugOrders, null)).thenReturn(expected);
 
-        TreatmentRegimen actual = drugOGramController.getRegimen("patientUuid", null);
+        TreatmentRegimen actual = drugOGramController.getRegimen("patientUuid", null, null, null);
 
-        verify(bahmniDrugOrderService, times(1)).getAllDrugOrders("patientUuid", null);
+        verify(bahmniDrugOrderService, times(1)).getAllDrugOrders("patientUuid", null, null, null);
         verify(drugOrderToTreatmentRegimenMapper, times(1)).map(drugOrders, null);
         assertEquals(expected, actual);
         assertEquals(0, expected.getHeaders().size());
@@ -64,13 +64,13 @@ public class DrugOGramControllerTest {
         ArrayList<Order> drugOrders = new ArrayList<>();
         HashSet<Concept> concepts = new HashSet<>();
         concepts.add(paracetamol);
-        when(bahmniDrugOrderService.getAllDrugOrders("patientUuid", concepts)).thenReturn(drugOrders);
+        when(bahmniDrugOrderService.getAllDrugOrders("patientUuid", concepts, null, null)).thenReturn(drugOrders);
         TreatmentRegimen expected = new TreatmentRegimen();
         when(drugOrderToTreatmentRegimenMapper.map(drugOrders, concepts)).thenReturn(expected);
 
-        TreatmentRegimen actual = drugOGramController.getRegimen("patientUuid", Arrays.asList("Paracetamol"));
+        TreatmentRegimen actual = drugOGramController.getRegimen("patientUuid", Arrays.asList("Paracetamol"), null, null);
 
-        verify(bahmniDrugOrderService, times(1)).getAllDrugOrders("patientUuid", concepts);
+        verify(bahmniDrugOrderService, times(1)).getAllDrugOrders("patientUuid", concepts, null, null);
         verify(drugOrderToTreatmentRegimenMapper, times(1)).map(drugOrders, concepts);
         assertEquals(expected, actual);
         assertEquals(0, expected.getHeaders().size());
@@ -86,13 +86,13 @@ public class DrugOGramControllerTest {
         ArrayList<Order> drugOrders = new ArrayList<>();
         HashSet<Concept> concepts = new HashSet<>();
         concepts.add(paracetamol);
-        when(bahmniDrugOrderService.getAllDrugOrders("patientUuid", concepts)).thenReturn(drugOrders);
+        when(bahmniDrugOrderService.getAllDrugOrders("patientUuid", concepts, null, null)).thenReturn(drugOrders);
         TreatmentRegimen expected = new TreatmentRegimen();
         when(drugOrderToTreatmentRegimenMapper.map(drugOrders, concepts)).thenReturn(expected);
 
-        TreatmentRegimen actual = drugOGramController.getRegimen("patientUuid", Arrays.asList("TB Drugs"));
+        TreatmentRegimen actual = drugOGramController.getRegimen("patientUuid", Arrays.asList("TB Drugs"), null, null);
 
-        verify(bahmniDrugOrderService, times(1)).getAllDrugOrders("patientUuid", concepts);
+        verify(bahmniDrugOrderService, times(1)).getAllDrugOrders("patientUuid", concepts, null, null);
         verify(drugOrderToTreatmentRegimenMapper, times(1)).map(drugOrders, concepts);
         assertEquals(expected, actual);
         assertEquals(0, expected.getHeaders().size());

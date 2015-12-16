@@ -4,6 +4,7 @@ import org.bahmni.module.bahmnicore.contract.drugorder.*;
 import org.bahmni.module.bahmnicore.model.BahmniFeedDrugOrder;
 import org.openmrs.*;
 
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +20,7 @@ public interface BahmniDrugOrderService {
 
     DrugOrderConfigResponse getConfig();
 
-    List<Order> getAllDrugOrders(String patientUuid, Set<Concept> conceptsForDrugs);
+    List<Order> getAllDrugOrders(String patientUuid, Set<Concept> conceptsForDrugs, String startDate, String endDate) throws ParseException;
 
     Map<String,DrugOrder> getDiscontinuedDrugOrders(List<DrugOrder> drugOrders);
 }

@@ -7,7 +7,6 @@ import org.openmrs.Concept;
 import org.openmrs.Order;
 import org.openmrs.api.ConceptService;
 import org.openmrs.module.bahmniemrapi.drugogram.contract.BaseTableExtension;
-import org.openmrs.module.bahmniemrapi.drugogram.contract.TableExtension;
 import org.openmrs.module.bahmniemrapi.drugogram.contract.TreatmentRegimen;
 import org.openmrs.module.webservices.rest.web.RestConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,9 +41,11 @@ public class DrugOGramController {
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     public TreatmentRegimen getRegimen(@RequestParam(value = "patientUuid", required = true) String patientUuid,
-                              @RequestParam(value = "drugs", required = false) List<String> drugs) throws ParseException {
+                                       @RequestParam(value = "drugs", required = false) List<String> drugs,
+                                       @RequestParam(value = "startDate", required = false) String startDate,
+                                       @RequestParam(value = "endDate", required = false) String endDate) throws ParseException {
         Set<Concept> conceptsForDrugs = getConceptsForDrugs(drugs);
-        List<Order> allDrugOrders = bahmniDrugOrderService.getAllDrugOrders(patientUuid, conceptsForDrugs);
+        List<Order> allDrugOrders = bahmniDrugOrderService.getAllDrugOrders(patientUuid, conceptsForDrugs, startDate, endDate);
         TreatmentRegimen treatmentRegimen = drugOrderToTreatmentRegimenMapper.map(allDrugOrders, conceptsForDrugs);
         BaseTableExtension<TreatmentRegimen> extension = bahmniExtensions.getExtension("TreatmentRegimenExtension.groovy");
         extension.update(treatmentRegimen);
