@@ -72,7 +72,7 @@
     <!--Test Concepts-->
     <concept concept_id="688" retired="0" datatype_id="1" class_id="11" is_set="1" creator="1"
              date_created="2013-12-04 11:36:42" uuid="5d2d4cb7-mm3b-0037-70f7-0dmimmm22222"/>
-    <concept_name concept_id="688" name="Existing Concept" locale="en" creator="1" date_created="2005-01-01 00:00:00.0"
+    <concept_name concept_id="688" name="Existing Concept" locale="en_GB" creator="1" date_created="2005-01-01 00:00:00.0"
                   concept_name_id="1712" voided="false" uuid="ccid4cb7-988b-4007-lkcc-0ebb94022222"
                   concept_name_type="FULLY_SPECIFIED" locale_preferred="0"/>
     <concept_name concept_id="688" name="SName" locale="en" creator="1" date_created="2005-01-01 00:00:00.0"
