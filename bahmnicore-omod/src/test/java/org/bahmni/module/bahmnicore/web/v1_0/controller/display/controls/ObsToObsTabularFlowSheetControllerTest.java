@@ -10,9 +10,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
-import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.mockito.*;
 import org.openmrs.Concept;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
@@ -56,6 +54,9 @@ public class ObsToObsTabularFlowSheetControllerTest {
     private BahmniObsService bahmniObsService;
     @Mock
     private BahmniExtensions bahmniExtensions;
+
+    @Captor
+    private ArgumentCaptor<Set<EncounterTransaction.Concept>> leafConceptsCaptured;
 
     private ObsToObsTabularFlowSheetController obsToObsPivotTableController;
     private ConceptMapper conceptMapper = new ConceptMapper();
@@ -246,6 +247,42 @@ public class ObsToObsTabularFlowSheetControllerTest {
         verify(conceptService, times(1)).getConceptByName("ConceptSetName");
         verify(bahmniObsService, times(1)).observationsFor("patientUuid", rootConcept, groupByConcept, -1);
         verify(bahmniObservationsToTabularViewMapper, times(1)).constructTable(Matchers.<Set<EncounterTransaction.Concept>>any(), eq(bahmniObservations), anyString());
+        assertNotNull(actualPivotTable);
+        assertEquals(pivotTable, actualPivotTable);
+    }
+
+    @Test
+    public void shouldSortTheConceptsAsTheOrderDefinedIntheConceptNames() throws Exception {
+        Concept member1 = new ConceptBuilder().withName("Member1").withClass("N/A").withDataType("Numeric").withSet(false).build();
+        Concept member2 = new ConceptBuilder().withName("Member2").withClass("N/A").withDataType("Numeric").withSet(false).build();
+        Concept parent = new ConceptBuilder().withName("Parent").withSetMember(member1).withSetMember(member2).withSet(true).withClass("N/A").withDataType("N/A").build();
+        Concept groupByConcept = new ConceptBuilder().withName("GroupByConcept").withClass("N/A").withDataType("Numeric").withSet(false).build();
+        Concept rootConcept = new ConceptBuilder().withName("ConceptSetName").withSetMember(groupByConcept).withSetMember(parent).withClass("N/A").withDataType("Numeric").withSet(true).build();
+        ArrayList<BahmniObservation> bahmniObservations = new ArrayList<>();
+
+        when(conceptService.getConceptByName("ConceptSetName")).thenReturn(rootConcept);
+        when(conceptService.getConceptByName("GroupByConcept")).thenReturn(groupByConcept);
+        when(bahmniObsService.observationsFor("patientUuid", rootConcept, groupByConcept, 1)).thenReturn(bahmniObservations);
+
+        PivotTable pivotTable = new PivotTable();
+        List<String> conceptNames = Arrays.asList("Member2", "Member1");
+
+//        Set<String> leafConcepts = new HashSet<>(Arrays.asList("Member1", "Member2", "GroupByConcept"));
+        when(bahmniObservationsToTabularViewMapper.constructTable(Matchers.<Set<EncounterTransaction.Concept>>any(), eq(bahmniObservations), anyString())).thenReturn(pivotTable);
+
+        PivotTable actualPivotTable = obsToObsPivotTableController.constructPivotTableFor("patientUuid", 1, "ConceptSetName", "GroupByConcept", conceptNames, null, null, null);
+
+        verify(conceptService, times(1)).getConceptByName("ConceptSetName");
+        verify(conceptService, times(1)).getConceptByName("GroupByConcept");
+        verify(bahmniObsService, times(1)).observationsFor("patientUuid", rootConcept, groupByConcept, 1);
+
+        verify(bahmniObservationsToTabularViewMapper, times(1)).constructTable(leafConceptsCaptured.capture(), eq(bahmniObservations), anyString());
+        Set<EncounterTransaction.Concept> actualLeafConcepts = leafConceptsCaptured.getValue();
+
+        Iterator<EncounterTransaction.Concept> iterator = actualLeafConcepts.iterator();
+        assertEquals(iterator.next().getName(),"Member2");
+        assertEquals(iterator.next().getName(),"Member1");
+
         assertNotNull(actualPivotTable);
         assertEquals(pivotTable, actualPivotTable);
     }

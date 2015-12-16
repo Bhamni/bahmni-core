@@ -69,6 +69,9 @@ public class ObsToObsTabularFlowSheetController {
         } else {
             getSpecifiedLeafConcepts(rootConcept, conceptNames, leafConcepts);
         }
+        if (!CollectionUtils.isEmpty(conceptNames)) {
+            leafConcepts = sortConcepts(conceptNames, leafConcepts);
+        }
         if (conceptNames != null && !conceptNames.contains(groupByConcept)) {
             leafConcepts.add(conceptMapper.map(childConcept));
         }
@@ -77,6 +80,18 @@ public class ObsToObsTabularFlowSheetController {
         BaseTableExtension<PivotTable> extension = bahmniExtensions.getExtension(groovyExtension + ".groovy");
         extension.update(pivotTable, patientUuid);
         return pivotTable;
+    }
+
+    private Set<EncounterTransaction.Concept> sortConcepts(List<String> conceptNames, Set<EncounterTransaction.Concept> leafConcepts) {
+        Set<EncounterTransaction.Concept> sortedConcepts = new LinkedHashSet<>();
+        for (String conceptName: conceptNames){
+            for (EncounterTransaction.Concept leafConcept : leafConcepts) {
+                if (conceptName.equals(leafConcept.getName())) {
+                    sortedConcepts.add(leafConcept);
+                }
+            }
+        }
+        return sortedConcepts;
     }
 
     private Collection<BahmniObservation> filterDataByCount(Collection<BahmniObservation> bahmniObservations, Integer initialCount, Integer latestCount) {
