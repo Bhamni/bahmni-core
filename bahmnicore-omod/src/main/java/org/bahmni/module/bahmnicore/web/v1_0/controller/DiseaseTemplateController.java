@@ -9,7 +9,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
@@ -28,10 +27,9 @@ public class DiseaseTemplateController extends BaseRestController {
         return diseaseTemplateService.allDiseaseTemplatesFor(diseaseTemplatesConfig);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = baseUrl + "diseaseTemplate")
+    @RequestMapping(method = RequestMethod.POST, value = baseUrl + "diseaseTemplate")
     @ResponseBody
-    public DiseaseTemplate getDiseaseTemplate(@RequestParam(value = "patientUuid", required = true) String patientUUID,
-                                              @RequestParam(value = "diseaseName", required = true) String diseaseName) {
-        return diseaseTemplateService.diseaseTemplateFor(patientUUID, diseaseName);
+    public DiseaseTemplate getDiseaseTemplate(@RequestBody DiseaseTemplatesConfig diseaseTemplatesConfig){
+        return diseaseTemplateService.diseaseTemplateFor(diseaseTemplatesConfig);
     }
 }
