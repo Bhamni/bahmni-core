@@ -148,11 +148,10 @@ public class BahmniDiagnosisServiceImpl implements BahmniDiagnosisService {
         return null;
     }
 
-    public List<BahmniDiagnosisRequest> getBahmniDiagnosisByPatientAndDate(String patientUuid, String date) throws ParseException {
+    public List<BahmniDiagnosisRequest> getBahmniDiagnosisByPatientAndDate(String patientUuid, Date startDate, Date endDate) throws ParseException {
         Patient patient = patientService.getPatientByUuid(patientUuid);
 
-        Date fromDate = date!=null ? new SimpleDateFormat("yyyy-MM-dd").parse(date) : null;
-        List<Diagnosis> diagnosisByPatientAndDate = diagnosisService.getDiagnoses(patient, fromDate);
+        List<Diagnosis> diagnosisByPatientAndDate = diagnosisService.getDiagnoses(patient, startDate, endDate);
 
         List<BahmniDiagnosisRequest> bahmniDiagnosisRequests = new ArrayList<>();
 
