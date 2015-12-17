@@ -6,7 +6,7 @@
 
 <hibernate-mapping package="org.bahmni.module.bahmnicore.model.bahmniPatientProgram">
 
-    <class name="BahmniPatientProgramAttribute" table="patient_program_attribute">
+    <class name="org.bahmni.module.bahmnicore.model.bahmniPatientProgram.PatientProgramAttribute" table="patient_program_attribute">
 
         <id name="patientProgramAttributeId" type="int" column="patient_program_attribute_id">
             <generator class="native">
@@ -17,7 +17,7 @@
 
         <many-to-one name="patientProgram" class="BahmniPatientProgram" not-null="true" column="patient_program_id"/>
 
-        <many-to-one name="attributeType" class="BahmniPatientProgramAttributeType" not-null="true"
+        <many-to-one name="attributeType" class="org.bahmni.module.bahmnicore.model.bahmniPatientProgram.PatientProgramAttributeType" not-null="true"
                      column="attribute_type_id"/>
 
         <property name="valueReference" type="text" not-null="true" access="field" column="value_reference"

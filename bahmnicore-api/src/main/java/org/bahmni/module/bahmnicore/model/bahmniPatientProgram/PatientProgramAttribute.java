@@ -5,7 +5,7 @@ import org.openmrs.attribute.Attribute;
 import org.openmrs.attribute.BaseAttribute;
 
 
-public class BahmniPatientProgramAttribute extends BaseAttribute<BahmniPatientProgramAttributeType, BahmniPatientProgram> implements Attribute<BahmniPatientProgramAttributeType, BahmniPatientProgram> {
+public class PatientProgramAttribute extends BaseAttribute<PatientProgramAttributeType, BahmniPatientProgram> implements Attribute<PatientProgramAttributeType, BahmniPatientProgram> {
 
     private Integer patientProgramAttributeId;
 
@@ -19,11 +19,11 @@ public class BahmniPatientProgramAttribute extends BaseAttribute<BahmniPatientPr
         setPatientProgramAttributeId(id);
     }
 
-    public BahmniPatientProgram getPatientProgram() {
+    public BahmniPatientProgram getBahmniPatientProgram() {
         return getOwner();
     }
 
-    public void setPatientProgram(BahmniPatientProgram patientProgram) {
+    public void setBahmniPatientProgram(BahmniPatientProgram patientProgram) {
         setOwner(patientProgram);
     }
 
@@ -31,7 +31,7 @@ public class BahmniPatientProgramAttribute extends BaseAttribute<BahmniPatientPr
         return patientProgramAttributeId;
     }
 
-    public void setPatientProgramAttributeId(Integer patientProgramAttribute) {
-        this.patientProgramAttributeId = patientProgramAttribute;
+    public void setPatientProgramAttributeId(Integer id) {
+        this.patientProgramAttributeId = id;
     }
 }

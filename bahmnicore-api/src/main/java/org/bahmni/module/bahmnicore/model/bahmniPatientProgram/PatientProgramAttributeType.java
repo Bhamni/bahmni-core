@@ -4,7 +4,7 @@ package org.bahmni.module.bahmnicore.model.bahmniPatientProgram;
 import org.openmrs.attribute.AttributeType;
 import org.openmrs.attribute.BaseAttributeType;
 
-public class BahmniPatientProgramAttributeType extends BaseAttributeType<BahmniPatientProgram> implements AttributeType<BahmniPatientProgram> {
+public class PatientProgramAttributeType extends BaseAttributeType<BahmniPatientProgram> implements AttributeType<BahmniPatientProgram> {
     private Integer patientProgramAttributeTypeId;
 
     @Override

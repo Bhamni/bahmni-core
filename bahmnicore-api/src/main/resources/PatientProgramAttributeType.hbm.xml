@@ -6,7 +6,7 @@
 
 <hibernate-mapping package="org.bahmni.module.bahmnicore.model.bahmniPatientProgram">
 
-    <class name="BahmniPatientProgramAttributeType" table="patient_program_attribute_type">
+    <class name="org.bahmni.module.bahmnicore.model.bahmniPatientProgram.PatientProgramAttributeType" table="patient_program_attribute_type">
 
         <id name="patientProgramAttributeTypeId" type="int" column="patient_program_attribute_type_id">
             <generator class="native">
