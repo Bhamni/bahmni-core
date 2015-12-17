@@ -18,7 +18,7 @@ import java.util.*;
 @Component
 public class DrugOrderToTreatmentRegimenMapper {
 
-	public TreatmentRegimen map(List<Order> drugOrders, Set<Concept> conceptsForDrugs) throws ParseException {
+	public TreatmentRegimen map(List<Order> drugOrders) throws ParseException {
 		TreatmentRegimen treatmentRegimen = new TreatmentRegimen();
 		Set<Concept> headers = new LinkedHashSet<>();
 		SortedSet<RegimenRow> regimenRows = new TreeSet<>(new RegimenRow.RegimenComparator());
@@ -34,7 +34,7 @@ public class DrugOrderToTreatmentRegimenMapper {
 			constructRegimenRows(drugOrders, regimenRows, drugOrder);
 		}
 
-		Set<EncounterTransaction.Concept> headersConcept = mapHeaders(conceptsForDrugs, headers);
+		Set<EncounterTransaction.Concept> headersConcept = mapHeaders(headers);
 		treatmentRegimen.setHeaders(headersConcept);
 		treatmentRegimen.setRows(regimenRows);
 		return treatmentRegimen;
@@ -126,18 +126,12 @@ public class DrugOrderToTreatmentRegimenMapper {
 		drugOrders.removeAll(drugOrdersStartedAndStoppedOnSameDate);
 	}
 
-	private Set<EncounterTransaction.Concept> mapHeaders(Set<Concept> conceptsForDrugs, Set<Concept> headers) {
+	private Set<EncounterTransaction.Concept> mapHeaders(Set<Concept> headers) {
 		Set<EncounterTransaction.Concept> headersConcept = new LinkedHashSet<>();
-		if (CollectionUtils.isEmpty(conceptsForDrugs)) {
-			for (Concept header : headers) {
+        for (Concept header : headers) {
 				headersConcept.add(new ConceptMapper().map(header));
 			}
-			return headersConcept;
-		}
-		for (Concept header : conceptsForDrugs) {
-			headersConcept.add(new ConceptMapper().map(header));
-		}
-		return headersConcept;
+        return headersConcept;
 	}
 
 	private void constructRegimenRows(List<Order> drugOrders, SortedSet<RegimenRow> regimenRows, DrugOrder drugOrder)
@@ -172,7 +166,7 @@ public class DrugOrderToTreatmentRegimenMapper {
 			throws ParseException {
 		if (orderCrossDate(drugOrder1, regimenRow.getDate())) {
 
-			Date startDate = drugOrder1.getDateActivated() != null ? drugOrder1.getDateActivated(): drugOrder1.getScheduledDate();
+			Date startDate = drugOrder1.getScheduledDate() != null ? drugOrder1.getScheduledDate(): drugOrder1.getDateActivated();
 			if (stoppedDate == null && (startDate.before(regimenRow.getDate()) || startDate.equals(regimenRow.getDate()) ))
 				regimenRow.addDrugs(drugOrder1.getConcept().getName().getName(), drugOrder1.getDose().toString());
 			else if (stoppedDate != null && getOnlyDate(stoppedDate).equals(regimenRow.getDate()))

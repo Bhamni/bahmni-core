@@ -50,7 +50,7 @@ public class DrugOrderToTreatmentRegimenMapperTest {
         drugOrders.add(ibeprofen);
         drugOrders.add(paracetemol);
 
-        TreatmentRegimen treatmentRegimen = drugOrderToTreatmentRegimenMapper.map(drugOrders, null);
+        TreatmentRegimen treatmentRegimen = drugOrderToTreatmentRegimenMapper.map(drugOrders);
 
         assertNotNull(treatmentRegimen);
         assertEquals(2, treatmentRegimen.getHeaders().size());
@@ -85,7 +85,7 @@ public class DrugOrderToTreatmentRegimenMapperTest {
         drugOrders.add(ibeprofen);
         drugOrders.add(paracetemol);
 
-        TreatmentRegimen treatmentRegimen = drugOrderToTreatmentRegimenMapper.map(drugOrders, null);
+        TreatmentRegimen treatmentRegimen = drugOrderToTreatmentRegimenMapper.map(drugOrders);
 
         assertNotNull(treatmentRegimen);
         assertEquals(2, treatmentRegimen.getHeaders().size());
@@ -115,7 +115,7 @@ public class DrugOrderToTreatmentRegimenMapperTest {
         drugOrders.add(ibeprofen);
         drugOrders.add(paracetemol);
 
-        TreatmentRegimen treatmentRegimen = drugOrderToTreatmentRegimenMapper.map(drugOrders, null);
+        TreatmentRegimen treatmentRegimen = drugOrderToTreatmentRegimenMapper.map(drugOrders);
 
         assertNotNull(treatmentRegimen);
         assertEquals(2, treatmentRegimen.getHeaders().size());
@@ -155,7 +155,7 @@ public class DrugOrderToTreatmentRegimenMapperTest {
         drugOrders.add(ibeprofen);
         drugOrders.add(paracetemol);
 
-        TreatmentRegimen treatmentRegimen = drugOrderToTreatmentRegimenMapper.map(drugOrders, null);
+        TreatmentRegimen treatmentRegimen = drugOrderToTreatmentRegimenMapper.map(drugOrders);
 
         assertNotNull(treatmentRegimen);
         assertEquals(2, treatmentRegimen.getHeaders().size());
@@ -193,7 +193,7 @@ public class DrugOrderToTreatmentRegimenMapperTest {
         DrugOrder ibeprofen = new DrugOrderBuilder().withDrugName("Ibeprofen").withDateActivated(now).withDose(1000.0).withAutoExpireDate(now).withConcept(new ConceptBuilder().withName("Ibeprofen").withSet(false).withDataType("N/A").build()).build();
         drugOrders.add(ibeprofen);
 
-        TreatmentRegimen treatmentRegimen = drugOrderToTreatmentRegimenMapper.map(drugOrders, null);
+        TreatmentRegimen treatmentRegimen = drugOrderToTreatmentRegimenMapper.map(drugOrders);
 
         assertNotNull(treatmentRegimen);
         assertEquals(1, treatmentRegimen.getHeaders().size());
@@ -224,7 +224,7 @@ public class DrugOrderToTreatmentRegimenMapperTest {
         drugOrders.add(lignocaine);
         drugOrders.add(magnesium);
 
-        TreatmentRegimen treatmentRegimen = drugOrderToTreatmentRegimenMapper.map(drugOrders, null);
+        TreatmentRegimen treatmentRegimen = drugOrderToTreatmentRegimenMapper.map(drugOrders);
 
         assertNotNull(treatmentRegimen);
         assertEquals(4, treatmentRegimen.getHeaders().size());
@@ -275,7 +275,7 @@ public class DrugOrderToTreatmentRegimenMapperTest {
         drugOrders.add(ibeprofen);
         drugOrders.add(paracetamol);
 
-        TreatmentRegimen treatmentRegimen = drugOrderToTreatmentRegimenMapper.map(drugOrders, null);
+        TreatmentRegimen treatmentRegimen = drugOrderToTreatmentRegimenMapper.map(drugOrders);
 
         assertNotNull(treatmentRegimen);
         assertEquals(2, treatmentRegimen.getHeaders().size());
@@ -314,7 +314,7 @@ public class DrugOrderToTreatmentRegimenMapperTest {
 
         drugOrders.add(ibeprofen);
 
-        TreatmentRegimen treatmentRegimen = drugOrderToTreatmentRegimenMapper.map(drugOrders, null);
+        TreatmentRegimen treatmentRegimen = drugOrderToTreatmentRegimenMapper.map(drugOrders);
 
         assertNotNull(treatmentRegimen);
         assertEquals(0, treatmentRegimen.getHeaders().size());
@@ -330,7 +330,7 @@ public class DrugOrderToTreatmentRegimenMapperTest {
         drugOrders.add(ibeprofen);
         drugOrders.add(ibeprofenRevised);
 
-        TreatmentRegimen treatmentRegimen = drugOrderToTreatmentRegimenMapper.map(drugOrders, null);
+        TreatmentRegimen treatmentRegimen = drugOrderToTreatmentRegimenMapper.map(drugOrders);
 
         assertNotNull(treatmentRegimen);
         assertEquals(1, treatmentRegimen.getHeaders().size());
@@ -363,7 +363,7 @@ public class DrugOrderToTreatmentRegimenMapperTest {
         drugOrders.add(caffeine);
         drugOrders.add(lajvanti);
 
-        TreatmentRegimen treatmentRegimen = drugOrderToTreatmentRegimenMapper.map(drugOrders, null);
+        TreatmentRegimen treatmentRegimen = drugOrderToTreatmentRegimenMapper.map(drugOrders);
 
         assertNotNull(treatmentRegimen);
         assertEquals(3, treatmentRegimen.getHeaders().size());
@@ -416,7 +416,7 @@ public class DrugOrderToTreatmentRegimenMapperTest {
         drugOrders.add(revisedPmg);
         drugOrders.add(caffeine);
 
-        TreatmentRegimen treatmentRegimen = drugOrderToTreatmentRegimenMapper.map(drugOrders, null);
+        TreatmentRegimen treatmentRegimen = drugOrderToTreatmentRegimenMapper.map(drugOrders);
 
         assertNotNull(treatmentRegimen);
         assertEquals(2, treatmentRegimen.getHeaders().size());
@@ -458,7 +458,7 @@ public class DrugOrderToTreatmentRegimenMapperTest {
         drugOrders.add(revisedPmg);
         drugOrders.add(caffeine);
 
-        TreatmentRegimen treatmentRegimen = drugOrderToTreatmentRegimenMapper.map(drugOrders, null);
+        TreatmentRegimen treatmentRegimen = drugOrderToTreatmentRegimenMapper.map(drugOrders);
 
         assertNotNull(treatmentRegimen);
         assertEquals(2, treatmentRegimen.getHeaders().size());
@@ -502,7 +502,7 @@ public class DrugOrderToTreatmentRegimenMapperTest {
         drugOrders.add(caffeine);
         drugOrders.add(revisedCaffeine);
 
-        TreatmentRegimen treatmentRegimen = drugOrderToTreatmentRegimenMapper.map(drugOrders, null);
+        TreatmentRegimen treatmentRegimen = drugOrderToTreatmentRegimenMapper.map(drugOrders);
 
         assertNotNull(treatmentRegimen);
         assertEquals(2, treatmentRegimen.getHeaders().size());
@@ -535,7 +535,7 @@ public class DrugOrderToTreatmentRegimenMapperTest {
         DrugOrder pmg = new DrugOrderBuilder().withDrugName("P 500mg").withDateActivated(now).withDose(null).withAutoExpireDate(addDays(now, 2)).withOrderAction(Order.Action.NEW).withConcept(new ConceptBuilder().withName("P 500mg").withUUID("P 500mg uuid").withSet(false).withDataType("N/A").build()).build();
         drugOrders.add(pmg);
 
-        TreatmentRegimen treatmentRegimen = drugOrderToTreatmentRegimenMapper.map(drugOrders, null);
+        TreatmentRegimen treatmentRegimen = drugOrderToTreatmentRegimenMapper.map(drugOrders);
 
         assertNotNull(treatmentRegimen);
         assertEquals(0, treatmentRegimen.getHeaders().size());
@@ -562,7 +562,7 @@ public class DrugOrderToTreatmentRegimenMapperTest {
         drugOrders.add(ibeprofen);
         drugOrders.add(paracetemol);
 
-        TreatmentRegimen treatmentRegimen = drugOrderToTreatmentRegimenMapper.map(drugOrders, null);
+        TreatmentRegimen treatmentRegimen = drugOrderToTreatmentRegimenMapper.map(drugOrders);
 
         assertNotNull(treatmentRegimen);
         assertEquals(2, treatmentRegimen.getHeaders().size());
@@ -592,7 +592,7 @@ public class DrugOrderToTreatmentRegimenMapperTest {
         drugOrders.add(ibeprofen);
         drugOrders.add(paracetemol);
 
-        TreatmentRegimen treatmentRegimen = drugOrderToTreatmentRegimenMapper.map(drugOrders, null);
+        TreatmentRegimen treatmentRegimen = drugOrderToTreatmentRegimenMapper.map(drugOrders);
 
         assertNotNull(treatmentRegimen);
         assertEquals(2, treatmentRegimen.getHeaders().size());
@@ -626,7 +626,7 @@ public class DrugOrderToTreatmentRegimenMapperTest {
         DrugOrder paracetemol = new DrugOrderBuilder().withDrugName("Paracetemol").withDateActivated(now).withDose(200.0).withConcept(new ConceptBuilder().withName("Paracetemol").withSet(false).withDataType("N/A").build()).build();
         drugOrders.add(paracetemol);
 
-        TreatmentRegimen treatmentRegimen = drugOrderToTreatmentRegimenMapper.map(drugOrders, null);
+        TreatmentRegimen treatmentRegimen = drugOrderToTreatmentRegimenMapper.map(drugOrders);
 
         assertNotNull(treatmentRegimen);
         assertEquals(1, treatmentRegimen.getHeaders().size());
@@ -649,7 +649,7 @@ public class DrugOrderToTreatmentRegimenMapperTest {
         drugOrders.add(ibeprofen);
         drugOrders.add(paracetemol);
 
-        TreatmentRegimen treatmentRegimen = drugOrderToTreatmentRegimenMapper.map(drugOrders, null);
+        TreatmentRegimen treatmentRegimen = drugOrderToTreatmentRegimenMapper.map(drugOrders);
 
         assertNotNull(treatmentRegimen);
         assertEquals(2, treatmentRegimen.getHeaders().size());
