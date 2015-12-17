@@ -100,14 +100,4 @@ public class BahmniObsServiceImplTest {
         bahmniObsService.getObservationsForOrder("orderUuid");
         verify(obsDao, times(1)).getObsForOrder("orderUuid");
     }
-
-//    @Test
-//    public void getLatestObsForConceptSetByVisit() throws  Exception{
-//        VisitBuilder visitBuilder = new VisitBuilder();
-//        Visit visit = visitBuilder.withUUID("visitId").withEncounter(new Encounter(1)).withPerson(new Person()).build();
-//        List<Obs> obsList = new ArrayList<Obs>();
-//        when(obsDao.getLatestObsForConceptSetByVisit(personUUID, "Blood Pressure", visit.getVisitId())).thenReturn(obsList);
-//        Collection<BahmniObservation> latestObsForConceptSetByVisit = bahmniObsService.getLatestObsForConceptSetByVisit(personUUID, "Blood Pressure", visit.getVisitId());
-//        assertEquals(1, latestObsForConceptSetByVisit.size());
-//    }
 }
