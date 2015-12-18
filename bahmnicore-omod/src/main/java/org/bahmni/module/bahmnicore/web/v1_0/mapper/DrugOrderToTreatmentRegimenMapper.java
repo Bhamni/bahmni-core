@@ -18,7 +18,7 @@ import java.util.*;
 @Component
 public class DrugOrderToTreatmentRegimenMapper {
 
-	public TreatmentRegimen map(List<Order> drugOrders) throws ParseException {
+	public TreatmentRegimen map(List<Order> drugOrders, Set<Concept> headersConfig) throws ParseException {
 		TreatmentRegimen treatmentRegimen = new TreatmentRegimen();
 		Set<Concept> headers = new LinkedHashSet<>();
 		SortedSet<RegimenRow> regimenRows = new TreeSet<>(new RegimenRow.RegimenComparator());
@@ -33,8 +33,11 @@ public class DrugOrderToTreatmentRegimenMapper {
 
 			constructRegimenRows(drugOrders, regimenRows, drugOrder);
 		}
-
-		Set<EncounterTransaction.Concept> headersConcept = mapHeaders(headers);
+		Set<EncounterTransaction.Concept> headersConcept;
+		if (!CollectionUtils.isEmpty(headersConfig))
+			headersConcept = mapHeaders(headersConfig);
+		else
+			headersConcept = mapHeaders(headers);
 		treatmentRegimen.setHeaders(headersConcept);
 		treatmentRegimen.setRows(regimenRows);
 		return treatmentRegimen;
