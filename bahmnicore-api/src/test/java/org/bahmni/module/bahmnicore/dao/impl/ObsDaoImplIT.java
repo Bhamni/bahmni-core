@@ -1,15 +1,20 @@
 package org.bahmni.module.bahmnicore.dao.impl;
 
+import org.apache.commons.lang3.StringUtils;
 import org.bahmni.module.bahmnicore.BaseIntegrationTest;
 import org.bahmni.module.bahmnicore.dao.ObsDao;
+import org.bahmni.test.builder.ConceptBuilder;
 import org.junit.Before;
 import org.junit.Test;
+import org.openmrs.Concept;
 import org.openmrs.Obs;
+import org.openmrs.api.ConceptService;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.bahmniemrapi.encountertransaction.contract.BahmniObservation;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 
@@ -55,6 +60,26 @@ public class ObsDaoImplIT extends BaseIntegrationTest {
         assertEquals((Integer)7, obsForOrder.get(4).getId());
 
         assertEquals(0, obsDao.getObsForOrder("some-random-uuid").size());
+    }
+
+    @Test
+    public void shouldRetrieveObservationWithinProgramsDateRange() throws Exception {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+        String rootConceptName = "Breast Cancer Intake";
+        String childConceptName = "Histopathology";
+        String patientUUid = "86526ed5-3c11-11de-a0ba-001e378eb67a";
+        Date startDate = simpleDateFormat.parse("2008-08-18T15:00:01.000");
+        Concept rootConcept = Context.getConceptService().getConceptByName(rootConceptName);
+        Concept childConcept = Context.getConceptService().getConceptByName(childConceptName);
+        List<Integer> listOfVisitIds = new ArrayList<Integer>();
+        listOfVisitIds.add(902);
+        rootConcept.getName().getName();
+
+        List<Obs> bahmniObservations = obsDao.getObsFor(patientUUid, rootConcept, childConcept,listOfVisitIds, startDate, null);
+
+        assertEquals(1, bahmniObservations.size());
+        assertEquals(rootConceptName, bahmniObservations.get(0).getConcept().getName().getName());
+        assertEquals(3, bahmniObservations.get(0).getGroupMembers(true).size());
     }
 
 }

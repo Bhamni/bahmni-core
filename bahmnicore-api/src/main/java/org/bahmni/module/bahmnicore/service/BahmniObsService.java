@@ -6,6 +6,7 @@ import org.openmrs.Order;
 import org.openmrs.Visit;
 import org.openmrs.module.bahmniemrapi.encountertransaction.contract.BahmniObservation;
 
+import java.text.ParseException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -22,5 +23,5 @@ public interface BahmniObsService {
     Collection<BahmniObservation> getLatestObsByVisit(Visit visit, Collection<Concept> concepts, List<String> obsIgnoreList, Boolean filterObsWithOrders);
     Collection<BahmniObservation> getObservationsForOrder(String orderUuid);
 
-    Collection<BahmniObservation> observationsFor(String patientUuid, Concept rootConcept, Concept childConcept, Integer numberOfVisits);
+    Collection<BahmniObservation> observationsFor(String patientUuid, Concept rootConcept, Concept childConcept, Integer numberOfVisits, String startDateStr, String endDateStr) throws ParseException;
 }

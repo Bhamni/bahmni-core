@@ -11,6 +11,7 @@ import org.openmrs.api.ConceptNameType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Repository
@@ -193,11 +194,11 @@ public class ObsDaoImpl implements ObsDao {
     }
 
     @Override
-    public List<Obs> getObsFor(String patientUuid, Concept rootConcept, Concept childConcept, List<Integer> listOfVisitIds) {
+    public List<Obs> getObsFor(String patientUuid, Concept rootConcept, Concept childConcept, List<Integer> listOfVisitIds, Date startDate, Date endDate) {
         if (listOfVisitIds == null || listOfVisitIds.isEmpty())
             return new ArrayList<>();
 
-        String queryString = "SELECT rootObs.* " +
+        StringBuilder queryString = new StringBuilder("SELECT rootObs.* " +
                 "FROM obs rootObs " +
                 "JOIN concept_name rootConceptName " +
                 "ON rootObs.concept_id = rootConceptName.concept_id AND rootConceptName.name = :rootConceptName AND " +
@@ -209,15 +210,20 @@ public class ObsDaoImpl implements ObsDao {
                 "JOIN obs groupByObs ON groupByObs.obs_group_id = rootObs.obs_id AND groupByObs.voided = 0 " +
                 "JOIN concept_name groupByConceptName " +
                 "ON groupByConceptName.concept_id = groupByObs.concept_id AND groupByConceptName.name = :childConceptName AND " +
-                "groupByConceptName.concept_name_type = 'FULLY_SPECIFIED' group by groupByObs.obs_group_id " +
-                "order by obs_datetime asc ";
+                "groupByConceptName.concept_name_type = 'FULLY_SPECIFIED' ");
 
-        Query queryToGetObs = sessionFactory.getCurrentSession().createSQLQuery(queryString)
-                .addEntity(Obs.class)
-                .setParameter("rootConceptName", rootConcept.getName().getName())
-                .setParameter("patientUuid", patientUuid)
-                .setParameterList("visitIds", listOfVisitIds)
-                .setParameter("childConceptName", childConcept.getName().getName());
+        if(startDate != null) queryString.append("where groupByObs.obs_datetime >= :startDate ");
+        if(startDate != null && endDate != null) queryString.append("and groupByObs.obs_datetime <= :endDate ");
+        queryString.append("group by groupByObs.obs_group_id order by obs_datetime asc ");
+
+        Query queryToGetObs = sessionFactory.getCurrentSession()
+                .createSQLQuery(queryString.toString()).addEntity(Obs.class);
+        queryToGetObs.setParameter("rootConceptName", rootConcept.getName().getName());
+        queryToGetObs.setParameter("patientUuid", patientUuid);
+        queryToGetObs.setParameterList("visitIds", listOfVisitIds);
+        queryToGetObs.setParameter("childConceptName", childConcept.getName().getName());
+        if(startDate != null) queryToGetObs.setParameter("startDate", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(startDate));
+        if(endDate != null) queryToGetObs.setParameter("endDate", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(endDate));
         return queryToGetObs.list();
     }
 }

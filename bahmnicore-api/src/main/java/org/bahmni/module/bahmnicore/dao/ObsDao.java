@@ -13,7 +13,7 @@ public interface ObsDao {
 
     List<Concept> getNumericConceptsForPerson(String personUUID);
 
-    List<Obs> getObsFor(String patientUuid, Concept rootConcept, Concept childConcept, List<Integer> visitIdsFor);
+    List<Obs> getObsFor(String patientUuid, Concept rootConcept, Concept childConcept, List<Integer> visitIdsFor, Date startDate, Date endDate);
 
     List<Obs> getLatestObsFor(String patientUuid, String conceptName, Integer limit);
 

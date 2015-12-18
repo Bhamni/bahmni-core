@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.text.ParseException;
 import java.util.*;
 
 @Controller
@@ -55,13 +56,15 @@ public class ObsToObsTabularFlowSheetController {
             @RequestParam(value = "conceptNames", required = false) List<String> conceptNames,
             @RequestParam(value = "initialCount", required = false) Integer initialCount,
             @RequestParam(value = "latestCount", required = false) Integer latestCount,
-            @RequestParam(value = "name", required = false) String groovyExtension) {
+            @RequestParam(value = "name", required = false) String groovyExtension,
+            @RequestParam(value = "startDate", required = false) String startDate,
+            @RequestParam(value = "endDate", required = false) String endDate) throws ParseException {
 
         Concept rootConcept = conceptService.getConceptByName(conceptSet);
         Concept childConcept = conceptService.getConceptByName(groupByConcept);
         validate(conceptSet, groupByConcept, rootConcept, childConcept);
 
-        Collection<BahmniObservation> bahmniObservations = bahmniObsService.observationsFor(patientUuid, rootConcept, childConcept, numberOfVisits);
+        Collection<BahmniObservation> bahmniObservations = bahmniObsService.observationsFor(patientUuid, rootConcept, childConcept, numberOfVisits, startDate, endDate);
 
         Set<EncounterTransaction.Concept> leafConcepts = new LinkedHashSet<>();
         if (CollectionUtils.isEmpty(conceptNames)) {
