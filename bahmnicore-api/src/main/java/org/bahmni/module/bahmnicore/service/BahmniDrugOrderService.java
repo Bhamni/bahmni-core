@@ -20,7 +20,7 @@ public interface BahmniDrugOrderService {
 
     DrugOrderConfigResponse getConfig();
 
-    List<Order> getAllDrugOrders(String patientUuid, Set<Concept> conceptsForDrugs, String startDate, String endDate) throws ParseException;
+    List<Order> getAllDrugOrders(String patientUuid, Set<Concept> conceptsForDrugs, Date startDate, Date endDate) throws ParseException;
 
     Map<String,DrugOrder> getDiscontinuedDrugOrders(List<DrugOrder> drugOrders);
 }

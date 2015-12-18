@@ -4,6 +4,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.bahmni.module.bahmnicore.extensions.BahmniExtensions;
 import org.bahmni.module.bahmnicore.service.BahmniObsService;
+import org.bahmni.module.bahmnicore.util.BahmniDateUtil;
 import org.bahmni.module.bahmnicore.web.v1_0.mapper.BahmniObservationsToTabularViewMapper;
 import org.openmrs.Concept;
 import org.openmrs.api.ConceptService;
@@ -57,12 +58,14 @@ public class ObsToObsTabularFlowSheetController {
             @RequestParam(value = "initialCount", required = false) Integer initialCount,
             @RequestParam(value = "latestCount", required = false) Integer latestCount,
             @RequestParam(value = "name", required = false) String groovyExtension,
-            @RequestParam(value = "startDate", required = false) String startDate,
-            @RequestParam(value = "endDate", required = false) String endDate) throws ParseException {
+            @RequestParam(value = "startDate", required = false) String startDateStr,
+            @RequestParam(value = "endDate", required = false) String endDateStr) throws ParseException {
 
         Concept rootConcept = conceptService.getConceptByName(conceptSet);
         Concept childConcept = conceptService.getConceptByName(groupByConcept);
         validate(conceptSet, groupByConcept, rootConcept, childConcept);
+        Date startDate = BahmniDateUtil.convertToDate(startDateStr, BahmniDateUtil.DateFormatType.UTC);
+        Date endDate = BahmniDateUtil.convertToDate(endDateStr, BahmniDateUtil.DateFormatType.UTC);
 
         Collection<BahmniObservation> bahmniObservations = bahmniObsService.observationsFor(patientUuid, rootConcept, childConcept, numberOfVisits, startDate, endDate);
 

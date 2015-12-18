@@ -5,6 +5,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.bahmni.module.bahmnicore.service.BahmniDrugOrderService;
 import org.bahmni.module.bahmnicore.service.BahmniObsService;
+import org.bahmni.module.bahmnicore.util.BahmniDateUtil;
 import org.openmrs.Concept;
 import org.openmrs.DrugOrder;
 import org.openmrs.Order;
@@ -27,7 +28,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Controller
@@ -73,19 +73,14 @@ public class BahmniDrugOrderController extends BaseRestController {
                             @RequestParam(value = "numberOfVisits", required = false) Integer numberOfVisits,
                             @RequestParam(value = "getOtherActive", required = false) Boolean getOtherActive,
                             @RequestParam(value = "visitUuids", required = false) List visitUuids,
-                            @RequestParam(value = "startDate", required = false) String startDate,
-                            @RequestParam(value = "endDate", required = false) String endDate) throws ParseException {
-
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
-        Date end_date=null;
-        Date start_date=null;
-
-        if(startDate!=null) start_date = simpleDateFormat.parse(startDate);
-        if(endDate!=null) end_date = simpleDateFormat.parse(endDate);
+                            @RequestParam(value = "startDate", required = false) String startDateStr,
+                            @RequestParam(value = "endDate", required = false) String endDateStr) throws ParseException {
 
         Map<String, Collection<BahmniDrugOrder>> visitWiseOrders = new HashMap<>();
+        Date startDate = BahmniDateUtil.convertToDate(startDateStr, BahmniDateUtil.DateFormatType.UTC);
+        Date endDate = BahmniDateUtil.convertToDate(endDateStr, BahmniDateUtil.DateFormatType.UTC);
 
-        List<BahmniDrugOrder> prescribedOrders = getPrescribedOrders(visitUuids, patientUuid, true, numberOfVisits, start_date, end_date);
+        List<BahmniDrugOrder> prescribedOrders = getPrescribedOrders(visitUuids, patientUuid, true, numberOfVisits, startDate, endDate);
         visitWiseOrders.put("visitDrugOrders", prescribedOrders);
 
         if (Boolean.TRUE.equals(getOtherActive)) {

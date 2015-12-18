@@ -2,6 +2,7 @@ package org.bahmni.module.bahmnicore.dao.impl;
 
 import org.bahmni.module.bahmnicore.BaseIntegrationTest;
 import org.bahmni.module.bahmnicore.service.OrderService;
+import org.bahmni.module.bahmnicore.util.BahmniDateUtil;
 import org.junit.Test;
 import org.openmrs.*;
 import org.openmrs.api.ConceptService;
@@ -12,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
 import java.net.URISyntaxException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static junit.framework.Assert.assertEquals;
@@ -105,10 +105,8 @@ public class OrderDaoImplIT extends BaseIntegrationTest {
         executeDataSet("patientWithOrders.xml");
         Patient patient = Context.getPatientService().getPatient(1001);
 
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
-
-        Date startDate = simpleDateFormat.parse("2013-01-01T00:00:00.000");
-        Date endDate = simpleDateFormat.parse("2013-09-09T00:00:00.000");
+        Date startDate = BahmniDateUtil.convertToDate("2013-01-01T00:00:00.000", BahmniDateUtil.DateFormatType.UTC);
+        Date endDate = BahmniDateUtil.convertToDate("2013-09-09T00:00:00.000", BahmniDateUtil.DateFormatType.UTC);
 
         List<DrugOrder> drugOrders = orderDao.getPrescribedDrugOrders(patient, true, null, startDate, null);
         assertThat(drugOrders.size(), is(equalTo(3)));

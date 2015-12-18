@@ -23,5 +23,5 @@ public interface BahmniObsService {
     Collection<BahmniObservation> getLatestObsByVisit(Visit visit, Collection<Concept> concepts, List<String> obsIgnoreList, Boolean filterObsWithOrders);
     Collection<BahmniObservation> getObservationsForOrder(String orderUuid);
 
-    Collection<BahmniObservation> observationsFor(String patientUuid, Concept rootConcept, Concept childConcept, Integer numberOfVisits, String startDateStr, String endDateStr) throws ParseException;
+    Collection<BahmniObservation> observationsFor(String patientUuid, Concept rootConcept, Concept childConcept, Integer numberOfVisits, Date startDate, Date endDate) throws ParseException;
 }

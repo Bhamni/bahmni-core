@@ -1,19 +1,15 @@
 package org.bahmni.module.bahmnicore.dao.impl;
 
-import org.apache.commons.lang3.StringUtils;
 import org.bahmni.module.bahmnicore.BaseIntegrationTest;
 import org.bahmni.module.bahmnicore.dao.ObsDao;
-import org.bahmni.test.builder.ConceptBuilder;
+import org.bahmni.module.bahmnicore.util.BahmniDateUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Concept;
 import org.openmrs.Obs;
-import org.openmrs.api.ConceptService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.bahmniemrapi.encountertransaction.contract.BahmniObservation;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static org.junit.Assert.assertEquals;
@@ -64,11 +60,10 @@ public class ObsDaoImplIT extends BaseIntegrationTest {
 
     @Test
     public void shouldRetrieveObservationWithinProgramsDateRange() throws Exception {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
         String rootConceptName = "Breast Cancer Intake";
         String childConceptName = "Histopathology";
         String patientUUid = "86526ed5-3c11-11de-a0ba-001e378eb67a";
-        Date startDate = simpleDateFormat.parse("2008-08-18T15:00:01.000");
+        Date startDate = BahmniDateUtil.convertToDate("2008-08-18T15:00:01.000", BahmniDateUtil.DateFormatType.UTC);
         Concept rootConcept = Context.getConceptService().getConceptByName(rootConceptName);
         Concept childConcept = Context.getConceptService().getConceptByName(childConceptName);
         List<Integer> listOfVisitIds = new ArrayList<Integer>();
