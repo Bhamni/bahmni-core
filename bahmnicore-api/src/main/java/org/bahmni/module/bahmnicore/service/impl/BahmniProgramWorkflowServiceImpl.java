@@ -1,6 +1,6 @@
 package org.bahmni.module.bahmnicore.service.impl;
 
-import org.bahmni.module.bahmnicore.dao.BahmniProgramWorkflowDao;
+import org.bahmni.module.bahmnicore.dao.BahmniProgramWorkflowDAO;
 import org.bahmni.module.bahmnicore.model.bahmniPatientProgram.BahmniPatientProgram;
 import org.bahmni.module.bahmnicore.model.bahmniPatientProgram.PatientProgramAttribute;
 import org.bahmni.module.bahmnicore.model.bahmniPatientProgram.PatientProgramAttributeType;
@@ -15,7 +15,7 @@ import java.util.List;
 @Transactional
 public class BahmniProgramWorkflowServiceImpl extends ProgramWorkflowServiceImpl implements BahmniProgramWorkflowService {
 
-    protected BahmniProgramWorkflowDao bahmniProgramWorkflowDao;
+    protected BahmniProgramWorkflowDAO bahmniProgramWorkflowDao;
 
     @Override
     public List<PatientProgramAttributeType> getAllPatientProgramAttributeTypes() {
@@ -38,16 +38,6 @@ public class BahmniProgramWorkflowServiceImpl extends ProgramWorkflowServiceImpl
     }
 
     @Override
-    public PatientProgramAttributeType retirePatientProgramAttributeType(PatientProgramAttributeType var1, String var2) {
-        return bahmniProgramWorkflowDao.retirePatientProgramAttributeType(var1, var2);
-    }
-
-    @Override
-    public PatientProgramAttributeType unretirePatientProgramAttributeType(PatientProgramAttributeType var1) {
-        return bahmniProgramWorkflowDao.unretirePatientProgramAttributeType(var1);
-    }
-
-    @Override
     public void purgePatientProgramAttributeType(PatientProgramAttributeType var1) {
         bahmniProgramWorkflowDao.purgePatientProgramAttributeType(var1);
     }
@@ -59,7 +49,7 @@ public class BahmniProgramWorkflowServiceImpl extends ProgramWorkflowServiceImpl
 
     @Override
     public List<PatientProgramAttribute> getAttributesByPatientProgramId(int id) {
-        return null;
+        return bahmniProgramWorkflowDao.getAttributesPatientProgramById(id);
     }
 
     @Override

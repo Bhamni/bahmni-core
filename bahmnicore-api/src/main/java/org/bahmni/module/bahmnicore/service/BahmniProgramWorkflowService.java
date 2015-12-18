@@ -27,12 +27,6 @@ public interface BahmniProgramWorkflowService extends ProgramWorkflowService {
     @Authorized({"Manage PatientProgram Attribute Types"})
     PatientProgramAttributeType savePatientProgramAttributeType(PatientProgramAttributeType var1);
 
-    @Authorized({"Manage PatientProgram Attribute Types"})
-    PatientProgramAttributeType retirePatientProgramAttributeType(PatientProgramAttributeType var1, String var2);
-
-    @Authorized({"Manage PatientProgram Attribute Types"})
-    PatientProgramAttributeType unretirePatientProgramAttributeType(PatientProgramAttributeType var1);
-
     @Authorized({"Purge PatientProgram Attribute Types"})
     void purgePatientProgramAttributeType(PatientProgramAttributeType var1);
 

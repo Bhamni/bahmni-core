@@ -7,7 +7,7 @@ import org.openmrs.api.db.ProgramWorkflowDAO;
 
 import java.util.List;
 
-public interface BahmniProgramWorkflowDao extends ProgramWorkflowDAO {
+public interface BahmniProgramWorkflowDAO extends ProgramWorkflowDAO {
 
     List getAllPatientProgramAttributeTypes();
 
@@ -16,10 +16,6 @@ public interface BahmniProgramWorkflowDao extends ProgramWorkflowDAO {
     PatientProgramAttributeType getPatientProgramAttributeTypeByUuid(String var1);
 
     PatientProgramAttributeType savePatientProgramAttributeType(PatientProgramAttributeType var1);
-
-    PatientProgramAttributeType retirePatientProgramAttributeType(PatientProgramAttributeType var1, String var2);
-
-    PatientProgramAttributeType unretirePatientProgramAttributeType(PatientProgramAttributeType var1);
 
     PatientProgramAttribute getPatientProgramAttributeByUuid(String var1);
 

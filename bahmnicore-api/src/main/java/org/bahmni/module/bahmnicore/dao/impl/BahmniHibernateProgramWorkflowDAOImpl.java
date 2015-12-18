@@ -1,6 +1,6 @@
 package org.bahmni.module.bahmnicore.dao.impl;
 
-import org.bahmni.module.bahmnicore.dao.BahmniProgramWorkflowDao;
+import org.bahmni.module.bahmnicore.dao.BahmniProgramWorkflowDAO;
 import org.bahmni.module.bahmnicore.model.bahmniPatientProgram.BahmniPatientProgram;
 import org.bahmni.module.bahmnicore.model.bahmniPatientProgram.PatientProgramAttribute;
 import org.bahmni.module.bahmnicore.model.bahmniPatientProgram.PatientProgramAttributeType;
@@ -13,7 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-public class BahmniHibernateProgramWorkflowDaoImpl extends HibernateProgramWorkflowDAO implements BahmniProgramWorkflowDao {
+public class BahmniHibernateProgramWorkflowDAOImpl extends HibernateProgramWorkflowDAO implements BahmniProgramWorkflowDAO {
     private SessionFactory sessionFactory;
 
     public void setSessionFactory(SessionFactory sessionFactory) {
@@ -43,23 +43,14 @@ public class BahmniHibernateProgramWorkflowDaoImpl extends HibernateProgramWorkf
     }
 
     @Override
-    public PatientProgramAttributeType retirePatientProgramAttributeType(PatientProgramAttributeType var1, String var2) {
-        return null;
-    }
-
-    @Override
-    public PatientProgramAttributeType unretirePatientProgramAttributeType(PatientProgramAttributeType var1) {
-        return null;
-    }
-
-    @Override
-    public PatientProgramAttribute getPatientProgramAttributeByUuid(String var1) {
-        return null;
+    public PatientProgramAttribute getPatientProgramAttributeByUuid(String uuid) {
+        return (PatientProgramAttribute) sessionFactory.getCurrentSession().createCriteria(PatientProgramAttribute.class).add(Restrictions.eq("uuid", uuid))
+                .uniqueResult();
     }
 
     @Override
     public void purgePatientProgramAttributeType(PatientProgramAttributeType var1) {
-
+        sessionFactory.getCurrentSession().delete(var1);
     }
 
     @Override
