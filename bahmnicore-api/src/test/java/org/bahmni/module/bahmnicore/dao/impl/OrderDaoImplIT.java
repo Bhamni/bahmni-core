@@ -145,9 +145,30 @@ public class OrderDaoImplIT extends BaseIntegrationTest {
         List<Visit> visits = orderService.getVisitsWithOrders(patient, "DrugOrder", true, 1);
         assertEquals(1, visits.size());
 
-        List<DrugOrder> result = orderDao.getPrescribedDrugOrdersForConcepts(patient, true, visits, concepts);
+        List<DrugOrder> result = orderDao.getPrescribedDrugOrdersForConcepts(patient, true, visits, concepts, null, null);
         assertEquals(2, result.size());
         assertThat(getOrderIds(result), hasItems(55, 57));
+
+    }
+
+    @Test
+    public void shouldFetchAllPrescribedDrugOrdersForGivenConceptsForGivenNoOfVisitsWithinGivenDateRange() throws Exception {
+        executeDataSet("patientWithOrders.xml");
+        Date startDate = BahmniDateUtil.convertToDate("2013-08-07T00:00:00.000", BahmniDateUtil.DateFormatType.UTC);
+        Date endDate = BahmniDateUtil.convertToDate("2013-08-09T00:00:00.000", BahmniDateUtil.DateFormatType.UTC);
+
+        Patient patient = patientService.getPatient(2);
+
+        List<Concept> concepts = new ArrayList<>();
+        concepts.add(conceptService.getConcept(25));
+        concepts.add(conceptService.getConcept(26));
+
+        List<Visit> visits = orderService.getVisitsWithOrders(patient, "DrugOrder", true, 1);
+        assertEquals(1, visits.size());
+
+        List<DrugOrder> result = orderDao.getPrescribedDrugOrdersForConcepts(patient, true, visits, concepts, startDate, endDate);
+        assertEquals(1, result.size());
+        assertThat(getOrderIds(result), hasItems(57));
 
     }
 

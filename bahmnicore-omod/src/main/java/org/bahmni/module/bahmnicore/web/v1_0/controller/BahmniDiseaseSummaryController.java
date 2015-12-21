@@ -1,5 +1,6 @@
 package org.bahmni.module.bahmnicore.web.v1_0.controller;
 
+import org.bahmni.module.bahmnicore.util.BahmniDateUtil;
 import org.bahmni.module.bahmnicoreui.constant.DiseaseSummaryConstants;
 import org.bahmni.module.bahmnicoreui.contract.DiseaseDataParams;
 import org.bahmni.module.bahmnicoreui.contract.DiseaseSummaryData;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -32,7 +35,12 @@ public class BahmniDiseaseSummaryController extends BaseRestController {
                                                     @RequestParam(value = "obsConcepts",required = false) List<String> obsConcepts,
                                                     @RequestParam(value = "drugConcepts",required = false) List<String> drugConcepts,
                                                     @RequestParam(value = "labConcepts",required = false) List<String> labConcepts,
-                                                    @RequestParam(value = "groupBy", defaultValue = DiseaseSummaryConstants.RESULT_TABLE_GROUP_BY_VISITS, required = false) String groupBy){
+                                                    @RequestParam(value = "groupBy", defaultValue = DiseaseSummaryConstants.RESULT_TABLE_GROUP_BY_VISITS, required = false) String groupBy,
+                                                    @RequestParam(value = "startDate",required = false) String startDateStr,
+                                                    @RequestParam(value = "endDate",required = false) String endDateStr) throws ParseException {
+
+        Date startDate = BahmniDateUtil.convertToDate(startDateStr, BahmniDateUtil.DateFormatType.UTC);
+        Date endDate = BahmniDateUtil.convertToDate(endDateStr, BahmniDateUtil.DateFormatType.UTC);
 
         DiseaseDataParams diseaseDataParams = new DiseaseDataParams();
         diseaseDataParams.setNumberOfVisits(numberOfVisits);
@@ -43,6 +51,8 @@ public class BahmniDiseaseSummaryController extends BaseRestController {
         diseaseDataParams.setLabConcepts(labConcepts);
         diseaseDataParams.setDrugConcepts(drugConcepts);
         diseaseDataParams.setGroupBy(groupBy);
+        diseaseDataParams.setStartDate(startDate);
+        diseaseDataParams.setEndDate(endDate);
         return bahmniDiseaseSummaryService.getDiseaseSummary(patientUuid,diseaseDataParams);
     }
 

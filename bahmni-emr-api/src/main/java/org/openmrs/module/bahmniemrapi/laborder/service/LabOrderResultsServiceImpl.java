@@ -16,13 +16,7 @@ import org.openmrs.module.emrapi.encounter.domain.EncounterTransaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 
 @Service
@@ -63,7 +57,7 @@ public class LabOrderResultsServiceImpl implements LabOrderResultsService {
             EncounterTransaction encounterTransaction = encounterTransactionMapper.map(encounter, false);
             List<EncounterTransaction.Order> existingTestOrders = filterTestOrders(encounterTransaction, encounter, encounterTestOrderUuidMap, null);
             testOrders.addAll(existingTestOrders);
-            List<EncounterTransaction.Observation> nonVoidedObservations = filterVoided(encounterTransaction.getObservations());
+            List<EncounterTransaction.Observation> nonVoidedObservations = filterObservations(encounterTransaction.getObservations(), null, null);
             observations.addAll(nonVoidedObservations);
             createAccessionNotesByEncounter(encounterToAccessionNotesMap, encounters, encounter);
             mapObservationsWithEncounter(nonVoidedObservations, encounter, encounterObservationMap);
@@ -90,7 +84,7 @@ public class LabOrderResultsServiceImpl implements LabOrderResultsService {
     }
 
     @Override
-    public List<LabOrderResult> getAllForConcepts(Patient patient, Collection<String> concepts, List<Visit> visits){
+    public List<LabOrderResult> getAllForConcepts(Patient patient, Collection<String> concepts, List<Visit> visits, Date startDate, Date endDate) {
         if (concepts != null && !concepts.isEmpty()) {
 
             List<EncounterTransaction.Order> testOrders = new ArrayList<>();
@@ -103,10 +97,10 @@ public class LabOrderResultsServiceImpl implements LabOrderResultsService {
             for (Encounter encounter : encounters) {
                 EncounterTransaction encounterTransaction = encounterTransactionMapper.map(encounter, false);
                 testOrders.addAll(filterTestOrders(encounterTransaction, encounter, encounterTestOrderUuidMap, concepts));
-                List<EncounterTransaction.Observation> nonVoidedObservations = filterVoided(encounterTransaction.getObservations());
-                observations.addAll(nonVoidedObservations);
+                List<EncounterTransaction.Observation> filteredObservations = filterObservations(encounterTransaction.getObservations(), startDate, endDate );
+                observations.addAll(filteredObservations);
                 createAccessionNotesByEncounter(encounterToAccessionNotesMap, encounters, encounter);
-                mapObservationsWithEncounter(nonVoidedObservations, encounter, encounterObservationMap);
+                mapObservationsWithEncounter(filteredObservations, encounter, encounterObservationMap);
             }
             return mapOrdersWithObs(testOrders, observations, encounterTestOrderUuidMap, encounterObservationMap, encounterToAccessionNotesMap);
         }
@@ -172,14 +166,17 @@ public class LabOrderResultsServiceImpl implements LabOrderResultsService {
         return orders;
     }
 
-    private List<EncounterTransaction.Observation> filterVoided(List<EncounterTransaction.Observation> observations) {
-        List<EncounterTransaction.Observation> nonVoidedObservations = new ArrayList<>();
+    private List<EncounterTransaction.Observation> filterObservations(List<EncounterTransaction.Observation> observations, Date startDate, Date endDate) {
+        List<EncounterTransaction.Observation> filteredObservations = new ArrayList<>();
         for (EncounterTransaction.Observation observation : observations) {
             if(!observation.getVoided()){
-                nonVoidedObservations.add(observation);
+                if(!((startDate != null && observation.getObservationDateTime().before(startDate))
+                        || (endDate != null && observation.getObservationDateTime().after(endDate)))) {
+                    filteredObservations.add(observation);
+                }
             }
         }
-        return nonVoidedObservations;
+        return filteredObservations;
     }
 
     private void mapObservationsWithEncounter(List<EncounterTransaction.Observation> observations, Encounter encounter, Map<String, Encounter> encounterObservationMap) {

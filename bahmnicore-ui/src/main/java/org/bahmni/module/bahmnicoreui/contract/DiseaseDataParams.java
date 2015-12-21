@@ -1,5 +1,6 @@
 package org.bahmni.module.bahmnicoreui.contract;
 
+import java.util.Date;
 import java.util.List;
 
 public class DiseaseDataParams {
@@ -10,20 +11,34 @@ public class DiseaseDataParams {
     private List<String> obsConcepts;
     private List<String> drugConcepts;
     private List<String> labConcepts;
-    private  String groupBy;
+    private String groupBy;
     private String visitUuid;
+    private Date startDate;
+    private Date endDate;
 
-    public Integer getNumberOfVisits() { return numberOfVisits; }
+    public Integer getNumberOfVisits() {
+        return numberOfVisits;
+    }
 
-    public void setNumberOfVisits(Integer numberOfVisits) { this.numberOfVisits = numberOfVisits; }
+    public void setNumberOfVisits(Integer numberOfVisits) {
+        this.numberOfVisits = numberOfVisits;
+    }
 
-    public Integer getLatestCount() { return latestCount; }
+    public Integer getLatestCount() {
+        return latestCount;
+    }
 
-    public void setLatestCount(Integer latestCount) { this.latestCount = latestCount; }
+    public void setLatestCount(Integer latestCount) {
+        this.latestCount = latestCount;
+    }
 
-    public Integer getInitialCount() { return initialCount; }
+    public Integer getInitialCount() {
+        return initialCount;
+    }
 
-    public void setInitialCount(Integer initialCount) { this.initialCount = initialCount; }
+    public void setInitialCount(Integer initialCount) {
+        this.initialCount = initialCount;
+    }
 
     public List<String> getObsConcepts() {
         return obsConcepts;
@@ -63,5 +78,21 @@ public class DiseaseDataParams {
 
     public void setVisitUuid(String visitUuid) {
         this.visitUuid = visitUuid;
+    }
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
     }
 }

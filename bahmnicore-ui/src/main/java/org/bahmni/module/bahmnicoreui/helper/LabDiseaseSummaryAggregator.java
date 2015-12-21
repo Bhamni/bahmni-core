@@ -44,7 +44,7 @@ public class LabDiseaseSummaryAggregator {
         DiseaseSummaryData diseaseSummaryData =  new DiseaseSummaryData();
         List<Concept> concepts = conceptHelper.getConceptsForNames(diseaseDataParams.getLabConcepts());
         if(!concepts.isEmpty()){
-            List<LabOrderResult> labOrderResults = labOrderResultsService.getAllForConcepts(patient, diseaseDataParams.getLabConcepts(), getVisits(patient, diseaseDataParams));
+            List<LabOrderResult> labOrderResults = labOrderResultsService.getAllForConcepts(patient, diseaseDataParams.getLabConcepts(), getVisits(patient, diseaseDataParams), diseaseDataParams.getStartDate(), diseaseDataParams.getEndDate());
             diseaseSummaryData.addTabularData(diseaseSummaryLabMapper.map(labOrderResults, diseaseDataParams.getGroupBy()));
             diseaseSummaryData.addConceptDetails(conceptHelper.getLeafConceptDetails(concepts, false));
             mapLowNormalAndHiNormal(diseaseSummaryData, labOrderResults);

@@ -1,6 +1,7 @@
 package org.bahmni.module.bahmnicore.dao.impl;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.bahmni.module.bahmnicore.contract.orderTemplate.OrderTemplateJson;
 import org.bahmni.module.bahmnicore.dao.OrderDao;
@@ -102,19 +103,32 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
-    public List<DrugOrder> getPrescribedDrugOrdersForConcepts(Patient patient, Boolean includeActiveVisit, List<Visit> visits, List<Concept> concepts) {
+    public List<DrugOrder> getPrescribedDrugOrdersForConcepts(Patient patient, Boolean includeActiveVisit, List<Visit> visits, List<Concept> concepts, Date startDate, Date endDate) {
         Session currentSession = getCurrentSession();
         List<Integer> visitWithDrugOrderIds = getVisitIds(visits);
         if (!visitWithDrugOrderIds.isEmpty()) {
+            StringBuilder queryBuilder = new StringBuilder("select d1 from DrugOrder d1, Encounter e, Visit v where d1.encounter = e and e.visit = v and v.visitId in (:visitIds) and d1.drug.concept in (:concepts)" +
+                    "and d1.voided = false and d1.action != :discontinued and " +
+                    "not exists (select d2 from DrugOrder d2 where d2.voided = false and d2.action = :revised and d2.encounter = d1.encounter and d2.previousOrder = d1)");
+            if(startDate != null){
+                queryBuilder.append(" and d1.dateActivated >= :startDate");
+            }
+            if(endDate != null) {
+                queryBuilder.append(" and d1.dateActivated <= :endDate ");
+            }
+            queryBuilder.append(" order by d1.dateActivated desc");
+            Query query = currentSession.createQuery(queryBuilder.toString());
 
-            Query query = currentSession.createQuery("select d1 from DrugOrder d1, Encounter e, Visit v where d1.encounter = e and e.visit = v and v.visitId in (:visitIds) and d1.drug.concept in (:concepts)" +
-                "and d1.voided = false and d1.action != :discontinued and " +
-                "not exists (select d2 from DrugOrder d2 where d2.voided = false and d2.action = :revised and d2.encounter = d1.encounter and d2.previousOrder = d1)" +
-                "order by d1.dateActivated desc");
             query.setParameterList("visitIds", visitWithDrugOrderIds);
             query.setParameterList("concepts", concepts);
             query.setParameter("discontinued", Order.Action.DISCONTINUE);
             query.setParameter("revised", Order.Action.REVISE);
+            if (startDate != null) {
+                query.setParameter("startDate", startDate);
+            }
+            if (endDate != null) {
+                query.setParameter("endDate", endDate);
+            }
             return (List<DrugOrder>) query.list();
         }
         return new ArrayList<>();
