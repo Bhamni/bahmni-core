@@ -14,7 +14,7 @@ PROJECT_BASE=$PATH_OF_CURRENT_SCRIPT/../../..
 run_in_vagrant -f "$SCRIPTS_DIR/setup_environment.sh"
 
 # Kill tomcat
-run_in_vagrant -f "$SCRIPTS_DIR/openmrs_stop.sh"
+run_in_vagrant -f "$SCRIPTS_DIR/tomcat_stop.sh"
 
 # Deploy Bhamni core
 scp_to_vagrant $PROJECT_BASE/bahmnicore-omod/target/bahmnicore*-$VERSION.omod $MODULE_DEPLOYMENT_FOLDER/bahmnicore-$VERSION.omod
@@ -27,4 +27,4 @@ scp_to_vagrant $PROJECT_BASE/reference-data/omod/target/reference-data*-$VERSION
 run_in_vagrant -f "$SCRIPTS_DIR/deploy_omods.sh"
 
 # Restart tomcat
-run_in_vagrant -f "$SCRIPTS_DIR/openmrs_start.sh"
+run_in_vagrant -f "$SCRIPTS_DIR/tomcat_start.sh"
