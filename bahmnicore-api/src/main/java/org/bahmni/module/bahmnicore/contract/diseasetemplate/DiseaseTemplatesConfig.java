@@ -1,5 +1,7 @@
 package org.bahmni.module.bahmnicore.contract.diseasetemplate;
 
+import org.codehaus.jackson.annotate.JsonProperty;
+
 import java.util.Date;
 import java.util.List;
 
@@ -28,6 +30,7 @@ public class DiseaseTemplatesConfig {
         this.patientUuid = patientUuid;
     }
 
+    @JsonProperty("endDate")
     public Date getEndDate() {
         return endDate;
     }
@@ -36,6 +39,7 @@ public class DiseaseTemplatesConfig {
         this.endDate = endDate;
     }
 
+    @JsonProperty("startDate")
     public Date getStartDate() {
         return startDate;
     }
