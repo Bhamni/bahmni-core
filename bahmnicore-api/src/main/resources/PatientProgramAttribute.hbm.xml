@@ -14,13 +14,12 @@
             </generator>
         </id>
 
+        <many-to-one name="patientProgram" class="org.openmrs.PatientProgram" not-null="true" column="patient_program_id"/>
 
-        <many-to-one name="patientProgram" class="BahmniPatientProgram" not-null="true" column="patient_program_id"/>
-
-        <many-to-one name="attributeType" class="org.bahmni.module.bahmnicore.model.bahmniPatientProgram.PatientProgramAttributeType" not-null="true"
+        <many-to-one name="attributeType" class="org.bahmni.module.bahmnicore.model.bahmniPatientProgram.ProgramAttributeType" not-null="true"
                      column="attribute_type_id"/>
 
-        <property name="valueReference" type="text" not-null="true" access="field" column="value_reference"
+        <property name="value" type="text" not-null="true" access="field" column="value"
                   length="65535"/>
 
         <many-to-one name="creator" class="org.openmrs.User" not-null="true" column="creator"/>

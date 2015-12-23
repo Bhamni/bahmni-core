@@ -1,9 +1,9 @@
 package org.openmrs.module.bahmnicore.web.v1_0.resource;
 
 
-import org.bahmni.module.bahmnicore.model.bahmniPatientProgram.BahmniPatientProgram;
 import org.bahmni.module.bahmnicore.model.bahmniPatientProgram.PatientProgramAttribute;
-import org.bahmni.module.bahmnicore.model.bahmniPatientProgram.PatientProgramAttributeType;
+import org.bahmni.module.bahmnicore.model.bahmniPatientProgram.BahmniPatientProgram;
+import org.bahmni.module.bahmnicore.model.bahmniPatientProgram.ProgramAttributeType;
 import org.bahmni.module.bahmnicore.service.BahmniProgramWorkflowService;
 import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.RestConstants;
@@ -24,7 +24,7 @@ public class PatientProgramAttributeResource  extends BaseAttributeCrudResource1
     BahmniProgramWorkflowService bahmniProgramWorkflowService;
 
     @PropertySetter("attributeType")
-    public static void setAttributeType(PatientProgramAttribute instance, PatientProgramAttributeType attr) {
+    public static void setAttributeType(PatientProgramAttribute instance, ProgramAttributeType attr) {
         instance.setAttributeType(attr);
     }
 
@@ -37,7 +37,7 @@ public class PatientProgramAttributeResource  extends BaseAttributeCrudResource1
     protected void delete(PatientProgramAttribute delegate, String reason, RequestContext context) throws ResponseException {
         delegate.setVoided(true);
         delegate.setVoidReason(reason);
-        bahmniProgramWorkflowService.saveBahmniPatientProgram(delegate.getBahmniPatientProgram());
+        bahmniProgramWorkflowService.saveBahmniPatientProgram((BahmniPatientProgram) delegate.getPatientProgram());
     }
 
     @Override
@@ -48,16 +48,17 @@ public class PatientProgramAttributeResource  extends BaseAttributeCrudResource1
     @Override
     public PatientProgramAttribute save(PatientProgramAttribute delegate) {
         boolean needToAdd = true;
-        for (PatientProgramAttribute pa : delegate.getBahmniPatientProgram().getActiveAttributes()) {
+        BahmniPatientProgram bahmniPatientProgram = (BahmniPatientProgram) delegate.getPatientProgram();
+        for (PatientProgramAttribute pa : bahmniPatientProgram.getActiveAttributes()) {
             if (pa.equals(delegate)) {
                 needToAdd = false;
                 break;
             }
         }
         if (needToAdd) {
-            delegate.getBahmniPatientProgram().addAttribute(delegate);
+            bahmniPatientProgram.addAttribute(delegate);
         }
-        bahmniProgramWorkflowService.saveBahmniPatientProgram(delegate.getBahmniPatientProgram());
+        bahmniProgramWorkflowService.saveBahmniPatientProgram(new BahmniPatientProgram(delegate.getPatientProgram()));
         return delegate;
     }
 
@@ -67,12 +68,12 @@ public class PatientProgramAttributeResource  extends BaseAttributeCrudResource1
     }
     @Override
     public BahmniPatientProgram getParent(PatientProgramAttribute patientProgramAttribute) {
-        return patientProgramAttribute.getBahmniPatientProgram();
+        return new BahmniPatientProgram(patientProgramAttribute.getPatientProgram());
     }
 
     @Override
     public void setParent(PatientProgramAttribute patientProgramAttribute, BahmniPatientProgram bahmniPatientProgram) {
-        patientProgramAttribute.setBahmniPatientProgram(bahmniPatientProgram);
+        patientProgramAttribute.setPatientProgram(bahmniPatientProgram);
     }
 
     @Override

@@ -27,6 +27,8 @@
             </map>
         </property>
     </bean>
-    
-    
+
+    <bean id="bahmniProgramWorkflowDAO" class="org.bahmni.module.bahmnicore.dao.impl.BahmniHibernateProgramWorkflowDAOImpl">
+        <property name="sessionFactory"><ref bean="sessionFactory"/></property>
+    </bean>
 </beans>

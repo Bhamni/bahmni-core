@@ -1,12 +1,10 @@
 package org.bahmni.module.bahmnicore.model.bahmniPatientProgram;
 
-
+import org.openmrs.PatientProgram;
 import org.openmrs.attribute.Attribute;
 import org.openmrs.attribute.BaseAttribute;
 
-
-public class PatientProgramAttribute extends BaseAttribute<PatientProgramAttributeType, BahmniPatientProgram> implements Attribute<PatientProgramAttributeType, BahmniPatientProgram> {
-
+public class PatientProgramAttribute extends BaseAttribute<ProgramAttributeType, BahmniPatientProgram> implements Attribute<ProgramAttributeType, BahmniPatientProgram> {
     private Integer patientProgramAttributeId;
 
     @Override
@@ -19,12 +17,12 @@ public class PatientProgramAttribute extends BaseAttribute<PatientProgramAttribu
         setPatientProgramAttributeId(id);
     }
 
-    public BahmniPatientProgram getBahmniPatientProgram() {
+    public PatientProgram getPatientProgram() {
         return getOwner();
     }
 
-    public void setBahmniPatientProgram(BahmniPatientProgram patientProgram) {
-        setOwner(patientProgram);
+    public void setPatientProgram(PatientProgram patientProgram) {
+        setOwner(new BahmniPatientProgram(patientProgram));
     }
 
     public Integer getPatientProgramAttributeId() {

@@ -121,6 +121,8 @@
         BahmniConfig.hbm.xml
         EntityMapping.hbm.xml
         EntityMappingType.hbm.xml
+        PatientProgramAttribute.hbm.xml
+        ProgramAttributeType.hbm.xml
     </mappingFiles>
     <!-- Internationalization -->
     <!-- All message codes should start with moduleId.* -->
