@@ -6,6 +6,7 @@ import org.bahmni.module.bahmnicore.model.bahmniPatientProgram.BahmniPatientProg
 import org.bahmni.module.bahmnicore.model.bahmniPatientProgram.ProgramAttributeType;
 import org.bahmni.module.bahmnicore.service.BahmniProgramWorkflowService;
 import org.openmrs.api.impl.ProgramWorkflowServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,7 +16,12 @@ import java.util.List;
 @Transactional
 public class BahmniProgramWorkflowServiceImpl extends ProgramWorkflowServiceImpl implements BahmniProgramWorkflowService {
 
-    protected BahmniProgramWorkflowDAO bahmniProgramWorkflowDao;
+    BahmniProgramWorkflowDAO bahmniProgramWorkflowDao;
+
+    @Autowired
+    public BahmniProgramWorkflowServiceImpl(BahmniProgramWorkflowDAO bahmniProgramWorkflowDao) {
+        this.bahmniProgramWorkflowDao = bahmniProgramWorkflowDao;
+    }
 
     @Override
     public List<ProgramAttributeType> getAllProgramAttributeTypes() {
@@ -45,11 +51,6 @@ public class BahmniProgramWorkflowServiceImpl extends ProgramWorkflowServiceImpl
     @Override
     public PatientProgramAttribute getPatientProgramAttributeByUuid(String uuid) {
         return bahmniProgramWorkflowDao.getPatientProgramAttributeByUuid(uuid);
-    }
-
-    @Override
-    public List<PatientProgramAttribute> getAttributesByPatientProgramId(int id) {
-        return bahmniProgramWorkflowDao.getAttributesPatientProgramById(id);
     }
 
     @Override

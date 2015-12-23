@@ -4,20 +4,20 @@ import org.bahmni.module.bahmnicore.extensions.BahmniExtensions;
 import org.bahmni.module.bahmnicore.service.BahmniDrugOrderService;
 import org.bahmni.module.bahmnicore.web.v1_0.mapper.DrugOrderToTreatmentRegimenMapper;
 import org.bahmni.test.builder.ConceptBuilder;
+import org.bahmni.test.builder.DrugOrderBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.openmrs.Concept;
+import org.openmrs.DrugOrder;
 import org.openmrs.Order;
 import org.openmrs.api.ConceptService;
 import org.openmrs.module.bahmniemrapi.drugogram.contract.BaseTableExtension;
 import org.openmrs.module.bahmniemrapi.drugogram.contract.TreatmentRegimen;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
@@ -58,12 +58,15 @@ public class DrugOGramControllerTest {
 
     @Test
     public void shouldFetchSpecifiedDrugsAsRegimen() throws Exception {
-        Concept paracetamol = new ConceptBuilder().withName("Paracetamol").build();
-        when(conceptService.getConceptByName("Paracetamol")).thenReturn(paracetamol);
+        Concept paracetemolConcept= new ConceptBuilder().withName("Paracetemol").withDescription("Description").withClass("Some").withDataType("N/A").withShortName("Paracetemol").build();;
+        DrugOrder paracetemol = new DrugOrderBuilder().withDrugName("Paracetemol").withDateActivated(new Date()).withDose(200.0).withConcept(paracetemolConcept).build();
 
-        ArrayList<Order> drugOrders = new ArrayList<>();
-        HashSet<Concept> concepts = new HashSet<>();
-        concepts.add(paracetamol);
+        List<Order> drugOrders = new ArrayList<>();
+        drugOrders.add(paracetemol);
+        Set<Concept> concepts = new LinkedHashSet<>();
+        concepts.add(paracetemolConcept);
+        when(conceptService.getConceptByName("Paracetamol")).thenReturn(paracetemolConcept);
+
         when(bahmniDrugOrderService.getAllDrugOrders("patientUuid", concepts, null, null)).thenReturn(drugOrders);
         TreatmentRegimen expected = new TreatmentRegimen();
         when(drugOrderToTreatmentRegimenMapper.map(drugOrders, concepts)).thenReturn(expected);
@@ -78,13 +81,16 @@ public class DrugOGramControllerTest {
 
     @Test
     public void shouldFetchSpecifiedDrugsAsRegimenWhenTheyPassConceptSet() throws Exception {
-        Concept paracetamol = new ConceptBuilder().withName("Paracetamol").withSet(false).build();
+        Concept paracetamol = new ConceptBuilder().withName("Paracetemol").withDescription("Description").withClass("Some").withDataType("N/A").withShortName("Paracetemol").build();;
         Concept tbDrugs = new ConceptBuilder().withName("TB Drugs").withSet(true).withSetMember(paracetamol).build();
+        DrugOrder paracetemolDrug = new DrugOrderBuilder().withDrugName("Paracetemol").withDateActivated(new Date()).withDose(200.0).withConcept(paracetamol).build();
 
         when(conceptService.getConceptByName("TB Drugs")).thenReturn(tbDrugs);
+        when(conceptService.getConceptByName("Paracetemol")).thenReturn(paracetamol);
 
         ArrayList<Order> drugOrders = new ArrayList<>();
-        HashSet<Concept> concepts = new HashSet<>();
+        drugOrders.add(paracetemolDrug);
+        Set<Concept> concepts = new LinkedHashSet<>();
         concepts.add(paracetamol);
         when(bahmniDrugOrderService.getAllDrugOrders("patientUuid", concepts, null, null)).thenReturn(drugOrders);
         TreatmentRegimen expected = new TreatmentRegimen();

@@ -4,7 +4,6 @@ import org.bahmni.module.bahmnicore.dao.BahmniProgramWorkflowDAO;
 import org.bahmni.module.bahmnicore.model.bahmniPatientProgram.BahmniPatientProgram;
 import org.bahmni.module.bahmnicore.model.bahmniPatientProgram.PatientProgramAttribute;
 import org.bahmni.module.bahmnicore.model.bahmniPatientProgram.ProgramAttributeType;
-import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.openmrs.api.db.hibernate.HibernateProgramWorkflowDAO;
@@ -47,17 +46,6 @@ public class BahmniHibernateProgramWorkflowDAOImpl extends HibernateProgramWorkf
     @Override
     public void purgeProgramAttributeType(ProgramAttributeType type) {
         sessionFactory.getCurrentSession().delete(type);
-    }
-
-    @Override
-    public List<PatientProgramAttribute> getAttributesPatientProgramById(int id) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(PatientProgramAttribute.class).add(
-                Restrictions.eq("patientProgram", id));
-        List<PatientProgramAttribute> patientProgramAttributes = criteria.list();
-        if (null == patientProgramAttributes || patientProgramAttributes.isEmpty()) {
-            return null;
-        }
-        return patientProgramAttributes;
     }
 
     @Override

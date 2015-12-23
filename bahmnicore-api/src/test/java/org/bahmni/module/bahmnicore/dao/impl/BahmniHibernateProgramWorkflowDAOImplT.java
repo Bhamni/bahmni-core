@@ -124,11 +124,4 @@ public class BahmniHibernateProgramWorkflowDAOImplT extends BaseIntegrationTest 
         Assert.assertNull(bahmniHibernateProgramWorkflowDAO.getProgramAttributeType(1));
     }
 
-    @Test
-    public void testGetAttributesPatientProgramById() throws Exception {
-        List<PatientProgramAttribute> patientProgramAttributes = bahmniHibernateProgramWorkflowDAO.getAttributesPatientProgramById(1);
-        Assert.assertTrue(patientProgramAttributes.size() == 1);
-        Assert.assertTrue(patientProgramAttributes.get(0).getId() == 1);
-        Assert.assertTrue(patientProgramAttributes.get(0).getValue().equals("Stage1"));
-    }
 }

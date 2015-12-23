@@ -43,6 +43,9 @@
     <program_attribute_type program_attribute_type_id="1" name="stage" min_occurs="1" retired="false"
                             creator="1" date_created="2008-08-15 17:04:50.0"
                             uuid="d7477c21-bfc3-4922-9591-e89d8b9c8efb"/>
+    <program_attribute_type program_attribute_type_id="2" name="facility" min_occurs="1" retired="false"
+                            creator="1" date_created="2008-08-15 17:04:50.0"
+                            uuid="d7477c21-bfc3-4922-9591-e89d8b9c8efe"/>
 
     <person person_id="2" gender="M" dead="false" creator="1" birthdate_estimated="0" date_created="2008-08-15 15:57:09.0" voided="false" void_reason="" uuid="75e04d42-3ca8-11e3-bf2b-0808633c1b75"/>
     <patient patient_id="2" creator="1" date_created="2005-09-22 00:00:00.0" changed_by="1" date_changed="2008-08-18 12:29:59.0" voided="false" void_reason=""/>

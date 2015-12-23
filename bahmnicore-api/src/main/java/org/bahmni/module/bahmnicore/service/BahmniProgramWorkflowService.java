@@ -33,8 +33,6 @@ public interface BahmniProgramWorkflowService extends ProgramWorkflowService {
     @Authorized({"View PatientPrograms"})
     PatientProgramAttribute getPatientProgramAttributeByUuid(String var1);
 
-    List<PatientProgramAttribute> getAttributesByPatientProgramId(int id);
-
     BahmniPatientProgram saveBahmniPatientProgram(BahmniPatientProgram bahmniPatientProgram);
 
 }
