@@ -5,12 +5,11 @@ import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.openmrs.Concept;
 import org.openmrs.ConceptAnswer;
+import org.openmrs.Drug;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 @Repository
 public class BahmniConceptDaoImpl implements BahmniConceptDao {
@@ -49,15 +48,24 @@ public class BahmniConceptDaoImpl implements BahmniConceptDao {
 
     @Override
     public Concept getConceptByFullySpecifiedName(String fullySpecifiedConceptName) {
-        String queryString="select concept " +
-            "from ConceptName as conceptName " +
-            "where conceptName.conceptNameType ='FULLY_SPECIFIED' " +
-            " and lower(conceptName.name)= lower(:fullySpecifiedName)";
-        Query query = sessionFactory.getCurrentSession().createQuery(queryString);
-        query.setString("fullySpecifiedName",fullySpecifiedConceptName);
+        List<Concept> concepts = sessionFactory.getCurrentSession()
+                .createQuery("select concept " +
+                        "from ConceptName as conceptName " +
+                        "where conceptName.conceptNameType ='FULLY_SPECIFIED' " +
+                        " and lower(conceptName.name)= lower(:fullySpecifiedName)")
+                .setString("fullySpecifiedName", fullySpecifiedConceptName)
+                .list();
 
-        List<Concept> concepts = query.list();
-        return concepts.size()>0?concepts.get(0):null;
+        return concepts.size() > 0 ? concepts.get(0) : null;
+    }
+
+    @Override
+    public Collection<Drug> getDrugByListOfConcepts(Collection<Concept> concepts) {
+        return sessionFactory.getCurrentSession()
+                .createQuery("select drug from Drug as drug " +
+                        "where drug.concept in (:conceptIds)")
+                .setParameterList("conceptIds", concepts)
+                .list();
     }
 
     private void appendSearchQueriesToBase(String[] queryArray, StringBuffer queryStringBuffer) {

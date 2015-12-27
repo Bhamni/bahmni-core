@@ -22,10 +22,6 @@
         <point>org.openmrs.api.ConceptService</point>
         <class>org.bahmni.module.referencedata.labconcepts.advice.ConceptServiceEventInterceptor</class>
     </advice>
-    <advice>
-        <point>org.openmrs.api.LocationService</point>
-        <class>org.bahmni.module.referencedata.location.advice.LocationServiceEventInterceptor</class>
-    </advice>
     <!-- Module Activator -->
     <!-- Internationalization -->
     <!-- All message codes should start with ${project.parent.artifactId}. -->

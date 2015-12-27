@@ -3,6 +3,7 @@ package org.bahmni.module.bahmnicore.service.impl;
 import org.bahmni.module.bahmnicore.dao.BahmniConceptDao;
 import org.bahmni.module.bahmnicore.service.BahmniConceptService;
 import org.openmrs.Concept;
+import org.openmrs.Drug;
 import org.openmrs.api.ConceptService;
 import org.openmrs.module.emrapi.encounter.ConceptMapper;
 import org.openmrs.module.emrapi.encounter.domain.EncounterTransaction;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
+import java.util.List;
 
 @Component
 @Transactional
@@ -46,6 +48,14 @@ public class BahmniConceptServiceImpl implements BahmniConceptService{
             throw new ConceptNotFoundException("Concept '" + questionConceptName + "' not found");
         }
         return bahmniConceptDao.searchByQuestion(questionConcept, query);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Collection<Drug> getDrugsByConceptSetName(String conceptSetName) {
+        Concept conceptSet = bahmniConceptDao.getConceptByFullySpecifiedName(conceptSetName);
+        List<Concept> setMembers = conceptService.getConceptsByConceptSet(conceptSet);
+        return bahmniConceptDao.getDrugByListOfConcepts(setMembers);
     }
 
     private EncounterTransaction.Concept convertToContract(Concept concept) {
