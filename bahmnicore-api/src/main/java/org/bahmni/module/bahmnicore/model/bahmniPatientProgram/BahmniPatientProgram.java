@@ -17,6 +17,7 @@ public class BahmniPatientProgram extends PatientProgram implements Customizable
     public BahmniPatientProgram() {
         super();
     }
+
     public BahmniPatientProgram(PatientProgram patientProgram) {
         super(patientProgram.getPatientProgramId());
     }

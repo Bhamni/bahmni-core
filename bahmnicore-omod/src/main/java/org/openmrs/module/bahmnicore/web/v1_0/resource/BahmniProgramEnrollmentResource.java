@@ -3,7 +3,6 @@ package org.openmrs.module.bahmnicore.web.v1_0.resource;
 
 import org.bahmni.module.bahmnicore.model.bahmniPatientProgram.BahmniPatientProgram;
 import org.bahmni.module.bahmnicore.service.BahmniProgramWorkflowService;
-import org.openmrs.PatientProgram;
 import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.RestConstants;
 import org.openmrs.module.webservices.rest.web.annotation.Resource;
@@ -24,10 +23,7 @@ public class BahmniProgramEnrollmentResource extends DelegatingCrudResource<Bahm
     @SuppressWarnings("unchecked")
     @Override
     public BahmniPatientProgram getByUniqueId(String uuid) {
-        PatientProgram patientProgram = bahmniProgramWorkflowService.getPatientProgramByUuid(uuid);
-        BahmniPatientProgram bahmniPatientProgram = (BahmniPatientProgram) patientProgram;
-//        List<PatientProgramAttribute> patientProgramAttributes = bahmniProgramWorkflowService.getAttributesByPatientProgramId(patientProgram.getPatientProgramId());
-//        bahmniPatientProgram.setAttributes((Set<PatientProgramAttribute>) patientProgramAttributes);
+        BahmniPatientProgram bahmniPatientProgram = bahmniProgramWorkflowService.getBahmniPatientProgramByUuid(uuid);
         return bahmniPatientProgram;
     }
 

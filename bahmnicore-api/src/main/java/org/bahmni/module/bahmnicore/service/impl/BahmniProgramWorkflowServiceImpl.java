@@ -21,6 +21,7 @@ public class BahmniProgramWorkflowServiceImpl extends ProgramWorkflowServiceImpl
     @Autowired
     public BahmniProgramWorkflowServiceImpl(BahmniProgramWorkflowDAO bahmniProgramWorkflowDao) {
         this.bahmniProgramWorkflowDao = bahmniProgramWorkflowDao;
+        super.setProgramWorkflowDAO(bahmniProgramWorkflowDao);
     }
 
     @Override
@@ -56,5 +57,10 @@ public class BahmniProgramWorkflowServiceImpl extends ProgramWorkflowServiceImpl
     @Override
     public BahmniPatientProgram saveBahmniPatientProgram(BahmniPatientProgram bahmniPatientProgram) {
         return bahmniProgramWorkflowDao.saveBahmniPatientProgram(bahmniPatientProgram);
+    }
+
+    @Override
+    public BahmniPatientProgram getBahmniPatientProgramByUuid(String uuid) {
+        return bahmniProgramWorkflowDao.getBahmniPatientProgramByUuid(uuid);
     }
 }

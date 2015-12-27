@@ -22,4 +22,8 @@ public interface BahmniProgramWorkflowDAO extends ProgramWorkflowDAO {
     void purgeProgramAttributeType(ProgramAttributeType var1);
 
     BahmniPatientProgram saveBahmniPatientProgram(BahmniPatientProgram bahmniPatientProgram);
+
+    BahmniPatientProgram getBahmniPatientProgram(Integer id);
+
+    BahmniPatientProgram getBahmniPatientProgramByUuid(String uuid);
 }

@@ -6,6 +6,7 @@ import org.bahmni.module.bahmnicore.model.bahmniPatientProgram.PatientProgramAtt
 import org.bahmni.module.bahmnicore.model.bahmniPatientProgram.ProgramAttributeType;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
+import org.openmrs.api.db.DAOException;
 import org.openmrs.api.db.hibernate.HibernateProgramWorkflowDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -14,6 +15,11 @@ import java.util.List;
 public class BahmniHibernateProgramWorkflowDAOImpl extends HibernateProgramWorkflowDAO implements BahmniProgramWorkflowDAO {
     @Autowired
     private SessionFactory sessionFactory;
+
+    public void setSessionFactory(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+        super.setSessionFactory(sessionFactory);
+    }
 
     @SuppressWarnings("unchecked")
     @Override
@@ -55,7 +61,17 @@ public class BahmniHibernateProgramWorkflowDAOImpl extends HibernateProgramWorkf
         } else {
             this.sessionFactory.getCurrentSession().merge(bahmniPatientProgram);
         }
-
         return bahmniPatientProgram;
+    }
+
+    @Override
+    public BahmniPatientProgram getBahmniPatientProgram(Integer id) throws DAOException {
+        return (BahmniPatientProgram)this.sessionFactory.getCurrentSession().get(BahmniPatientProgram.class, id);
+    }
+
+    @Override
+    public BahmniPatientProgram getBahmniPatientProgramByUuid(String uuid) {
+//        return (BahmniPatientProgram) sessionFactory.getCurrentSession().createQuery("from PatientProgram pp where pp.uuid = :uuid").setString("uuid", uuid).uniqueResult();
+        return (BahmniPatientProgram) sessionFactory.getCurrentSession().createCriteria(BahmniPatientProgram.class).add(Restrictions.eq("uuid", uuid)).uniqueResult();
     }
 }

@@ -23,7 +23,7 @@ public class ProgramAttributeTypeResourceTest extends BaseDelegatingResourceTest
 
     @Override
     public String getDisplayProperty() {
-        return "Audit Date";
+        return "stage";
     }
 
     @Override

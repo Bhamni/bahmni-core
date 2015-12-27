@@ -52,5 +52,5 @@
     <person_name person_name_id="1" preferred="true" person_id="2" prefix="" given_name="Abc" middle_name="" family_name="Def" family_name_suffix="" creator="1" date_created="2005-09-22 00:00:00.0" voided="false" void_reason="" uuid="399e3a7b-6482-409d-94ce-c87bb3ca3cca"/>
 
     <patient_program patient_program_id="1" patient_id="2" program_id="5" date_enrolled="2006-10-14 00:00:00.0" creator="1" date_created="2007-09-20 00:00:00.0" voided="false" uuid="9119b9f8-af3d-4ad8-9e2e-2317c3de91c6"/>
-    <patient_program_attribute patient_program_attribute_id="1" patient_program_id="1" attribute_type_id="1" value="Stage1" uuid="3a2bdb18-6faa-11e0-8414-001e378eb67e" creator="1" date_created="2005-01-01 00:00:00.0" voided="false" />
+    <patient_program_attribute patient_program_attribute_id="1" patient_program_id="1" attribute_type_id="1" value_reference="Stage1" uuid="3a2bdb18-6faa-11e0-8414-001e378eb67e" creator="1" date_created="2005-01-01 00:00:00.0" voided="false" />
 </dataset>

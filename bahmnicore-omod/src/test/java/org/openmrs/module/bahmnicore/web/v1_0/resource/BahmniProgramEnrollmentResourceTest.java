@@ -18,12 +18,12 @@ public class BahmniProgramEnrollmentResourceTest extends BaseDelegatingResourceT
 
     @Override
     public BahmniPatientProgram newObject() {
-        return new BahmniPatientProgram(bahmniProgramWorkflowService.getPatientProgramByUuid(RestConstants.PATIENT_PROGRAM_UUID));
+        return bahmniProgramWorkflowService.getBahmniPatientProgramByUuid(RestConstants.PATIENT_PROGRAM_UUID);
     }
 
     @Override
     public String getDisplayProperty() {
-        return "Never Never Land";
+        return "HIV Program";
     }
 
     @Override

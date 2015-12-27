@@ -3744,7 +3744,7 @@
             </column>
             <column name="patient_program_id" type="int"><constraints nullable="false" /></column>
             <column name="attribute_type_id" type="int"><constraints nullable="false" /></column>
-            <column name="value" type="text"><constraints nullable="false" /></column>
+            <column name="value_reference" type="text"><constraints nullable="false" /></column>
             <column name="uuid" type="char(38)"><constraints nullable="false" unique="true" /></column>
             <column name="creator" type="int"><constraints nullable="false"/></column>
             <column name="date_created" type="datetime"><constraints nullable="false"/></column>
