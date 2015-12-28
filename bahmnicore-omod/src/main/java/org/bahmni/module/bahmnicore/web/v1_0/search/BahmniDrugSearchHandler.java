@@ -1,5 +1,6 @@
 package org.bahmni.module.bahmnicore.web.v1_0.search;
 
+import org.bahmni.module.referencedata.labconcepts.contract.Concept;
 import org.openmrs.Drug;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.webservices.rest.web.RequestContext;
@@ -29,12 +30,24 @@ public class BahmniDrugSearchHandler implements SearchHandler {
     @Override
     public PageableResult search(RequestContext ctx) throws ResponseException {
         boolean includeRetired = ctx.getIncludeAll();
-        String searchPhrase = ctx.getParameter("q");
+            String searchPhrase = ctx.getParameter("q");
+            LinkedHashSet<Drug> drugs = new LinkedHashSet<>(findDrugsStartingWith(searchPhrase, includeRetired, ctx));
+            LinkedHashSet<Drug> drugsHavingConcept = new LinkedHashSet<>();
 
-        LinkedHashSet<Drug> drugs = new LinkedHashSet<>(findDrugsStartingWith(searchPhrase, includeRetired, ctx));
+
         drugs.addAll(findDrugsContaining(searchPhrase, includeRetired, ctx));
 
-        return new NeedsPaging<>(new ArrayList<>(drugs), ctx);
+            if(ctx.getParameter("conceptUuid") != null) {
+                String conceptUuid = ctx.getParameter("conceptUuid");
+                for(Drug drug : drugs){
+                    if(drug.getConcept().getUuid().equals(conceptUuid)){
+                        drugsHavingConcept.add(drug);
+                    }
+                }
+                return new NeedsPaging<>(new ArrayList<>(drugsHavingConcept), ctx);
+            }
+
+            return new NeedsPaging<>(new ArrayList<>(drugs), ctx);
     }
 
     private List<Drug> findDrugsStartingWith(String searchPhrase, boolean includeRetired, RequestContext ctx) {
