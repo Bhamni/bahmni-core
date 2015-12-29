@@ -375,6 +375,18 @@
             <version>${emrapi-omod.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>addresshierarchy-api</artifactId>
+            <version>${addressHierarchyVersion}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>addresshierarchy-omod</artifactId>
+            <version>${addressHierarchyVersion}</version>
+            <type>jar</type>
+        </dependency>
     </dependencies>
 
 </project>

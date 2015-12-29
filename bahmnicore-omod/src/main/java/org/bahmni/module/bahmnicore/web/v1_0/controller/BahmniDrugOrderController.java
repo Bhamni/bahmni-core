@@ -74,13 +74,14 @@ public class BahmniDrugOrderController extends BaseRestController {
                             @RequestParam(value = "getOtherActive", required = false) Boolean getOtherActive,
                             @RequestParam(value = "visitUuids", required = false) List visitUuids,
                             @RequestParam(value = "startDate", required = false) String startDateStr,
-                            @RequestParam(value = "endDate", required = false) String endDateStr) throws ParseException {
+                            @RequestParam(value = "endDate", required = false) String endDateStr,
+                            @RequestParam(value = "getEffectiveOrdersOnly", required = false) Boolean getEffectiveOrdersOnly) throws ParseException {
 
         Map<String, Collection<BahmniDrugOrder>> visitWiseOrders = new HashMap<>();
         Date startDate = BahmniDateUtil.convertToDate(startDateStr, BahmniDateUtil.DateFormatType.UTC);
         Date endDate = BahmniDateUtil.convertToDate(endDateStr, BahmniDateUtil.DateFormatType.UTC);
 
-        List<BahmniDrugOrder> prescribedOrders = getPrescribedOrders(visitUuids, patientUuid, true, numberOfVisits, startDate, endDate);
+        List<BahmniDrugOrder> prescribedOrders = getPrescribedOrders(visitUuids, patientUuid, true, numberOfVisits, startDate, endDate, Boolean.TRUE.equals(getEffectiveOrdersOnly));
         visitWiseOrders.put("visitDrugOrders", prescribedOrders);
 
         if (Boolean.TRUE.equals(getOtherActive)) {
@@ -97,7 +98,7 @@ public class BahmniDrugOrderController extends BaseRestController {
     public List<BahmniDrugOrder> getPrescribedDrugOrders(@RequestParam(value = "patientUuid") String patientUuid,
                                                          @RequestParam(value = "includeActiveVisit", required = false) Boolean includeActiveVisit,
                                                          @RequestParam(value = "numberOfVisits", required = false) Integer numberOfVisits) {
-        return getPrescribedOrders(null, patientUuid, includeActiveVisit, numberOfVisits, null, null);
+        return getPrescribedOrders(null, patientUuid, includeActiveVisit, numberOfVisits, null, null, false);
     }
 
     @RequestMapping(value = baseUrl + "/drugOrderDetails", method = RequestMethod.GET)
@@ -164,8 +165,8 @@ public class BahmniDrugOrderController extends BaseRestController {
         return getBahmniDrugOrders(patientUuid,activeDrugOrders);
     }
 
-    private List<BahmniDrugOrder> getPrescribedOrders(List<String> visitUuids, String patientUuid, Boolean includeActiveVisit, Integer numberOfVisits, Date startDate, Date endDate) {
-        List<DrugOrder> prescribedDrugOrders = drugOrderService.getPrescribedDrugOrders(visitUuids, patientUuid, includeActiveVisit, numberOfVisits, startDate, endDate);
+    private List<BahmniDrugOrder> getPrescribedOrders(List<String> visitUuids, String patientUuid, Boolean includeActiveVisit, Integer numberOfVisits, Date startDate, Date endDate, Boolean getEffectiveOrdersOnly) {
+        List<DrugOrder> prescribedDrugOrders = drugOrderService.getPrescribedDrugOrders(visitUuids, patientUuid, includeActiveVisit, numberOfVisits, startDate, endDate, getEffectiveOrdersOnly);
         logger.info(prescribedDrugOrders.size() + " prescribed drug orders found");
         return getBahmniDrugOrders(patientUuid, prescribedDrugOrders);
     }

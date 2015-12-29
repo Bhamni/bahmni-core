@@ -1,4 +1,4 @@
-package org.bahmni.module.bahmnicore.dao.impl;
+package org.bahmni.module.bahmnicore.dao;
 
 import java.io.File;
 

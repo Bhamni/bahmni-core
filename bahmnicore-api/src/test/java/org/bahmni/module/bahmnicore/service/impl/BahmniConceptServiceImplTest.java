@@ -68,4 +68,9 @@ public class BahmniConceptServiceImplTest {
 
         assertThat(drugs, containsInAnyOrder(allTBDrugs.toArray()));
     }
+
+    @Test(expected = ConceptNotFoundException.class)
+    public void getDrugsByConceptSetNameShouldFailWhenConceptSetNameDoesNotExist() {
+        bahmniConceptService.getDrugsByConceptSetName("this concept doesn't exist");
+    }
 }

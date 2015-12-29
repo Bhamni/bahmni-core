@@ -125,12 +125,12 @@ public class BahmniDrugOrderServiceImpl implements BahmniDrugOrderService {
     }
 
     @Override
-    public List<DrugOrder> getPrescribedDrugOrders(List<String> visitUuids, String patientUuid, Boolean includeActiveVisit, Integer numberOfVisits, Date startDate, Date endDate) {
+    public List<DrugOrder> getPrescribedDrugOrders(List<String> visitUuids, String patientUuid, Boolean includeActiveVisit, Integer numberOfVisits, Date startDate, Date endDate, Boolean getEffectiveOrdersOnly) {
         if(CollectionUtils.isNotEmpty(visitUuids)) {
             return orderDao.getPrescribedDrugOrders(visitUuids);
         } else {
             Patient patient = openmrsPatientService.getPatientByUuid(patientUuid);
-            return orderDao.getPrescribedDrugOrders(patient, includeActiveVisit, numberOfVisits, startDate, endDate);
+            return orderDao.getPrescribedDrugOrders(patient, includeActiveVisit, numberOfVisits, startDate, endDate, getEffectiveOrdersOnly);
         }
     }
 

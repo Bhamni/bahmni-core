@@ -3681,6 +3681,19 @@
             call add_concept_answer(@stopped_order_reason_concept_id, @refused_to_take_concept_id, 1);
         </sql>
     </changeSet>
+    <changeSet id="bahmni-core-201412281000" author="Santhosh">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">select count(*) from concept_reference_source where name='Abbreviation'</sqlCheck>
+        </preConditions>
+        <comment>Insert concept reference source for Abbreviation</comment>
+        <sql>
+            set @uuid = 0;
+            select uuid() into @uuid;
+
+            insert into concept_reference_source (name, description, hl7_code, creator, date_created, uuid)
+            values('Abbreviation', 'Custom dictionary for storing abbreviation of concepts', null, 1, now(), @uuid);
+        </sql>
+    </changeSet>
     <changeSet id="20151218-1530-create-program_attribute_type-table" author="Rahul,Swathi" dbms="mysql">
         <preConditions onFail="MARK_RAN">
             <not>

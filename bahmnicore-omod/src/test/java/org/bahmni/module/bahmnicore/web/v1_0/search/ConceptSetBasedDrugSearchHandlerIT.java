@@ -3,6 +3,7 @@ package org.bahmni.module.bahmnicore.web.v1_0.search;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.openmrs.module.emrapi.encounter.exception.ConceptNotFoundException;
 import org.openmrs.module.webservices.rest.SimpleObject;
 import org.openmrs.module.webservices.rest.web.RestConstants;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -43,5 +44,13 @@ public class ConceptSetBasedDrugSearchHandlerIT extends MainResourceControllerTe
         SimpleObject result = deserialize(handle(req));
         List<Object> hits = (List<Object>) result.get("results");
         Assert.assertEquals(2, hits.size());
+    }
+
+    @Test(expected = ConceptNotFoundException.class)
+    public void shouldThrowExceptionWhenConceptSetNotProvided() throws Exception {
+        MockHttpServletRequest requestWithoutAConceptSetName = request(RequestMethod.GET, getURI());
+        requestWithoutAConceptSetName.addParameter("s", "byConceptSet");
+        requestWithoutAConceptSetName.addParameter("v", RestConstants.REPRESENTATION_DEFAULT);
+        handle(requestWithoutAConceptSetName);
     }
 }

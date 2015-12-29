@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<dataset>
+    <address_hierarchy_level address_hierarchy_level_id="1" name="Country" address_field="COUNTRY" required="0" uuid="12e41146-e162-11df-9195-001e378eb67f"/>
+    <address_hierarchy_entry address_hierarchy_entry_id="1" name="United States" level_id="1" uuid="22e41146-e162-11df-9195-001e378eb67f"/>
+</dataset>

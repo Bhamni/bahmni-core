@@ -130,6 +130,16 @@
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>addresshierarchy-api</artifactId>
+            <version>${addressHierarchyVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>addresshierarchy-omod</artifactId>
+            <version>${addressHierarchyVersion}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -181,7 +191,7 @@
                                         <limit>
                                             <counter>BRANCH</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.14</minimum>
+                                            <minimum>0.13</minimum>
                                         </limit>
                                     </limits>
                                 </rule>

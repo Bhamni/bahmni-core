@@ -2,7 +2,7 @@ package org.bahmni.module.bahmnicore.extensions;
 
 import groovy.lang.GroovyClassLoader;
 import org.apache.log4j.Logger;
-import org.bahmni.module.bahmnicore.dao.impl.ApplicationDataDirectory;
+import org.bahmni.module.bahmnicore.dao.ApplicationDataDirectory;
 import org.bahmni.module.bahmnicore.dao.impl.ApplicationDataDirectoryImpl;
 import org.openmrs.module.bahmniemrapi.drugogram.contract.BaseTableExtension;
 import org.springframework.stereotype.Component;

@@ -13,7 +13,6 @@ import java.util.Collection;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.*;
 
@@ -25,14 +24,10 @@ public class BahmniConceptDaoImplIT extends BaseIntegrationTest{
     private ConceptService conceptService;
     private Concept questionConcept;
 
-    @Before
-    public void setUp() throws Exception {
-        questionConcept = conceptService.getConcept(90);
-    }
-
     @Test
     public void shouldReturnNonVoidedAnswersForAQuestion() throws Exception {
         executeDataSet("sampleCodedConcept.xml");
+        questionConcept = conceptService.getConcept(90);
         Collection<Concept> result = bahmniConceptDao.searchByQuestion(questionConcept, "Aneurism");
 
         assertThat(result.size(), is(equalTo(1)));
@@ -44,6 +39,7 @@ public class BahmniConceptDaoImplIT extends BaseIntegrationTest{
     @Test
     public void shouldIgnoreCaseWhenSearching() throws Exception {
         executeDataSet("sampleCodedConcept.xml");
+        questionConcept = conceptService.getConcept(90);
         Collection<Concept> result = bahmniConceptDao.searchByQuestion(questionConcept, "aNeUrIsM");
 
         assertThat(result.size(), is(equalTo(1)));
@@ -55,6 +51,7 @@ public class BahmniConceptDaoImplIT extends BaseIntegrationTest{
     @Test
     public void shouldNotReturnVoidedAnswers() throws Exception {
         executeDataSet("sampleCodedConcept.xml");
+        questionConcept = conceptService.getConcept(90);
         Collection<Concept> result = bahmniConceptDao.searchByQuestion(questionConcept, "Porphyria");
         assertThat(result.size(), is(equalTo(0)));
     }
@@ -62,6 +59,7 @@ public class BahmniConceptDaoImplIT extends BaseIntegrationTest{
     @Test
     public void shouldSearchEachTermByQuestion() throws Exception {
         executeDataSet("sampleCodedConcept.xml");
+        questionConcept = conceptService.getConcept(90);
 
         //Searching for "Abscess, Skin"
         Collection<Concept> result = bahmniConceptDao.searchByQuestion(questionConcept, " ab sk  ");
@@ -71,7 +69,7 @@ public class BahmniConceptDaoImplIT extends BaseIntegrationTest{
 
         result = bahmniConceptDao.searchByQuestion(questionConcept, "in  ab");
         assertThat(result.size(), is(equalTo(2)));
-        assertThat(result, contains(conceptService.getConcept(902), conceptService.getConcept(903)));
+        assertThat(result, containsInAnyOrder(conceptService.getConcept(902), conceptService.getConcept(903)));
 
         result = bahmniConceptDao.searchByQuestion(questionConcept, "in  and another term that is not present");
         assertThat(result.size(), is(equalTo(0)));
@@ -80,17 +78,19 @@ public class BahmniConceptDaoImplIT extends BaseIntegrationTest{
     @Test
     public void shouldReturnMultipleResultsIfAvailable() throws Exception {
         executeDataSet("sampleCodedConcept.xml");
+        questionConcept = conceptService.getConcept(90);
 
         Collection<Concept> result = bahmniConceptDao.searchByQuestion(questionConcept, "ab");
 
         assertThat(result.size(), is(equalTo(2)));
 
-        assertThat(result, contains(conceptService.getConcept(902), conceptService.getConcept(903)));
+        assertThat(result, containsInAnyOrder(conceptService.getConcept(902), conceptService.getConcept(903)));
     }
 
     @Test
     public void getConceptByFullySpecifiedNameShouldGetConceptByItsFullySpecifiedName() throws Exception{
         executeDataSet("sampleCodedConcept.xml");
+        questionConcept = conceptService.getConcept(90);
 
         Concept result = bahmniConceptDao.getConceptByFullySpecifiedName("Acne");
 
@@ -101,6 +101,7 @@ public class BahmniConceptDaoImplIT extends BaseIntegrationTest{
     @Test
     public void getConceptByFullySpecifiedNameShouldBeCaseInsensitive() throws Exception{
         executeDataSet("sampleCodedConcept.xml");
+        questionConcept = conceptService.getConcept(90);
 
         Concept result = bahmniConceptDao.getConceptByFullySpecifiedName("ACNE");
 
@@ -111,6 +112,7 @@ public class BahmniConceptDaoImplIT extends BaseIntegrationTest{
     @Test
     public void searchByQuestionShouldGetAllConceptAnswersWhenQueryIsEmpty() throws Exception {
         executeDataSet("sampleCodedConcept.xml");
+        questionConcept = conceptService.getConcept(90);
 
         Collection<Concept> result = bahmniConceptDao.searchByQuestion(questionConcept, null);
 

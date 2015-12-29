@@ -1,9 +1,9 @@
 package org.bahmni.module.bahmnicore.dao.impl;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.bahmni.module.bahmnicore.contract.orderTemplate.OrderTemplateJson;
+import org.bahmni.module.bahmnicore.dao.ApplicationDataDirectory;
 import org.bahmni.module.bahmnicore.dao.OrderDao;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.hibernate.Criteria;
@@ -26,7 +26,13 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Component
 public class OrderDaoImpl implements OrderDao {
@@ -56,7 +62,7 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
-    public List<DrugOrder> getPrescribedDrugOrders(Patient patient, Boolean includeActiveVisit, Integer numberOfVisits, Date startDate, Date endDate) {
+    public List<DrugOrder> getPrescribedDrugOrders(Patient patient, Boolean includeActiveVisit, Integer numberOfVisits, Date startDate, Date endDate, Boolean getEffectiveOrdersOnly) {
         Session currentSession = getCurrentSession();
         List<Integer> visitWithDrugOrderIds = getVisitIds(getVisitsWithActiveOrders(patient, "DrugOrder", includeActiveVisit, numberOfVisits));
         if (visitWithDrugOrderIds.isEmpty()) {
@@ -69,14 +75,24 @@ public class OrderDaoImpl implements OrderDao {
             "and not exists " +
             "(select d2 from DrugOrder d2 where d2.voided = false and d2.action = :revised and d2.encounter = d1.encounter and d2.previousOrder = d1)");
 
-        if (startDate != null) {
-            queryString.append(" and d1.dateActivated >= :startDate ");
-        }
-        if (endDate != null) {
-            queryString.append(" and d1.dateActivated <= :endDate ");
-        }
-        queryString.append(" order by d1.dateActivated desc");
+        if (getEffectiveOrdersOnly) {
+            if (startDate != null) {
+                queryString.append(" and d1.scheduledDate >= :startDate ");
+            }
+            if (endDate != null) {
+                queryString.append(" and d1.scheduledDate <= :endDate ");
+            }
+            queryString.append(" order by d1.scheduledDate desc");
 
+        } else {
+            if (startDate != null) {
+                queryString.append(" and d1.dateActivated >= :startDate ");
+            }
+            if (endDate != null) {
+                queryString.append(" and d1.dateActivated <= :endDate ");
+            }
+            queryString.append(" order by d1.dateActivated desc");
+        }
         Query query = currentSession.createQuery(queryString.toString());
         query.setParameterList("visitIds", visitWithDrugOrderIds);
         query.setParameter("discontinued", Order.Action.DISCONTINUE);

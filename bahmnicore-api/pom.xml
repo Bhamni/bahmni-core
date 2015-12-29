@@ -139,6 +139,16 @@
             <scope>test</scope>
             <type>test-jar</type>
         </dependency>
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>addresshierarchy-api</artifactId>
+            <version>${addressHierarchyVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>addresshierarchy-omod</artifactId>
+            <version>${addressHierarchyVersion}</version>
+        </dependency>
 
     </dependencies>
 

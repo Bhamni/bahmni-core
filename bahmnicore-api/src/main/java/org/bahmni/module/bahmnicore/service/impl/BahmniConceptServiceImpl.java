@@ -43,19 +43,22 @@ public class BahmniConceptServiceImpl implements BahmniConceptService{
     @Override
     @Transactional(readOnly = true)
     public Collection<Concept> searchByQuestion(String questionConceptName, String query) {
-        Concept questionConcept = bahmniConceptDao.getConceptByFullySpecifiedName(questionConceptName);
-        if(questionConcept==null){
-            throw new ConceptNotFoundException("Concept '" + questionConceptName + "' not found");
-        }
-        return bahmniConceptDao.searchByQuestion(questionConcept, query);
+        return bahmniConceptDao.searchByQuestion(getConcept(questionConceptName), query);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Collection<Drug> getDrugsByConceptSetName(String conceptSetName) {
-        Concept conceptSet = bahmniConceptDao.getConceptByFullySpecifiedName(conceptSetName);
-        List<Concept> setMembers = conceptService.getConceptsByConceptSet(conceptSet);
+        List<Concept> setMembers = conceptService.getConceptsByConceptSet(getConcept(conceptSetName));
         return bahmniConceptDao.getDrugByListOfConcepts(setMembers);
+    }
+
+    private Concept getConcept(String conceptSetName) {
+        Concept conceptSet = bahmniConceptDao.getConceptByFullySpecifiedName(conceptSetName);
+        if (conceptSet == null) {
+            throw new ConceptNotFoundException("Concept '" + conceptSetName + "' not found");
+        }
+        return conceptSet;
     }
 
     private EncounterTransaction.Concept convertToContract(Concept concept) {
