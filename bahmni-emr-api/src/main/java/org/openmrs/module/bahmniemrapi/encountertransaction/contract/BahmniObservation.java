@@ -26,6 +26,8 @@ public class BahmniObservation implements Comparable<BahmniObservation>{
     private String creatorName;
     private int conceptSortWeight;
     private String parentConceptUuid;
+    private Double hiNormal;
+    private Double lowNormal;
 
     public BahmniObservation() {
         encounterTransactionObservation = new EncounterTransaction.Observation();
@@ -192,6 +194,22 @@ public class BahmniObservation implements Comparable<BahmniObservation>{
     }
     public Boolean getIsAbnormal() {
         return isAbnormal;
+    }
+
+    public Double getHiNormal(){
+        return this.hiNormal;
+    }
+
+    public Double getLowNormal(){
+        return this.lowNormal;
+    }
+
+    public void setHiNormal(Double hiNormal){
+        this.hiNormal=hiNormal;
+    }
+
+    public void setLowNormal(Double lowNormal){
+        this.lowNormal=lowNormal;
     }
 
     public Boolean isAbnormal() {

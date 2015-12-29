@@ -85,7 +85,37 @@ public class ObsToObsTabularFlowSheetController {
         PivotTable pivotTable = bahmniObservationsToTabularViewMapper.constructTable(leafConcepts, bahmniObservations, groupByConcept);
         BaseTableExtension<PivotTable> extension = bahmniExtensions.getExtension(groovyExtension + ".groovy");
         extension.update(pivotTable, patientUuid);
+        setNoramlRangeForHeaders(pivotTable.getHeaders());
         return pivotTable;
+    }
+
+    private void setNoramlRangeForHeaders(Set<EncounterTransaction.Concept> headers) {
+        for (EncounterTransaction.Concept header : headers) {
+            if(header.getConceptClass().equals("Concept Details")){
+                List<Concept> setMembers = conceptService.getConceptsByConceptSet(conceptService.getConceptByUuid(header.getUuid()));
+                Concept primaryConcept = getNumeric(setMembers);
+                if(primaryConcept==null) continue;
+                header.setHiNormal(getHiNormal(primaryConcept));
+                header.setLowNormal(getLowNormal(primaryConcept));
+            }
+        }
+    }
+
+    private Double getLowNormal(Concept primaryConcept) {
+        return conceptService.getConceptNumeric(primaryConcept.getConceptId()).getLowNormal();
+    }
+
+    private Double getHiNormal(Concept primaryConcept) {
+        return conceptService.getConceptNumeric(primaryConcept.getConceptId()).getHiNormal();
+    }
+
+    private Concept getNumeric(List<Concept> setMembers) {
+        for (Concept setMember : setMembers) {
+            if(setMember.getDatatype().isNumeric()){
+                return setMember;
+            }
+        }
+        return null;
     }
 
     private Set<EncounterTransaction.Concept> sortConcepts(List<String> conceptNames, Set<EncounterTransaction.Concept> leafConcepts) {

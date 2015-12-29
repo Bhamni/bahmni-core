@@ -67,6 +67,8 @@ public class ETObsToBahmniObsMapper {
                     bahmniObservation.setValue(member.getValue());
                     bahmniObservation.setType(member.getConcept().getDataType());
                     bahmniObservation.getConcept().setUnits(member.getConcept().getUnits());
+                    bahmniObservation.setHiNormal(member.getConcept().getHiNormal());
+                    bahmniObservation.setLowNormal(member.getConcept().getLowNormal());
                 }
             }
         } else if (observation.getGroupMembers().size() > 0) {
@@ -78,6 +80,8 @@ public class ETObsToBahmniObsMapper {
         } else {
             bahmniObservation.setValue(observation.getValue());
             bahmniObservation.setType(observation.getConcept().getDataType());
+            bahmniObservation.setHiNormal(observation.getConcept().getHiNormal());
+            bahmniObservation.setLowNormal(observation.getConcept().getLowNormal());
         }
 
         for (EncounterTransaction.Provider provider : additionalBahmniObservationFields.getProviders()) {
