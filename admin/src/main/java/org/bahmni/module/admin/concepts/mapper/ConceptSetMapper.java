@@ -10,8 +10,7 @@ import org.bahmni.module.referencedata.labconcepts.contract.ConceptReferenceTerm
 import org.bahmni.module.referencedata.labconcepts.contract.ConceptSet;
 import org.bahmni.module.referencedata.labconcepts.contract.Concepts;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static org.bahmni.module.admin.csv.utils.CSVUtils.getKeyValueList;
 
@@ -43,12 +42,32 @@ public class ConceptSetMapper {
 
     private List<String> getChildren(ConceptSetRow conceptSetRow) {
         List<String> children = new ArrayList<>();
-        for (KeyValue child : conceptSetRow.getChildren()) {
-            if (!StringUtils.isEmpty(child.getValue())) {
+        List<Map.Entry<Integer, String>> sortedChildren = sortChildrenAccordingToNumericValueOfKey(conceptSetRow.getChildren());
+        for (Map.Entry<Integer,String> child : sortedChildren) {
+            if(!StringUtils.isEmpty(child.getValue())) {
                 children.add(child.getValue());
             }
         }
         return children;
+    }
+
+    private List<Map.Entry<Integer, String>> sortChildrenAccordingToNumericValueOfKey(List<KeyValue> children) {
+        HashMap<Integer, String> childrenMap = new HashMap<Integer, String>();
+        for (KeyValue child : children) {
+            childrenMap.put(Integer.parseInt(child.getKey()), child.getValue());
+        }
+        List<Map.Entry<Integer,String>> sortedChildren = new ArrayList<Map.Entry<Integer,String>>(
+                childrenMap.entrySet()
+        );
+        Collections.sort(
+                sortedChildren
+                ,   new Comparator<Map.Entry<Integer,String>>() {
+                    public int compare(Map.Entry<Integer,String> a, Map.Entry<Integer,String> b) {
+                        return Integer.compare(a.getKey(), b.getKey());
+                    }
+                }
+        );
+        return sortedChildren;
     }
 
 

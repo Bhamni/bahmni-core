@@ -24,7 +24,7 @@ public class BahmniObsResource extends ObsResource1_11 {
             if (rep instanceof NamedRepresentation && rep.getRepresentation().equals("visitFormDetails")) {
                 DelegatingResourceDescription description = new DelegatingResourceDescription();
                 description.addProperty("uuid");
-                description.addProperty("concept", Representation.REF);
+                description.addProperty("concept",new NamedRepresentation("bahmniAnswer"));
                 description.addProperty("display");
                 description.addProperty("obsDatetime");
                 description.addProperty("visitUuid");

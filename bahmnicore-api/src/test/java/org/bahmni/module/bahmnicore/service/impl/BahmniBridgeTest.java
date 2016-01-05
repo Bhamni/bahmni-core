@@ -12,6 +12,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openmrs.DrugOrder;
+import org.openmrs.Order;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.PersonService;
@@ -19,9 +20,7 @@ import org.openmrs.module.emrapi.encounter.domain.EncounterTransaction;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 
 @RunWith(PowerMockRunner.class)
@@ -77,5 +76,45 @@ public class BahmniBridgeTest {
 
         List<EncounterTransaction.DrugOrder> drugOrders = bahmniBridge.activeDrugOrdersForPatient();
         Assert.assertEquals(1, drugOrders.size());
+    }
+
+    @Test
+    public void shouldGetFirstDrugActivatedDate() throws Exception {
+        List<Order> allDrugOrders = new ArrayList<>();
+        Order order1 = new Order();
+        Date now = new Date();
+        order1.setDateActivated(addDays(now, 10));
+        allDrugOrders.add(order1);
+        Order order2 = new Order();
+        order2.setDateActivated(now);
+        allDrugOrders.add(order2);
+        PowerMockito.when(bahmniDrugOrderService.getAllDrugOrders(patientUuid, null, null, null, null)).thenReturn(allDrugOrders);
+
+        Assert.assertEquals(now, bahmniBridge.getStartDateOfTreatment());
+
+    }
+
+    @Test
+    public void shouldGetSchuledDateIfTheDrugIsScheduled() throws Exception {
+        List<Order> allDrugOrders = new ArrayList<>();
+        Order order1 = new Order();
+        Date now = new Date();
+        order1.setDateActivated(addDays(now, 10));
+        allDrugOrders.add(order1);
+        Order order2 = new Order();
+        order2.setScheduledDate(addDays(now, 2));
+        order2.setDateActivated(now);
+        allDrugOrders.add(order2);
+        PowerMockito.when(bahmniDrugOrderService.getAllDrugOrders(patientUuid, null, null, null, null)).thenReturn(allDrugOrders);
+
+        Assert.assertEquals(addDays(now, 2), bahmniBridge.getStartDateOfTreatment());
+
+    }
+
+    public Date addDays(Date now, int days) {
+        Calendar c = Calendar.getInstance();
+        c.setTime(now);
+        c.add(Calendar.DATE, days);
+        return c.getTime();
     }
 }

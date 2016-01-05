@@ -26,7 +26,7 @@ public class EntityMappingDaoImplIT extends BaseModuleContextSensitiveTest {
 
     @Test
     public void shouldGetAllTheMappingsForTheGivenMappedEntity() {
-        List<EntityMapping> entityMappings = entityMappingDao.getEntityMappings("uuid1", "program_obstemplates");
+        List<EntityMapping> entityMappings = entityMappingDao.getMappingsOfEntity("uuid1", "program_obstemplates");
 
         assertEquals(2, entityMappings.size());
         EntityMapping firstEntity = entityMappings.get(0);
@@ -41,14 +41,14 @@ public class EntityMappingDaoImplIT extends BaseModuleContextSensitiveTest {
 
     @Test
     public void shouldGetNoMappingsForTheGivenNonMappedEntity(){
-        List<EntityMapping> entityMappings = entityMappingDao.getEntityMappings("uuid100", "program_obstemplates");
+        List<EntityMapping> entityMappings = entityMappingDao.getMappingsOfEntity("uuid100", "program_obstemplates");
 
         assertEquals(0,entityMappings.size());
     }
 
     @Test
     public void shouldGetNoMappingsForTheGivenNonExistingMappingType(){
-        List<EntityMapping> entityMappings = entityMappingDao.getEntityMappings("uuid1", "some_random_non_existing mapping type");
+        List<EntityMapping> entityMappings = entityMappingDao.getMappingsOfEntity("uuid1", "some_random_non_existing mapping type");
 
         assertEquals(0,entityMappings.size());
     }

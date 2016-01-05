@@ -9,6 +9,28 @@
         See http://www.liquibase.org/manual/home#available_database_refactorings
         for a list of supported elements and attributes
     -->
+
+    <property name="now" value="now()"/>
+
+    <changeSet id="bahmni-setup-6" author="tw" context="rel3">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM concept_reference_source where name = 'org.openmrs.module.emrapi';
+            </sqlCheck>
+        </preConditions>
+        <comment>rel3</comment>
+        <insert tableName="concept_reference_source">
+            <column name="name" value="org.openmrs.module.emrapi"/>
+            <column name="uuid" valueNumeric="name-of-uuid-function"/>
+            <column name="description" value="Source used to tag concepts used in the EMR API module"/>
+            <column name="date_created" valueDate="${now}"/>
+            <column name="creator" value="1"/>
+        </insert>
+        <modifySql dbms="mysql">
+            <replace replace="name-of-uuid-function" with="UUID()"/>
+        </modifySql>
+    </changeSet>
+
     <changeSet id="bahmni-1" author="tw" context="rel2">
         <comment>rel2</comment>
         <sqlFile path="V1_10__CreatingPatientIdentifierForBahmni.sql"/>
@@ -29,10 +51,6 @@
         <comment>rel2</comment>
         <sqlFile splitStatements="false" path="V1_30__AddConceptAnswerProc.sql"/>
     </changeSet>
-    <changeSet id="bahmni-6" author="tw" context="rel2">
-        <comment>rel2</comment>
-        <sqlFile splitStatements="false" path="V1_31__AddConceptWordProc.sql"/>
-    </changeSet>
     <changeSet id="bahmni-7" author="tw" context="rel2">
         <comment>rel2</comment>
         <sqlFile splitStatements="false" path="V1_37__SetValueAsConceptIdProc.sql"/>
@@ -40,10 +58,6 @@
     <changeSet id="bahmni-clinical-1" author="tw" context="rel2">
         <comment>rel2</comment>
         <sqlFile path="V1_39__CreateLaboratoryPanelConcept.sql"/>
-    </changeSet>
-    <changeSet id="bahmni-9" author="tw" context="rel2">
-        <comment>rel2</comment>
-        <sqlFile path="V1_40__AddingConceptWordForLaboratoryConcept.sql"/>
     </changeSet>
     <changeSet id="bahmni-10" author="tw" context="rel2">
         <comment>rel2</comment>
@@ -62,6 +76,7 @@
         <sqlFile path="V1_10__SetupRegistrationEncounterType.sql"/>
     </changeSet>
     <changeSet id="bahmni-16" author="tw" context="rel3">
+        <validCheckSum>3:9596557aceeccee17eb9a9af5df316af</validCheckSum>
         <comment>rel3</comment>
         <sqlFile path="V1_55__addLabAndRadiologyOrderTypes.sql"/>
     </changeSet>
@@ -70,6 +85,7 @@
         <sqlFile splitStatements="false" path="V1_56__AddConceptDescriptionProc.sql"/>
     </changeSet>
     <changeSet id="bahmni-clinical-2" author="tw" context="rel3">
+        <validCheckSum>3:248b34d9ff8955c24cfceffb8396e01c</validCheckSum>
         <comment>rel3</comment>
         <sqlFile path="V1_57__addDrugDosageInstructionsAndDosageFrequecies.sql"/>
     </changeSet>
@@ -82,18 +98,22 @@
         <sqlFile splitStatements="false" path="V1_59__AddConceptSetMembersProc.sql"/>
     </changeSet>
     <changeSet id="bahmni-clinical-3" author="tw" context="rel3">
+        <validCheckSum>3:a15a57cb8324e3e099775d7838880b71</validCheckSum>
         <comment>rel3</comment>
         <sqlFile path="V1_60__AddDiagnosisConcepts.sql"/>
     </changeSet>
     <changeSet id="bahmni-clinical-4" author="tw" context="rel3">
+        <validCheckSum>3:03c23be81ba7cebf6fec9df46bec239c</validCheckSum>
         <comment>rel3</comment>
         <sqlFile path="V1_62__AddDispositionConcepts.sql"/>
     </changeSet>
     <changeSet id="bahmni-clinical-5" author="tw" context="rel3">
+        <validCheckSum>3:14d62b7a1d949387b19aeeb385c17408</validCheckSum>
         <comment>rel3</comment>
         <sqlFile path="V1_66__addConceptConsultationNote.sql"/>
     </changeSet>
     <changeSet id="bahmni-25" author="tw" context="rel3">
+        <validCheckSum>3:89336c228d0063f50b24e7cc288793e5</validCheckSum>
         <comment>rel3</comment>
         <sqlFile path="V1_67__AddConceptSetForAdmission.sql"/>
     </changeSet>
@@ -102,6 +122,7 @@
         <sqlFile path="V1_68__EncounterTypeForAdmission.sql"/>
     </changeSet>
     <changeSet id="bahmni-27" author="tw" context="rel3">
+        <validCheckSum>3:321fb0b2fbc8c0add1dac2fac4824068</validCheckSum>
         <comment>rel3</comment>
         <sqlFile path="V1_69__AddConceptSetForDischarge.sql"/>
     </changeSet>
@@ -140,6 +161,7 @@
         <sqlFile path="V1_61__CreatingGlobalPropertyForPatientIdentifierType.sql"/>
     </changeSet>
     <changeSet id="bahmni-36" author="tw" context="rel3">
+        <validCheckSum>3:7e9c42924c89c509275adda048d3f6a0</validCheckSum>
         <comment>Add investigations meta data</comment>
         <sql>
             set @concept_id = 0;
@@ -148,26 +170,8 @@
             set @concept_name_full_id = 0;
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Lab Departments', 'Lab departments', 'N/A', 'ConvSet', true);
-            call add_concept_word(@concept_id, @concept_name_short_id, 'LAB', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'DEPARTMENTS', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'LAB', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'DEPARTMENTS', '1');
-
-
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Other Investigations', 'Other Investigations', 'N/A', 'ConvSet', true);
-            call add_concept_word(@concept_id, @concept_name_short_id, 'OTHER', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'INVESTIGATIONS', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'OTHER', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'INVESTIGATIONS', '1');
-
-
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Other Investigations Categories', 'Other Investigations Categories', 'N/A', 'ConvSet', true);
-            call add_concept_word(@concept_id, @concept_name_short_id, 'OTHER', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'INVESTIGATIONS', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'CATEGORIES', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'OTHER', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'INVESTIGATIONS', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'CATEGORIES', '1');
         </sql>
     </changeSet>
 
@@ -222,16 +226,6 @@
             'custom encounter session matcher',
             uuid()
             );
-        </sql>
-    </changeSet>
-    <changeSet id="bahmni-clinical-10" author="Vivek" context="rel3">
-        <comment>Add concept words for adt notes</comment>
-        <sql>
-            select concept_id INTO @concept_id from concept where short_name='Adt Notes';
-            select concept_name_id INTO @concept_name_full_id from concept_name where concept_id = (select concept_id from concept where short_name='Adt Notes');
-
-            call add_concept_word(@concept_id, @concept_name_full_id, 'Adt', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'Notes', '1');
         </sql>
     </changeSet>
     <changeSet id="bahmni-clinical-11" author="Arathy" context="rel3">
@@ -333,6 +327,7 @@
         </sql>
     </changeSet>
     <changeSet id="bahmni-clinical-201401311600" author="TW" context="rel3">
+        <validCheckSum>3:190851ded03e41d8b33b47c3cf720866</validCheckSum>
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0">select count(*) from concept_name where name = 'LAB_RESULTS_CONCEPT_SET'
             </sqlCheck>
@@ -346,43 +341,32 @@
             set @answer_concept_id = 0;
             call add_concept(@concept_id, @concept_name_short_id,
             @concept_name_full_id,'LABRESULTS_CONCEPT','LABRESULTS_CONCEPT', 'N/A', 'Finding', true);
-            call add_concept_word(@concept_id, @concept_name_short_id, 'LABRESULTS', 1);
 
             set @labresults_concept_id = @concept_id;
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id,'LAB_RESULT','LAB_RESULT',
             'Text', 'Finding', false);
-            call add_concept_word(@concept_id, @concept_name_short_id, 'LAB', 1);
-            call add_concept_word(@concept_id, @concept_name_short_id, 'RESULT', 1);
             set @set_concept_id = @concept_id;
             call add_concept_set_members (@labresults_concept_id,@set_concept_id,1);
 
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id,'LAB_NOTES','LAB_NOTES', 'Text',
             'Finding', false);
-            call add_concept_word(@concept_id, @concept_name_short_id, 'LAB', 1);
-            call add_concept_word(@concept_id, @concept_name_short_id, 'NOTES', 1);
             set @set_concept_id = @concept_id;
             call add_concept_set_members (@labresults_concept_id,@set_concept_id,1);
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id,'LAB_MINNORMAL','LAB_MINNORMAL',
             'Numeric', 'Finding', false);
-            call add_concept_word(@concept_id, @concept_name_short_id, 'LAB', 1);
-            call add_concept_word(@concept_id, @concept_name_short_id, 'MINNORMAL', 1);
             set @set_concept_id = @concept_id;
             call add_concept_set_members (@labresults_concept_id,@set_concept_id,1);
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id,'LAB_MAXNORMAL','LAB_MAXNORMAL',
             'Numeric', 'Finding', false);
-            call add_concept_word(@concept_id, @concept_name_short_id, 'LAB', 1);
-            call add_concept_word(@concept_id, @concept_name_short_id, 'MAXNORMAL', 1);
             set @set_concept_id = @concept_id;
             call add_concept_set_members (@labresults_concept_id,@set_concept_id,1);
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id,'LAB_ABNORMAL','LAB_ABNORMAL',
             'Boolean', 'Finding', false);
-            call add_concept_word(@concept_id, @concept_name_short_id, 'LAB', 1);
-            call add_concept_word(@concept_id, @concept_name_short_id, 'ABNORMAL', 1);
             set @set_concept_id = @concept_id;
             call add_concept_set_members (@labresults_concept_id,@set_concept_id,1);
         </sql>
@@ -458,6 +442,7 @@
         </sql>
     </changeSet>
     <changeSet id="bahmni-clinical-201402251700" author="Mihir,Vinay">
+        <validCheckSum>3:da4167ac93f082b79d4c3af1807fc7f7</validCheckSum>
         <comment>Add new concept to mark referred out tests</comment>
         <sql>
             set @concept_id = 0;
@@ -468,8 +453,6 @@
             set @answer_concept_id = 0;
             call add_concept(@concept_id, @concept_name_short_id,
             @concept_name_full_id,'REFERRED_OUT','REFERRED_OUT', 'N/A', 'Misc', true);
-            call add_concept_word(@concept_id, @concept_name_short_id, 'REFERRED', 1);
-            call add_concept_word(@concept_id, @concept_name_short_id, 'OUT', 1);
             select @labresults_concept_id := concept_id, min(concept_id) from concept_name where name = 'LABRESULTS_CONCEPT';
             set @set_concept_id = @concept_id;
             call add_concept_set_members (@labresults_concept_id,@set_concept_id,1);
@@ -504,6 +487,7 @@
         </sql>
     </changeSet>
     <changeSet id="bahmni-clinical-201403051246" author="Neha">
+        <validCheckSum>3:176087fd78dcbd1639ceded0a350687b</validCheckSum>
         <comment>Add new concept to lab order notes</comment>
         <sql>
             set @concept_id = 0;
@@ -513,9 +497,6 @@
             set @answer_concept_id = 0;
             call add_concept(@concept_id, @concept_name_short_id,
             @concept_name_full_id,'Lab Order Notes','Lab Order Notes', 'Text', 'Misc', false);
-            call add_concept_word(@concept_id, @concept_name_short_id, 'LAB', 1);
-            call add_concept_word(@concept_id, @concept_name_short_id, 'ORDER', 1);
-            call add_concept_word(@concept_id, @concept_name_short_id, 'NOTES', 1);
             set @set_concept_id = @concept_id;
         </sql>
     </changeSet>
@@ -555,6 +536,7 @@
         </sql>
     </changeSet>
     <changeSet id="bahmni-core-201403251424" author="Mujir">
+        <validCheckSum>3:a56d649cadef2d0f667a04e1c1bf0db2</validCheckSum>
         <comment>Add new concept for Ruled Out Diagnosis</comment>
         <sql>
             set @concept_id = 0;
@@ -563,12 +545,6 @@
             set @concept_name_full_id = 0;
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Ruled Out Diagnosis', 'Ruled Out Diagnosis', 'N/A', 'Misc', true);
-            call add_concept_word(@concept_id, @concept_name_short_id, 'RULED OUT DIAGNOSIS', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'DIAGNOSIS', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'RULED', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'RULED OUT DIAGNOSIS', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'DIAGNOSIS', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'RULED', '1');
         </sql>
     </changeSet>
     <changeSet id="bahmni-core-201404021353" author="Hemanth, Mihir" context="rel4">
@@ -620,6 +596,7 @@
         </insert>
     </changeSet>
     <changeSet id="bahmni-core-201404081624" author="Vivek, Shruthi">
+        <validCheckSum>3:3d0122b224fea11193b83de519fe6bf1</validCheckSum>
         <comment>Adding diagnosis meta data concepts</comment>
         <sql>
             set @concept_id = 0;
@@ -628,25 +605,12 @@
             set @concept_name_full_id = 0;
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Bahmni Diagnosis Status', 'Bahmni Diagnosis Status', 'Coded', 'Misc', true);
-            call add_concept_word(@concept_id, @concept_name_short_id, 'BAHMNI DIAGNOSIS STATUS', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'DIAGNOSIS', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'BAHMNI', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'STATUS', '1');
-
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Bahmni Initial Diagnosis', 'Bahmni Initial Diagnosis', 'Text', 'Misc', true);
-            call add_concept_word(@concept_id, @concept_name_short_id, 'BAHMNI INITIAL DIAGNOSIS', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'DIAGNOSIS', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'BAHMNI', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'INITIAL', '1');
-
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Bahmni Diagnosis Revised', 'Bahmni Diagnosis Revised', 'Boolean', 'Misc', true);
-            call add_concept_word(@concept_id, @concept_name_short_id, 'BAHMNI DIAGNOSIS REVISED', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'DIAGNOSIS', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'BAHMNI', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'REVISED', '1');
         </sql>
     </changeSet>
     <changeSet id="bahmni-core-201404081612" author="Indraneel, Mihir" context="rel4">
+        <validCheckSum>3:bfc6b2f1fa801727c5496ff02c3cf9f3</validCheckSum>
         <comment>Adding Lab Manager Notes Concept</comment>
         <sql>
             set @concept_id = 0;
@@ -655,14 +619,6 @@
             set @concept_name_full_id = 0;
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Lab Manager Notes', 'Lab Manager Notes', 'N/A', 'Misc', false);
-            call add_concept_word(@concept_id, @concept_name_short_id, 'LAB MANAGER NOTES', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'LAB', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'MANAGER', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'NOTES', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'LAB MANAGER NOTES', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'LAB', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'MANAGER', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'NOTES', '1');
         </sql>
     </changeSet>
     <changeSet id="bahmni-core-201404081625" author="Indraneel, Mihir" context="rel4">
@@ -679,6 +635,7 @@
             insert into provider (person_id, identifier, creator, date_created, uuid, name) values ((select person_id from person where uuid = @puuid), 'LABMANAGER', 1, now(), uuid(), 'Lab Manager');</sql>
     </changeSet>
     <changeSet id="bahmni-core-201404101558" author="Indraneel, Neha" context="rel4">
+        <validCheckSum>3:78af611c62a4dad7866a56f48d08d84e</validCheckSum>
         <comment>Adding Accession Uuid Concept</comment>
         <sql>
             set @concept_id = 0;
@@ -687,12 +644,6 @@
             set @concept_name_full_id = 0;
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Accession Uuid', 'Accession Uuid', 'N/A', 'Misc', false);
-            call add_concept_word(@concept_id, @concept_name_short_id, 'ACCESSION UUID', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'ACCESSION', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'UUID', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'ACCESSION UUID', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'ACCESSION', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'UUID', '1');
         </sql>
     </changeSet>
     <changeSet id="bahmni-core-201404101600" author="Neha,Indraneel" context="rel4">
@@ -789,6 +740,7 @@
         </insert>
     </changeSet>
     <changeSet id="bahmni-core-201404301204" author="RT, Mujir">
+        <validCheckSum>3:0cc74f1871cb1efa7199f4f4ea562a07</validCheckSum>
         <comment>delete Concept Proc</comment>
         <sqlFile splitStatements="false" path="V1_81__DeleteConcept.sql"/>
     </changeSet>
@@ -823,6 +775,7 @@
         </insert>
     </changeSet>
     <changeSet id="bahmni-core-201405061428" author="vinay">
+        <validCheckSum>3:61f1718716d2347542975e019859c062</validCheckSum>
         <comment>Fix delete_concept</comment>
         <sql>DROP PROCEDURE IF EXISTS delete_concept;</sql>
         <sql  splitStatements="false" stripComments="false">
@@ -832,7 +785,6 @@
             DECLARE conceptId INT default 0;
                 select concept_id INTO conceptId from concept_name where name = name_concept and locale_preferred = 1;
                 delete from concept_set where concept_set = conceptId;
-                delete from concept_word where concept_id = conceptId;
                 delete from concept_name where concept_id = conceptId;
                 delete from concept_numeric where concept_id = conceptId;
                 delete from concept_answer where concept_id = conceptId;
@@ -844,6 +796,7 @@
         </sql>
     </changeSet>
     <changeSet id="bahmni-core-201405071329" author="mujir" context="rel4">
+        <validCheckSum>3:d0b49ca7745107877d6019920536f0de</validCheckSum>
         <comment>add adt notes data concept set</comment>
         <sql>
             set @concept_id = 0;
@@ -853,10 +806,6 @@
             select concept_id INTO @adt_notes_id from concept_name where name='Adt Notes' and locale_preferred = 1;
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Adt Notes Data', 'Adt Notes Data', 'N/A', 'Concept Details', true);
-            call add_concept_word(@concept_id, @concept_name_short_id, 'Non-Coded', 1);
-            call add_concept_word(@concept_id, @concept_name_short_id, 'Adt', 1);
-            call add_concept_word(@concept_id, @concept_name_short_id, 'Notes', 1);
-            call add_concept_word(@concept_id, @concept_name_short_id, 'Data', 1);
             set @adt_notes_data_id = @concept_id;
             call add_concept_set_members(@adt_notes_data_id, @adt_notes_id, 0);
         </sql>
@@ -868,6 +817,7 @@
         </sql>
     </changeSet>
     <changeSet id="bahmni-core-201405061543" author="mujir">
+        <validCheckSum>3:23ca21a6b0be660b4b3fad3505f1b161</validCheckSum>
         <comment>Fix delete_concept. deleting concept set membership for the concept to be deleted.</comment>
         <sql>DROP PROCEDURE IF EXISTS delete_concept;</sql>
         <sql  splitStatements="false" stripComments="false">
@@ -878,7 +828,6 @@
                 select concept_id INTO conceptId from concept_name where name = name_concept and locale_preferred = 1;
                 delete from concept_set where concept_set = conceptId;
                 delete from concept_set where concept_id = conceptId;
-                delete from concept_word where concept_id = conceptId;
                 delete from concept_name where concept_id = conceptId;
                 delete from concept_numeric where concept_id = conceptId;
                 delete from concept_answer where concept_id = conceptId;
@@ -1056,11 +1005,12 @@
         </sql>
     </changeSet>
     <changeSet id="bahmni-core-201407251510" author="D3">
+        <validCheckSum>3:1c02bbb4699963a7c83ea542f2ea9236</validCheckSum>
         <comment>Set quantity for drug orders without this data</comment>
         <sql>
             UPDATE drug_order
             JOIN orders on drug_order.order_id = orders.order_id
-            SET quantity = (datediff(auto_expire_date, start_date) * dose)
+            SET quantity = (datediff(auto_expire_date, date_activated) * dose)
             WHERE quantity IS NULL;
         </sql>
     </changeSet>
@@ -1073,6 +1023,7 @@
         </sql>
     </changeSet>
     <changeSet id="bahmni-core-201407171215" author="Vinay,Indraneel">
+        <validCheckSum>3:67ea9e924f423254cfd3658b87c38eed</validCheckSum>
         <comment>Adding concepts and concept set related to dosing units </comment>
         <sql>
             set @concept_id = 0;
@@ -1083,44 +1034,26 @@
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Dosing Units', 'dosing  units', 'N/A', 'ConvSet', true);
             set @set_concept_id = @concept_id;
-            call add_concept_word(@concept_id, @concept_name_full_id, 'DOSING', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'DOSING', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'UNITS', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'UNITS', '1');
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Capsule', 'capsule', 'N/A', 'Misc', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'CAPSULE', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'CAPSULE', '1');
             call add_concept_set_members (@set_concept_id,@concept_id,1);
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Tablet', 'tablet', 'N/A', 'Misc', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'TABLET', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'TABLET', '1');
             call add_concept_set_members (@set_concept_id,@concept_id,1);
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Teaspoon', 'teaspoon', 'N/A', 'Misc', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'TEASPOON', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'TEASPOON', '1');
             call add_concept_set_members (@set_concept_id,@concept_id,1);
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Tablespoon', 'tablespoon', 'N/A', 'Misc', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'TABLESPOON', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'TABLESPOON', '1');
             call add_concept_set_members (@set_concept_id,@concept_id,1);
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Drop', 'drop', 'N/A', 'Misc', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'DROP', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'DROP', '1');
             call add_concept_set_members (@set_concept_id,@concept_id,1);
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'ml', 'ml', 'N/A', 'Misc', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'ML', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'ML', '1');
             call add_concept_set_members (@set_concept_id,@concept_id,1);
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'mg', 'mg', 'N/A', 'Misc', false);
-            call add_concept_word(@concept_id, @concept_name_short_id, 'MG', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'MG', '1');
             call add_concept_set_members (@set_concept_id,@concept_id,1);
 
             select c.uuid from concept_name cn inner join concept c on cn.concept_id = c.concept_id where cn.name = 'Dosing Units' and cn.concept_name_type = 'FULLY_SPECIFIED' into @concept_set_uuid;
@@ -1141,6 +1074,7 @@
         </sql>
     </changeSet>
     <changeSet id="bahmni-core-201407171300" author="Vinay, Indraneel">
+        <validCheckSum>3:e9299d5f6a6555c2d7ab498f5a515f80</validCheckSum>
         <comment>Add drug routes and set global property</comment>
         <sql>
             set @concept_id = 0;
@@ -1150,61 +1084,32 @@
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Drug Routes', 'drug routes', 'N/A', 'ConvSet', true);
             set @set_concept_id = @concept_id;
-            call add_concept_word(@concept_id, @concept_name_full_id, 'DRUG', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'DRUG', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'ROUTES', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'ROUTES', '1');
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Intramuscular', 'IM', 'N/A', 'Misc', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'INTRAMUSCULAR', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'INTRAMUSCULAR', '1');
             call add_concept_set_members (@set_concept_id,@concept_id,1);
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Intravenous', 'IV', 'N/A', 'Misc', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'INTRAVENOUS', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'INTRAVENOUS', '1');
             call add_concept_set_members (@set_concept_id,@concept_id,1);
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Per Os', 'PO', 'N/A', 'Misc', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'PER', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'OS', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'PO', '1');
             call add_concept_set_members (@set_concept_id,@concept_id,1);
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Per Vaginal', 'PV', 'N/A', 'Misc', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'PER', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'VAGINAL', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'PV', '1');
             call add_concept_set_members (@set_concept_id,@concept_id,1);
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Sub Cutaneous', 'SC', 'N/A', 'Misc', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'SUB', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'CUTANEOUS', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'SC', '1');
             call add_concept_set_members (@set_concept_id,@concept_id,1);
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Per Rectum', 'PR', 'N/A', 'Misc', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'PER', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'RECTUM', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'PR', '1');
             call add_concept_set_members (@set_concept_id,@concept_id,1);
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Sub Lingual', 'SL', 'N/A', 'Misc', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'SUB', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'LINGUAL', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'SL', '1');
             call add_concept_set_members (@set_concept_id,@concept_id,1);
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Percutaneous Endoscopic Gastrostomy', 'PEG', 'N/A', 'Misc', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'Percutaneous', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'Endoscopic', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'Gastrostomy', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'PEG', '1');
             call add_concept_set_members (@set_concept_id,@concept_id,1);
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Nasogastric', 'NG', 'N/A', 'Misc', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'Nasogastric', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'NG', '1');
             call add_concept_set_members (@set_concept_id,@concept_id,1);
 
             select c.uuid from concept_name cn inner join concept c on cn.concept_id = c.concept_id where cn.name = 'Drug Routes' and cn.concept_name_type = 'FULLY_SPECIFIED' into @concept_set_uuid;
@@ -1225,6 +1130,7 @@
         </sql>
     </changeSet>
     <changeSet id="bahmni-core-201407171700" author="Vinay, Indraneel">
+        <validCheckSum>3:2b64c9751b31b8fcc7a25f7545326632</validCheckSum>
         <comment>Adding duration unit concepts and setting up associated global property</comment>
         <sql>
             set @concept_id = 0;
@@ -1233,14 +1139,8 @@
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Duration Units', 'duration units', 'N/A', 'ConvSet', true);
             set @set_concept_id = @concept_id;
-            call add_concept_word(@concept_id, @concept_name_full_id, 'Duration', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'duration', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'Units', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'units', '1');
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Days', 'days', 'N/A', 'Misc', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'Days', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'days', '1');
             call add_concept_set_members (@set_concept_id,@concept_id,1);
 
             select c.uuid from concept_name cn inner join concept c on cn.concept_id = c.concept_id where cn.name = 'Duration Units' and cn.concept_name_type = 'FULLY_SPECIFIED' into @concept_set_uuid;
@@ -1261,6 +1161,7 @@
         </sql>
     </changeSet>
     <changeSet id="bahmni-core-201407171715" author="Vinay, Indraneel">
+        <validCheckSum>3:0eca0d167cd6e8ae3738ef2dadb1f2b6</validCheckSum>
         <comment></comment>
         <sql>
             set @concept_id = 0;
@@ -1270,36 +1171,24 @@
             set @now = now();
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Once a day', 'OD', 'N/A', 'Frequency', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'ONCE', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'DAY', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'OD', '1');
             select uuid() into @uuid;
             insert into order_frequency(concept_id, frequency_per_day, creator, date_created, uuid) values(@concept_id, 1, 1, @now, @uuid);
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Twice a day', 'BD', 'N/A', 'Frequency', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'TWICE', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'DAY', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'BD', '1');
             select uuid() into @uuid;
             insert into order_frequency(concept_id, frequency_per_day, creator, date_created, uuid) values(@concept_id, 2, 1, @now, @uuid);
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Thrice a day', 'TDS', 'N/A', 'Frequency', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'THRICE', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'DAY', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'TDS', '1');
             select uuid() into @uuid;
             insert into order_frequency(concept_id, frequency_per_day, creator, date_created, uuid) values(@concept_id, 3, 1, @now, @uuid);
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Four times a day', 'QDS', 'N/A', 'Frequency', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'FOUR', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'TIMES', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'DAY', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'QDS', '1');
             select uuid() into @uuid;
             insert into order_frequency(concept_id, frequency_per_day, creator, date_created, uuid) values(@concept_id, 4, 1, @now, @uuid);
         </sql>
     </changeSet>
     <changeSet id="bahmni-core-201407291254" author="Vinay, Deepak">
+        <validCheckSum>3:b281314578771f23d480ae45d66e38ea</validCheckSum>
         <comment></comment>
         <sql>
             set @concept_id = 0;
@@ -1308,51 +1197,29 @@
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Dosing Instructions', 'Dosing Instructions', 'N/A', 'ConvSet', true);
             set @set_concept_id = @concept_id;
-            call add_concept_word(@concept_id, @concept_name_full_id, 'Dosing', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'Instructions', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'Dosing', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'Instructions', '1');
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Before meals', 'ac', 'N/A', 'Misc', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'Before', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'meals', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'ac', '1');
             call add_concept_set_members (@set_concept_id,@concept_id,1);
 
-
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Empty stomach', '', 'N/A', 'Misc', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'Empty', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'stomach', '1');
             call add_concept_set_members (@set_concept_id,@concept_id,2);
 
-
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'After meals', 'pc', 'N/A', 'Misc', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'After', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'meals', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'pc', '1');
             call add_concept_set_members (@set_concept_id,@concept_id,3);
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'In the morning', 'cm', 'N/A', 'Misc', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'morning', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'cm', '1');
             call add_concept_set_members (@set_concept_id,@concept_id,4);
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'In the evening', '', 'N/A', 'Misc', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'evening', '1');
             call add_concept_set_members (@set_concept_id,@concept_id,5);
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'At bedtime', 'hs', 'N/A', 'Misc', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'bedtime', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'hs', '1');
             call add_concept_set_members (@set_concept_id,@concept_id,6);
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Immediately', 'STAT', 'N/A', 'Misc', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'Immediately', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'STAT', '1');
             call add_concept_set_members (@set_concept_id,@concept_id,7);
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'As directed', '', 'N/A', 'Misc', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'directed', '1');
             call add_concept_set_members (@set_concept_id,@concept_id,8);
 
             select c.uuid from concept_name cn inner join concept c on cn.concept_id = c.concept_id where cn.name = 'Dosing Instructions' and cn.concept_name_type = 'FULLY_SPECIFIED' into @concept_set_uuid;
@@ -1373,6 +1240,7 @@
         </sql>
     </changeSet>
     <changeSet id="bahmni-core-201408111300" author="Indraneel" >
+        <validCheckSum>3:106fe9b9c492f9d9c0f93d65dd1aa516</validCheckSum>
         <comment>Adding all templates concept set of sets</comment>
         <sql>
             set @concept_id = 0;
@@ -1381,13 +1249,6 @@
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'All Observation Templates', 'All Observation templates', 'N/A', 'ConvSet', true);
             set @set_concept_id = @concept_id;
-            call add_concept_word(@concept_id, @concept_name_full_id, 'ALL', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'OBSERVATION', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'TEMPLATES', '1');
-
-            call add_concept_word(@concept_id, @concept_name_short_id, 'ALL', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'OBSERVATION', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'TEMPLATES', '1');
         </sql>
     </changeSet>
     <changeSet id="bahmni-core-20140814132600" author="Rohan, Vinay" >
@@ -1511,6 +1372,7 @@
         </insert>
     </changeSet>
     <changeSet id="bahmni-core-201408251456" author="Rohan">
+        <validCheckSum>3:ed9c04ea91806b2e8c789fad21d92302</validCheckSum>
         <comment>Add new concept LAB REPORT for uploaded file</comment>
         <sql>
             set @concept_id = 0;
@@ -1521,8 +1383,6 @@
             set @answer_concept_id = 0;
             call add_concept(@concept_id, @concept_name_short_id,
             @concept_name_full_id,'LAB_REPORT','LAB_REPORT', 'Text', 'URL', true);
-            call add_concept_word(@concept_id, @concept_name_short_id, 'LAB', 1);
-            call add_concept_word(@concept_id, @concept_name_short_id, 'REPORT', 1);
             select @labresults_concept_id := concept_id, min(concept_id) from concept_name where name = 'LABRESULTS_CONCEPT';
             set @set_concept_id = @concept_id;
             call add_concept_set_members (@labresults_concept_id,@set_concept_id,1);
@@ -1680,6 +1540,7 @@
         </sql>
     </changeSet>
     <changeSet id="bahmni-core-201409041530" author="Rohan, Sravanthi">
+        <validCheckSum>3:f2057b5f013e4faea7a403e2ef20e13d</validCheckSum>
         <comment>Adding hours, weeks and months concepts for drug order duration units</comment>
         <sql>
             set @concept_id = 0;
@@ -1693,8 +1554,6 @@
             select concept_map_type_id from concept_map_type where name='SAME-AS' into @concept_map_type_id;
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id,'Hours','hours', 'N/A', 'Misc', false);
-            call add_concept_word(@concept_id, @concept_name_short_id, 'Hours', 1);
-            call add_concept_word(@concept_id, @concept_name_short_id, 'hours', 1);
             call add_concept_set_members (@set_concept_id,@concept_id,1);
             select concept_reference_term_id from concept_reference_term where name='Hour(s)' into @concept_reference_term_id;
             insert into concept_reference_map (concept_reference_term_id, concept_map_type_id, concept_id, date_created, creator) values (
@@ -1707,16 +1566,12 @@
             @concept_reference_term_id , @concept_map_type_id, @concept_id, now(),1);
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id,'Weeks','weeks', 'N/A', 'Misc', false);
-            call add_concept_word(@concept_id, @concept_name_short_id, 'Weeks', 1);
-            call add_concept_word(@concept_id, @concept_name_short_id, 'weeks', 1);
             call add_concept_set_members (@set_concept_id,@concept_id,1);
             select concept_reference_term_id from concept_reference_term where name='Week(s)' into @concept_reference_term_id;
             insert into concept_reference_map (concept_reference_term_id, concept_map_type_id, concept_id, date_created, creator) values (
             @concept_reference_term_id , @concept_map_type_id, @concept_id, now(),1);
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id,'Months','months', 'N/A', 'Misc', false);
-            call add_concept_word(@concept_id, @concept_name_short_id, 'Months', 1);
-            call add_concept_word(@concept_id, @concept_name_short_id, 'months', 1);
             call add_concept_set_members (@set_concept_id,@concept_id,1);
             select concept_reference_term_id from concept_reference_term where name='Month(s)' into @concept_reference_term_id;
             insert into concept_reference_map (concept_reference_term_id, concept_map_type_id, concept_id, date_created, creator) values (
@@ -1789,6 +1644,7 @@
                                  referencedTableName="users" referencedColumnNames="user_id" />
     </changeSet>
     <changeSet id="bahmni-core-20140908172845" author="Indraneel, Hemanth">
+        <validCheckSum>3:443fc5590784d91c87f4551ca782b7f1</validCheckSum>
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0">
                 select count(*) from concept_name where name = 'Impression';
@@ -1797,7 +1653,6 @@
         <comment>Add Impression concept</comment>
         <sql>
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Impression', 'Impression', 'Text', 'Misc', false);
-            call add_concept_word(@concept_id, @concept_name_short_id, 'Impression', '1');
         </sql>
     </changeSet>
     <changeSet id="bahmni-core-201409161415" author="Indraneel">
@@ -1953,15 +1808,14 @@
         </sql>
     </changeSet>
     <changeSet id="bahmni-core-201409291830" author="Indraneel">
+        <validCheckSum>3:59227f59b0dc69aedb429642ea0c528a</validCheckSum>
         <comment>Adding All Disease Templates Concept Set</comment>
         <sql>
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'All Disease Templates', 'All Disease Templates', 'N/A', 'ConvSet', true);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'ALL', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'DISEASE', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'TEMPLATES', '1');
         </sql>
     </changeSet>
     <changeSet id="bahmni-core-201409291027" author="Chethan,Banka">
+        <validCheckSum>3:4d2eac86ae2e3719506593f3446ce962</validCheckSum>
         <comment>Adding concepts and concept set related to dosing units</comment>
         <sql>
             set @concept_id = 0;
@@ -1971,18 +1825,14 @@
             select concept_id into @set_concept_id from concept_name where name = 'Dosing Units' and concept_name_type = 'FULLY_SPECIFIED';
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'IU', '', 'N/A', 'Misc', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'IU', '1');
             call add_concept_set_members (@set_concept_id, @concept_id, 1);
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Unit(s)', 'unit(s)', 'N/A', 'Misc', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'Unit', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'Unit(s)', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'unit', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'unit(s)', '1');
             call add_concept_set_members (@set_concept_id, @concept_id, 1);
         </sql>
     </changeSet>
     <changeSet id="bahmni-core-201409291037" author="Chethan, Banka">
+        <validCheckSum>3:8b1b389e659dd0b96682abd8769b64c5</validCheckSum>
         <comment>Adding order frequencies</comment>
         <sql>
             set @concept_id = 0;
@@ -1992,99 +1842,64 @@
             set @now = now();
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Every Hour', 'QH', 'N/A', 'Frequency', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'EVERY', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'HOUR', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'QH', '1');
             select uuid() into @uuid;
             insert into order_frequency(concept_id, frequency_per_day, creator, date_created, uuid) values(@concept_id, 24, 1, @now, @uuid);
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Every 2 hours', 'Q2H', 'N/A', 'Frequency', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'EVERY', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'HOUR', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'Q2H', '1');
             select uuid() into @uuid;
             insert into order_frequency(concept_id, frequency_per_day, creator, date_created, uuid) values(@concept_id, 12, 1, @now, @uuid);
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Every 3 hours', 'Q3H', 'N/A', 'Frequency', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'EVERY', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'HOUR', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'Q3H', '1');
             select uuid() into @uuid;
             insert into order_frequency(concept_id, frequency_per_day, creator, date_created, uuid) values(@concept_id, 8, 1, @now, @uuid);
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Every 4 hours', 'Q4H', 'N/A', 'Frequency', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'EVERY', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'HOUR', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'Q4H', '1');
             select uuid() into @uuid;
             insert into order_frequency(concept_id, frequency_per_day, creator, date_created, uuid) values(@concept_id, 6, 1, @now, @uuid);
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Every 6 hours', 'Q6H', 'N/A', 'Frequency', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'EVERY', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'HOUR', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'Q6H', '1');
             select uuid() into @uuid;
             insert into order_frequency(concept_id, frequency_per_day, creator, date_created, uuid) values(@concept_id, 4, 1, @now, @uuid);
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Every 8 hours', 'Q8H', 'N/A', 'Frequency', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'EVERY', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'HOUR', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'Q8H', '1');
             select uuid() into @uuid;
             insert into order_frequency(concept_id, frequency_per_day, creator, date_created, uuid) values(@concept_id, 3, 1, @now, @uuid);
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Every 12 hours', 'Q12H', 'N/A', 'Frequency', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'EVERY', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'HOUR', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'Q12H', '1');
             select uuid() into @uuid;
             insert into order_frequency(concept_id, frequency_per_day, creator, date_created, uuid) values(@concept_id, 2, 1, @now, @uuid);
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'On alternate days', 'A/D', 'N/A', 'Frequency', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'ALTERNATE', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'DAYS', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'A/D', '1');
             select uuid() into @uuid;
             insert into order_frequency(concept_id, frequency_per_day, creator, date_created, uuid) values(@concept_id, 1/2, 1, @now, @uuid);
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Once a week', '', 'N/A', 'Frequency', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'ONCE', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'WEEK', '1');
             select uuid() into @uuid;
             insert into order_frequency(concept_id, frequency_per_day, creator, date_created, uuid) values(@concept_id, 1/7, 1, @now, @uuid);
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Twice a week', '', 'N/A', 'Frequency', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'TWICE', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'WEEK', '1');
             select uuid() into @uuid;
             insert into order_frequency(concept_id, frequency_per_day, creator, date_created, uuid) values(@concept_id, 2/7, 1, @now, @uuid);
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Thrice a week', '', 'N/A', 'Frequency', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'THRICE', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'WEEK', '1');
             select uuid() into @uuid;
             insert into order_frequency(concept_id, frequency_per_day, creator, date_created, uuid) values(@concept_id, 3/7, 1, @now, @uuid);
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Every 2 weeks', '', 'N/A', 'Frequency', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'EVERY', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'WEEKS', '1');
             select uuid() into @uuid;
             insert into order_frequency(concept_id, frequency_per_day, creator, date_created, uuid) values(@concept_id, 1/14, 1, @now, @uuid);
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Every 3 weeks', '', 'N/A', 'Frequency', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'EVERY', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'WEEKS', '1');
             select uuid() into @uuid;
             insert into order_frequency(concept_id, frequency_per_day, creator, date_created, uuid) values(@concept_id, 1/21, 1, @now, @uuid);
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Once a month', '', 'N/A', 'Frequency', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'ONCE', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'MONTH', '1');
             select uuid() into @uuid;
             insert into order_frequency(concept_id, frequency_per_day, creator, date_created, uuid) values(@concept_id, 1/30, 1, @now, @uuid);
         </sql>
     </changeSet>
     <changeSet id="bahmni-core-201409291106" author="Chethan,Banka">
+        <validCheckSum>3:e16e8fe4446e38963a84a7a9681b9c54</validCheckSum>
         <comment>Add drug routes and delete Percutaneous Endoscopic Gastrostomy</comment>
         <sql>
             set @concept_id = 0;
@@ -2095,23 +1910,15 @@
             select concept_id into @set_concept_id from concept_name where name = 'Drug Routes' and concept_name_type = 'FULLY_SPECIFIED';
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Intradermal', 'ID', 'N/A', 'Misc', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'INTRADERMAL', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'ID', '1');
             call add_concept_set_members (@set_concept_id, @concept_id, 1);
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Intraperitoneal', 'IP', 'N/A', 'Misc', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'INTRAPERITONEAL', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'IP', '1');
             call add_concept_set_members (@set_concept_id, @concept_id, 1);
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Intrathecal', 'IT', 'N/A', 'Misc', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'INTRATHECAL', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'IT', '1');
             call add_concept_set_members (@set_concept_id, @concept_id, 1);
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Intraosseous', 'IO', 'N/A', 'Misc', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'INTRAOSSEOUS', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'IO', '1');
             call add_concept_set_members (@set_concept_id, @concept_id, 1);
 
             call delete_concept('Percutaneous Endoscopic Gastrostomy');
@@ -2285,6 +2092,56 @@
             insert into privilege(privilege, description, uuid) values('app:clinical:consultationTab', 'View Consultation tab', @uuid);
         </sql>
     </changeSet>
+
+    <changeSet id="bahmni-core-201511121343" author="goodrich">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">select count(*) from privilege where privilege='View Providers'</sqlCheck>
+        </preConditions>
+        <comment>Workaround for adding missing View Providers privlege</comment>
+        <sql>
+            set @uuid = '';
+            select uuid() into @uuid;
+            insert into privilege(privilege, description, uuid) values('View Providers', 'Able to view Provider', @uuid);
+        </sql>
+    </changeSet>
+
+    <changeSet id="bahmni-core-201511121200" author="goodrich">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">select count(*) from privilege where privilege='View Visit Types'</sqlCheck>
+        </preConditions>
+        <comment>Workaround for adding missing View Providers privlege</comment>
+        <sql>
+            set @uuid = '';
+            select uuid() into @uuid;
+            insert into privilege(privilege, description, uuid) values('View Visit Types', 'Able to view Visit Types', @uuid);
+        </sql>
+    </changeSet>
+
+    <changeSet id="bahmni-core-201511121201" author="goodrich">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">select count(*) from privilege where privilege='View Visits'</sqlCheck>
+        </preConditions>
+        <comment>Workaround for adding missing View Providers privlege</comment>
+        <sql>
+            set @uuid = '';
+            select uuid() into @uuid;
+            insert into privilege(privilege, description, uuid) values('View Visits', 'Able to view Visits', @uuid);
+        </sql>
+    </changeSet>
+
+    <changeSet id="bahmni-core-201511121245" author="goodrich">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">select count(*) from privilege where privilege='View Visit Attribute Types'</sqlCheck>
+        </preConditions>
+        <comment>Workaround for adding missing View Visit Attribute Types privlege</comment>
+        <sql>
+            set @uuid = '';
+            select uuid() into @uuid;
+            insert into privilege(privilege, description, uuid) values('View Visit Attribute Types', 'Able to view Visit Attribute Types', @uuid);
+        </sql>
+    </changeSet>
+
+
     <changeSet id="bahmni-core-201410101446" author="banka">
         <comment>Add privileges for clinical read only</comment>
         <sql>
@@ -2370,6 +2227,7 @@
         <sqlFile splitStatements="false" path="V1_84__FixAddConceptProc.sql"/>
     </changeSet>
     <changeSet id="bahmni-core-201411031108" author="Vinay, sravanthi">
+        <validCheckSum>3:9d7ca5167308aeea04c82a867098154e</validCheckSum>
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0">
                 SELECT count(*) FROM concept_name where name='Tablet' and concept_name_type='FULLY_SPECIFIED';
@@ -2382,10 +2240,10 @@
             set @concept_name_full_id = 0;
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Tablet', 'tablet', 'N/A', 'Misc', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'tablet', '1');
         </sql>
     </changeSet>
     <changeSet id="bahmni-core-201411031129" author="Vinay, sravanthi">
+        <validCheckSum>3:5db567592d0dfe203c5a3a6a159c7c61</validCheckSum>
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0">
                 SELECT count(*) FROM concept_name where name='Capsule' and concept_name_type='FULLY_SPECIFIED';
@@ -2398,7 +2256,6 @@
             set @concept_name_full_id = 0;
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Capsule', 'capsule', 'N/A', 'Misc', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'capsule', '1');
         </sql>
     </changeSet>
     <changeSet id="bahmni-core-201411031131" author="Vinay, sravanthi">
@@ -2478,6 +2335,7 @@
         </insert>
     </changeSet>
     <changeSet id="bahmni-core-201411131512" author="D3">
+        <validCheckSum>3:809bb2af1d4d95755dcf48f62c3a1840</validCheckSum>
         <comment>Add drug routes Topical, Nasal, Inhalation</comment>
         <sql>
             set @concept_id = 0;
@@ -2487,18 +2345,12 @@
             select concept_id into @set_concept_id from concept_name where name = 'Drug Routes' and concept_name_type = 'FULLY_SPECIFIED';
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Topical', 'TOPIC', 'N/A', 'Misc', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'TOPICAL', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'TOPIC', '1');
             call add_concept_set_members (@set_concept_id, @concept_id, 1);
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Nasal', 'NASAL', 'N/A', 'Misc', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'NASAL', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'NASAL', '1');
             call add_concept_set_members (@set_concept_id, @concept_id, 1);
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Inhalation', 'RESPIR', 'N/A', 'Misc', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'INHALATION', '1');
-            call add_concept_word(@concept_id, @concept_name_short_id, 'RESPIR', '1');
             call add_concept_set_members (@set_concept_id, @concept_id, 1);
         </sql>
     </changeSet>
@@ -2534,6 +2386,7 @@
         </sql>
     </changeSet>
     <changeSet id="bahmni-core-201412031050" author="Swathi">
+        <validCheckSum>3:d1ca4fa7639c189ed9602242e4f2bd0e</validCheckSum>
         <comment></comment>
         <sql>
             set @concept_id = 0;
@@ -2543,27 +2396,18 @@
             set @now = now();
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Five times a day', '', 'N/A', 'Frequency', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'FIVE', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'TIMES', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'DAY', '1');
             select uuid() into @uuid;
             insert into order_frequency(concept_id, frequency_per_day, creator, date_created, uuid) values(@concept_id, 5, 1, @now, @uuid);
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Four days a week', '', 'N/A', 'Frequency', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'FOUR', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'WEEK', '1');
             select uuid() into @uuid;
             insert into order_frequency(concept_id, frequency_per_day, creator, date_created, uuid) values(@concept_id, 4/7, 1, @now, @uuid);
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Five days a week', '', 'N/A', 'Frequency', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'FIVE', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'WEEK', '1');
             select uuid() into @uuid;
             insert into order_frequency(concept_id, frequency_per_day, creator, date_created, uuid) values(@concept_id, 5/7, 1, @now, @uuid);
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Six days a week', '', 'N/A', 'Frequency', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'SIX', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'WEEK', '1');
             select uuid() into @uuid;
             insert into order_frequency(concept_id, frequency_per_day, creator, date_created, uuid) values(@concept_id, 6/7, 1, @now, @uuid);
         </sql>
@@ -2596,6 +2440,7 @@
         </sql>
     </changeSet>
     <changeSet id="bahmni-core-201412160932" author="Rohan, Shruthi">
+        <validCheckSum>3:f77d13ad07ec98f9e3beda3047a09da8</validCheckSum>
         <comment>Adding minutes concept for drug order duration units</comment>
         <sql>
             set @concept_id = 0;
@@ -2609,8 +2454,6 @@
             select concept_map_type_id from concept_map_type where name='SAME-AS' into @concept_map_type_id;
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id,'Minute(s)','minute(s)', 'N/A', 'Misc', false);
-            call add_concept_word(@concept_id, @concept_name_short_id, 'Minute(s)', 1);
-            call add_concept_word(@concept_id, @concept_name_short_id, 'minute(s)', 1);
             call add_concept_set_members (@set_concept_id,@concept_id,1);
             select concept_reference_term_id from concept_reference_term where name='Minute(s)' into @concept_reference_term_id;
             insert into concept_reference_map (concept_reference_term_id, concept_map_type_id, concept_id, date_created, creator) values (
@@ -2649,6 +2492,7 @@
         </sql>
     </changeSet>
     <changeSet id="bahmni-core-201412171835" author="Mujir, Mihir">
+        <validCheckSum>3:ba27b100100f1dc0f5d2d0afdf9d29e9</validCheckSum>
         <comment>Adding Deny Admission concept reference term and mapping for close visit task</comment>
         <sql>
             set @concept_id = 0;
@@ -2672,8 +2516,6 @@
             select concept_map_type_id from concept_map_type where name='SAME-AS' into @concept_map_type_id;
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Deny Admission','Deny Admission', 'N/A', 'Misc', false);
-            call add_concept_word(@concept_id, @concept_name_short_id, 'Deny', 1);
-            call add_concept_word(@concept_id, @concept_name_short_id, 'Admission', 1);
 
             insert into concept_reference_map (concept_reference_term_id, concept_map_type_id, concept_id, date_created, creator) values (
             @concept_reference_term_id , @concept_map_type_id, @concept_id, @current_date, 1);
@@ -2711,6 +2553,7 @@
         </sql>
     </changeSet>
     <changeSet id="bahmni-core-201501071717" author="Vikash,Indraneel">
+        <validCheckSum>3:f9ed5a94595e1affa2778dce8f39f6a8</validCheckSum>
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0">
                 SELECT COUNT(*) FROM concept_name where name='Order Attributes' and concept_name_type='FULLY_SPECIFIED' and voided=0;
@@ -2723,8 +2566,6 @@
             set @concept_name_full_id = 0;
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id,'Order Attributes','Order Attributes', 'N/A', 'Misc', true);
-            call add_concept_word(@concept_id, @concept_name_short_id, 'Order', 1);
-            call add_concept_word(@concept_id, @concept_name_short_id, 'Attributes', 1);
         </sql>
     </changeSet>
     <changeSet id="bahmni-core-201501192149" author="Sravanthi">
@@ -2754,6 +2595,7 @@
         </insert>
     </changeSet>
     <changeSet id="bahmni-clinical-201502091501" author="Charles, Banka">
+        <validCheckSum>3:83d50d47fd5091b289483c66a54e3ac9</validCheckSum>
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0">select count(*) from concept_name where name = 'Undo Discharge'  and concept_name_type='FULLY_SPECIFIED'</sqlCheck>
         </preConditions>
@@ -2772,8 +2614,6 @@
 
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Undo Discharge', 'Undo Discharge', 'N/A', 'misc', false);
-            call add_concept_word(@concept_id, @concept_name_short_id, 'Undo', 1);
-            call add_concept_word(@concept_id, @concept_name_short_id, 'Discharge', 1);
             call add_concept_reference_map (@concept_id, @concept_source_id, 'UNDO_DISCHARGE',@concept_map_type_id);
             set @child1_concept_id = @concept_id;
 
@@ -2793,6 +2633,7 @@
         </insert>
     </changeSet>
     <changeSet id="bahmni-core-201503270603" author="Sandeep, Hemanth">
+        <validCheckSum>3:9dc0f97f859e8d26392fb7dbb48e980d</validCheckSum>
         <comment>Adding dispensed drug order attribute</comment>
         <sql>
             set @concept_id = 0;
@@ -2803,7 +2644,6 @@
             select concept_id from concept_name where name = 'Order Attributes' and concept_name_type = 'FULLY_SPECIFIED' into @set_concept_id;
 
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Dispensed', 'D', 'Boolean', 'Misc', false);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'Dispensed', '1');
 
             call add_concept_set_members(@set_concept_id,@concept_id,1);
         </sql>
@@ -2887,6 +2727,7 @@
         </sql>
     </changeSet>
     <changeSet id="bahmni-core-201505171755" author="Bharat">
+        <validCheckSum>3:24754f616857125b862150154fb85150</validCheckSum>
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0">
                 select count(*) from concept_name where name='All Orderables' and concept_name_type='FULLY_SPECIFIED';
@@ -2895,8 +2736,6 @@
         <comment>Adding 'All Orderables' concept set and associating Lab Samples to it.</comment>
         <sql>
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'All Orderables', 'All Orderables', 'N/A', 'ConvSet', true);
-            call add_concept_word(@concept_id, @concept_name_full_id, 'ALL', '1');
-            call add_concept_word(@concept_id, @concept_name_full_id, 'ORDERABLES', '1');
 
             select concept_id into @labsamples_concept_id from concept_name where name = 'Lab Samples' and concept_name_type = 'FULLY_SPECIFIED';
             call add_concept_set_members (@concept_id,@labsamples_concept_id,1);
@@ -3498,6 +3337,23 @@
         </sql>
     </changeSet>
 
+    <changeSet id="bahmni-reg-201401171330" author="banka-tw" context="rel3">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">select count(*) from privilege where privilege = 'app:registration'</sqlCheck>
+        </preConditions>
+        <insert tableName="privilege">
+            <column name="privilege" value="app:registration"/>
+            <column name="description" value="Bahmni registration app access privilege"/>
+            <column name="uuid" valueComputed="uuid()"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="bahmni-reg-201402141455" author="neha" context="rel3">
+        <comment>Add emrgency app role</comment>
+        <sql>
+            INSERT INTO privilege(privilege, description, uuid) VALUES('app:emergency', 'bahmni emergency app access privilege', uuid()) ON DUPLICATE KEY UPDATE privilege = 'app:emergency';
+        </sql>
+    </changeSet>
 
     <changeSet id="bahmni-registration-201507101757" author="Shan,Sourav" context="rel0.77">
         <comment>Add privileges for additional action required for registration app like encounter etc.</comment>
@@ -3522,7 +3378,7 @@
             INSERT INTO role_role(parent_role, child_role) VALUES ('Patient-Listing', 'Registration');
         </sql>
     </changeSet>
-    
+
     <changeSet id="bahmni-inpatient-read-201513101438" author="Banka,Padma" context="rel0.77">
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0">select count(*) from role where role='InPatient-Read'</sqlCheck>
@@ -3569,6 +3425,14 @@
         </preConditions>
         <sql>
             INSERT into role(role, description) VALUES('Emr-Reports','Ability to run reports');
+        </sql>
+    </changeSet>
+    <changeSet id="bahmni-orders-role-201523111314" author="Chethan,Shashi" context="release-0.77">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">select count(*) from role where role='Privilege Level: Full'</sqlCheck>
+        </preConditions>
+        <sql>
+            INSERT into role(role,description) VALUES('Privilege Level: Full', 'A role that has all API privileges');
         </sql>
     </changeSet>
     <changeSet id="bahmni-add-privileges-to-inpatient-read-201514101540" author="Banka,Padma" context="release-0.77">
@@ -3689,6 +3553,27 @@
         </sql>
     </changeSet>
 
+
+    <changeSet id="bahmni-reg-1" author="tw" context="rel2">
+        <comment>rel2</comment>
+        <sqlFile path="V1_11__CreateConceptSetForRegistrationConcepts.sql" />
+    </changeSet>
+
+    <changeSet id="bahmni-reg-3" author="tw" context="rel2">
+        <comment>rel2</comment>
+        <sqlFile path="V1_25__RegistrationConceptSetFix.sql" />
+    </changeSet>
+
+    <changeSet id="bahmni-reg-4" author="tw" context="rel3">
+        <comment>rel3</comment>
+        <sqlFile path="V1_79__AddressTemplateWithAllFields.sql" />
+    </changeSet>
+
+    <changeSet id="bahmni-reg-5" author="vivek-tw" context="rel3">
+        <comment>rel3</comment>
+        <sql>update patient_identifier_type set name = 'Bahmni Id' where name = 'JSS'</sql>
+    </changeSet>
+
     <changeSet id="bahmni-core-201511180200" author="Swathi">
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0">
@@ -3701,9 +3586,22 @@
         </sql>
     </changeSet>
 
+    <changeSet id="bahmni-core-201511251218" author="Jaya, Sravanthi">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM global_property where property = 'drugOrder.drugOther'
+            </sqlCheck>
+        </preConditions>
+        <comment>Add drug other global property</comment>
+        <sql>
+            insert into global_property (property, property_value, description, uuid)
+            values ('drugOrder.drugOther', '', 'Specifies the uuid of the concept which represents drug other non coded', uuid());
+        </sql>
+    </changeSet>
+
     <changeSet id="bahmni-core-201511180201" author="Swathi">
         <preConditions onFail="MARK_RAN">
-            <sqlCheck expectedResult="0">select count(*) from global_property where property='drugOrder.drugOther' and property_value not like ""  and property_value is not NULL</sqlCheck>
+            <sqlCheck expectedResult="1">select count(*) from global_property where property='drugOrder.drugOther'</sqlCheck>
         </preConditions>
         <comment>Setting 'DrugOther' concept uuid as value for 'drugOrder.drugOther' globalProperty.</comment>
         <sql>
@@ -3750,5 +3648,66 @@
             select uuid() into @uuid;
             insert into privilege(privilege, description, uuid) values('app:reports', 'View Reports', @uuid);
         </sql>
+    </changeSet>
+    <changeSet id="bahmni-core-201511250237" author="Hanisha">
+        <comment>Adding new loginLocationToVisitTypeMapping in entityMappingType table</comment>
+        <sql>
+            insert into entity_mapping_type(name ,uuid ,entity1_type , entity2_type , date_created) values('loginlocation_visittype', uuid() , 'org.openmrs.Location' , 'org.openmrs.VisitType' , '2015-11-25 18:54:23.0');
+        </sql>
+    </changeSet>
+    <changeSet id="bahmni-clinical-201511251240" author="Shireesha">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">select count(*) from concept_name where name in ('Stopped Order Reason','Refused To Take')  and concept_name_type='FULLY_SPECIFIED'</sqlCheck>
+        </preConditions>
+        <comment>Adding Stopped Order Reason and answers</comment>
+        <sql>
+            set @concept_id = 0;
+            set @concept_name_short_id = 0;
+            set @concept_name_full_id = 0;
+            set @stopped_order_reason_concept_id = 0;
+
+
+            call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Stopped Order Reason', 'Stopped Order Reason', 'Coded', 'Question', false);
+
+            select concept_id into @stopped_order_reason_concept_id from concept_name where name = 'Stopped Order Reason' and concept_name_type = 'FULLY_SPECIFIED';
+
+            set @concept_id = 0;
+            set @concept_name_short_id = 0;
+            set @concept_name_full_id = 0;
+            set @refused_to_take_concept_id = 0;
+
+            call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Refused To Take', 'Refused To Take', 'N/A', 'Misc', false);
+            select concept_id into @refused_to_take_concept_id from concept_name where name = 'Refused To Take' and concept_name_type = 'FULLY_SPECIFIED';
+            call add_concept_answer(@stopped_order_reason_concept_id, @refused_to_take_concept_id, 1);
+        </sql>
+    </changeSet>
+    <changeSet id="bahmni-core-201412281000" author="Santhosh">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">select count(*) from concept_reference_source where name='Abbreviation'</sqlCheck>
+        </preConditions>
+        <comment>Insert concept reference source for Abbreviation</comment>
+        <sql>
+            set @uuid = 0;
+            select uuid() into @uuid;
+
+            insert into concept_reference_source (name, description, hl7_code, creator, date_created, uuid)
+            values('Abbreviation', 'Custom dictionary for storing abbreviation of concepts', null, 1, now(), @uuid);
+        </sql>
+    </changeSet>
+    <changeSet id="bahmni-core-201512291400" author="Shashi, Hanisha">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM concept_class where name = 'Unknown';
+            </sqlCheck>
+        </preConditions>
+        <comment>add concept class Unknown</comment>
+        <insert tableName="concept_class">
+            <column name="name" value="Unknown"/>
+            <column name="description" value="Unknown class"/>
+            <column name="creator" value="1"/>
+            <column name="date_created" valueComputed="curdate()"/>
+            <column name="retired" value="0"/>
+            <column name="uuid" valueComputed="uuid()"/>
+        </insert>
     </changeSet>
 </databaseChangeLog>

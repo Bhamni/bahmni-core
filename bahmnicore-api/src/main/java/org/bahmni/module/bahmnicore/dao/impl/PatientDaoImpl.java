@@ -25,7 +25,6 @@ import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 @Repository
 public class PatientDaoImpl implements PatientDao {
-    private static final String PATIENT_IDENTIFIER_PARAM = "patientIdentifier";
     private static final String LIMIT_PARAM = "limit";
     private static final String OFFSET_PARAM = "offset";
     private static final String CUSTOM_ATTRIBUTE_PARAM = "customAttribute";
@@ -33,7 +32,7 @@ public class PatientDaoImpl implements PatientDao {
     private static final String PERSON_ATTRIBUTE_IDS_PARAMETER = "personAttributeTypeIds";
 
     public static final String WHERE_CLAUSE = " where p.voided = 'false' and pn.voided = 'false' and pn.preferred=true ";
-    public static final String SELECT_STATEMENT = "select p.uuid as uuid, pi.identifier as identifier, pn.given_name as givenName, pn.middle_name as middleName, pn.family_name as familyName, p.gender as gender, p.birthdate as birthDate," +
+    public static final String SELECT_STATEMENT = "select p.uuid as uuid, p.person_id as personId, pi.identifier as identifier, pn.given_name as givenName, pn.middle_name as middleName, pn.family_name as familyName, p.gender as gender, p.birthdate as birthDate," +
             " p.death_date as deathDate, pa.:addressFieldName as addressFieldValue, p.date_created as dateCreated, v.uuid as activeVisitUuid ";
     public static final String FROM_TABLE = " from patient pat " ;
     public static final String JOIN_CLAUSE =  " inner join person p on pat.patient_id=p.person_id " +
@@ -41,8 +40,8 @@ public class PatientDaoImpl implements PatientDao {
             " left join person_address pa on p.person_id=pa.person_id and pa.voided = 'false'" +
             " inner join patient_identifier pi on pi.patient_id = p.person_id " +
             " left outer join visit v on v.patient_id = pat.patient_id and v.date_stopped is null ";
-    public static final String BY_ID = "pi.identifier = :" + PATIENT_IDENTIFIER_PARAM;
     public static final String BY_NAME_PARTS = " concat(coalesce(given_name, ''), coalesce(middle_name, ''), coalesce(family_name, '')) like ";
+    public static final String BY_IDENTIFIER = " identifier like ";
     public static final String BY_ADDRESS_FIELD = " :addressFieldName like :addressFieldValue";
     public static final String ORDER_BY = " order by p.date_created desc LIMIT :" + LIMIT_PARAM + " OFFSET :" + OFFSET_PARAM;
 
@@ -54,10 +53,11 @@ public class PatientDaoImpl implements PatientDao {
     }
 
     @Override
-    public List<PatientResponse> getPatients(String identifier, String name, String customAttribute, String addressFieldName, String addressFieldValue, Integer length, Integer offset, String[] customAttributeFields) {
+    public List<PatientResponse> getPatients(String identifier, String identifierPrefix, String name, String customAttribute, String addressFieldName, String addressFieldValue, Integer length, Integer offset, String[] customAttributeFields) {
         Session currentSession = sessionFactory.getCurrentSession();
         WildCardParameter nameParameter = WildCardParameter.create(name);
         String nameSearchCondition = getNameSearchCondition(nameParameter);
+        String identifierSearchCondition = getIdentifierSearchCondition(identifier, identifierPrefix);
         WildCardParameter customAttributeParameter = WildCardParameter.create(customAttribute);
         String customAttributeJoins = getCustomAttributeJoins(customAttributeParameter, customAttributeFields);
         String selectStatement = getSelectStatementWithCustomAttributes(SELECT_STATEMENT, customAttributeFields);
@@ -67,7 +67,7 @@ public class PatientDaoImpl implements PatientDao {
                 "v.uuid  ";
         String query = selectStatement + FROM_TABLE + JOIN_CLAUSE + customAttributeJoins + WHERE_CLAUSE;
 
-        query = isEmpty(identifier) ? query : combine(query, "and", enclose(BY_ID));
+        query = isEmpty(identifier) ? query : combine(query, "and", enclose(identifierSearchCondition));
         query = isEmpty(nameSearchCondition) ? query : combine(query, "and", enclose(nameSearchCondition));
 
         if (isNotEmpty(addressFieldValue)) {
@@ -85,6 +85,7 @@ public class PatientDaoImpl implements PatientDao {
                 .addScalar("uuid", StandardBasicTypes.STRING)
                 .addScalar("identifier", StandardBasicTypes.STRING)
                 .addScalar("givenName", StandardBasicTypes.STRING)
+                .addScalar("personId", StandardBasicTypes.INTEGER)
                 .addScalar("middleName", StandardBasicTypes.STRING)
                 .addScalar("familyName", StandardBasicTypes.STRING)
                 .addScalar("gender", StandardBasicTypes.STRING)
@@ -94,8 +95,6 @@ public class PatientDaoImpl implements PatientDao {
                 .addScalar("dateCreated", StandardBasicTypes.TIMESTAMP)
                 .addScalar("activeVisitUuid", StandardBasicTypes.STRING);
 
-        if (isNotEmpty(identifier))
-            sqlQuery.setParameter(PATIENT_IDENTIFIER_PARAM, identifier);
         if(customAttributeFields !=null && customAttributeFields.length >0){
             sqlQuery.addScalar("customAttribute", StandardBasicTypes.STRING);
             sqlQuery.setParameterList(PERSON_ATTRIBUTE_NAMES_PARAMETER, Arrays.asList(customAttributeFields));
@@ -109,6 +108,11 @@ public class PatientDaoImpl implements PatientDao {
         sqlQuery.setResultTransformer(Transformers.aliasToBean(PatientResponse.class));
         return sqlQuery.list();
     }
+
+    private String getIdentifierSearchCondition(String identifier, String identifierPrefix) {
+        return BY_IDENTIFIER + " '" + identifierPrefix + "%" + identifier + "%'";
+    }
+
 
     private String getSelectStatementWithCustomAttributes(String selectStatement, String[] customAttributeFields){
         if(customAttributeFields != null && customAttributeFields.length > 0){

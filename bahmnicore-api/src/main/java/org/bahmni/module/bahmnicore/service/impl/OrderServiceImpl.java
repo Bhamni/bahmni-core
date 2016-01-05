@@ -33,7 +33,6 @@ public class OrderServiceImpl implements OrderService {
     public List<Order> getPendingOrders(String patientUuid, String orderTypeUuid) {
         Patient patient = patientService.getPatientByUuid(patientUuid);
         List<Order> allOrders = orderService.getAllOrdersByPatient(patient);
-        orderService.getActiveOrders(patient, null, orderService.getCareSettingByName(CareSetting.CareSettingType.OUTPATIENT.toString()), new Date());
         List<Order> completedOrders = orderDao.getCompletedOrdersFrom(Collections.unmodifiableList(allOrders));
         allOrders.removeAll(completedOrders);
         return allOrders;

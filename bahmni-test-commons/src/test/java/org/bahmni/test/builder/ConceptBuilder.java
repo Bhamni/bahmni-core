@@ -10,9 +10,7 @@ import org.openmrs.api.ConceptNameType;
 import org.openmrs.api.context.Context;
 import org.openmrs.util.LocaleUtility;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Locale;
+import java.util.*;
 
 public class ConceptBuilder {
     private final org.openmrs.Concept concept;
@@ -146,7 +144,9 @@ public class ConceptBuilder {
 
     public ConceptBuilder withDescription(String description) {
         ConceptDescription conceptDescription = new ConceptDescription(description, Context.getLocale());
-        concept.setDescriptions(Arrays.asList(conceptDescription));
+        Set<ConceptDescription> descriptions = new HashSet<>();
+        descriptions.add(conceptDescription);
+        concept.setDescriptions(descriptions);
         return this;
     }
 

@@ -47,25 +47,6 @@
         </modifySql>
     </changeSet>
 
-    <changeSet id="bahmni-setup-6" author="tw" context="rel3">
-        <preConditions onFail="MARK_RAN">
-            <sqlCheck expectedResult="0">
-                SELECT COUNT(*) FROM concept_reference_source where name = 'org.openmrs.module.emrapi';
-            </sqlCheck>
-        </preConditions>
-        <comment>rel3</comment>
-        <insert tableName="concept_reference_source">
-            <column name="name" value="org.openmrs.module.emrapi"/>
-            <column name="uuid" valueNumeric="name-of-uuid-function"/>
-            <column name="description" value="Source used to tag concepts used in the EMR API module"/>
-            <column name="date_created" valueDate="${now}"/>
-            <column name="creator" value="1"/>
-        </insert>
-        <modifySql dbms="mysql">
-            <replace replace="name-of-uuid-function" with="UUID()"/>
-        </modifySql>
-    </changeSet>
-
     <changeSet id="050620141511" author="tw">
         <preConditions onFail="MARK_RAN">
             <not><columnExists columnName="user" tableName="idgen_remote_source"/></not>

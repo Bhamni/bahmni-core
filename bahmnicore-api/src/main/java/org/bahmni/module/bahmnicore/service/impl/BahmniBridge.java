@@ -5,10 +5,7 @@ import org.bahmni.module.bahmnicore.dao.OrderDao;
 import org.bahmni.module.bahmnicore.service.BahmniDrugOrderService;
 import org.joda.time.LocalDate;
 import org.joda.time.Years;
-import org.openmrs.Concept;
-import org.openmrs.DrugOrder;
-import org.openmrs.Obs;
-import org.openmrs.PersonAttributeType;
+import org.openmrs.*;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.PersonService;
@@ -20,10 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.text.ParseException;
+import java.util.*;
 
 /**
  * Bridge between extension scripts of Bahmni and Bahmni core as well as OpenMRS core.
@@ -175,5 +170,28 @@ public class BahmniBridge {
         return drugOrder.getScheduledDate().before(new Date());
     }
 
+    /**
+     * Retrieve concept for <code>conceptName</code>
+     *
+     * @return
+     */
+    public Date getStartDateOfTreatment() throws ParseException {
+        List<Order> allDrugOrders = bahmniDrugOrderService.getAllDrugOrders(patientUuid, null, null, null, null);
+        sortOders(allDrugOrders);
+        return allDrugOrders.get(0).getScheduledDate() !=null ? allDrugOrders.get(0).getScheduledDate() : allDrugOrders.get(0).getDateActivated();
+    }
 
+    private void sortOders(List<Order> drugOrders) {
+        Collections.sort(drugOrders, new Comparator<Order>() {
+            @Override
+            public int compare(Order o1, Order o2) {
+                if (o1.getDateActivated().before(o2.getDateActivated()))
+                    return -1;
+                else if (o1.getDateActivated().after(o2.getDateActivated()))
+                    return 1;
+                else
+                    return 0;
+            }
+        });
+    }
 }

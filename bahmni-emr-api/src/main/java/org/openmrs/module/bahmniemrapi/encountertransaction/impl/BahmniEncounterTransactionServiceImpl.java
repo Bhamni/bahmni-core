@@ -63,7 +63,13 @@ public class BahmniEncounterTransactionServiceImpl implements BahmniEncounterTra
 
     @Override
     public BahmniEncounterTransaction save(BahmniEncounterTransaction bahmniEncounterTransaction, Patient patient, Date visitStartDate, Date visitEndDate) {
-        // TODO : Mujir - map string VisitType to the uuids and set on bahmniEncounterTransaction object
+
+        if(bahmniEncounterTransaction.getEncounterDateTime() == null){
+            bahmniEncounterTransaction.setEncounterDateTime(new Date());
+        }
+
+        handleDrugOrders(bahmniEncounterTransaction,patient);
+
         if(!StringUtils.isBlank(bahmniEncounterTransaction.getEncounterUuid())){
             Encounter encounterByUuid = encounterService.getEncounterByUuid(bahmniEncounterTransaction.getEncounterUuid());
             if(encounterByUuid != null){
@@ -77,9 +83,6 @@ public class BahmniEncounterTransactionServiceImpl implements BahmniEncounterTra
             setEncounterType(bahmniEncounterTransaction);
         }
 
-        if(bahmniEncounterTransaction.getEncounterDateTime() == null){
-            bahmniEncounterTransaction.setEncounterDateTime(new Date());
-        }
         for (EncounterDataPreSaveCommand saveCommand : encounterDataPreSaveCommand) {
             saveCommand.update(bahmniEncounterTransaction);
         }
@@ -100,6 +103,17 @@ public class BahmniEncounterTransactionServiceImpl implements BahmniEncounterTra
             updatedEncounterTransaction = saveCommand.save(bahmniEncounterTransaction,currentEncounter, updatedEncounterTransaction);
         }
         return bahmniEncounterTransactionMapper.map(updatedEncounterTransaction, includeAll);
+    }
+
+    private void handleDrugOrders(BahmniEncounterTransaction bahmniEncounterTransaction,Patient patient) {
+
+        bahmniEncounterTransaction.updateDrugOrderIfScheduledDateNotSet(new Date());
+
+        if(bahmniEncounterTransaction.hasPastDrugOrders()){
+            BahmniEncounterTransaction pastEncounterTransaction = bahmniEncounterTransaction.cloneForPastDrugOrders();
+            save(pastEncounterTransaction,patient,null,null);
+            bahmniEncounterTransaction.clearDrugOrders();
+        }
     }
 
     private void setVisitType(BahmniEncounterTransaction bahmniEncounterTransaction) {

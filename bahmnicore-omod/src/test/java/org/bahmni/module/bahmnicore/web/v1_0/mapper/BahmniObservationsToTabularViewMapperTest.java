@@ -1,6 +1,7 @@
 package org.bahmni.module.bahmnicore.web.v1_0.mapper;
 
 import org.junit.Test;
+import org.omg.CORBA.BAD_CONTEXT;
 import org.openmrs.module.bahmniemrapi.builder.BahmniObservationBuilder;
 import org.openmrs.module.bahmniemrapi.builder.ETConceptBuilder;
 import org.openmrs.module.bahmniemrapi.encountertransaction.contract.BahmniObservation;
@@ -17,6 +18,7 @@ import static org.junit.Assert.assertNotNull;
 public class BahmniObservationsToTabularViewMapperTest {
 
     private BahmniObservationsToTabularViewMapper bahmniObservationsToTabularViewMapper = new BahmniObservationsToTabularViewMapper();
+    private String groupByConcept = null;
 
     @Test
     public void shouldReturnAllObservationsInTabularFormatIfTheConceptNamesAreNotPassed() throws Exception {
@@ -32,7 +34,7 @@ public class BahmniObservationsToTabularViewMapperTest {
         Set<EncounterTransaction.Concept> conceptNames = new HashSet<>();
         conceptNames.add(heightConcept);
         conceptNames.add(weightConcept);
-        PivotTable pivotTable = bahmniObservationsToTabularViewMapper.constructTable(conceptNames, bahmniObservations);
+        PivotTable pivotTable = bahmniObservationsToTabularViewMapper.constructTable(conceptNames, bahmniObservations, groupByConcept);
 
         assertNotNull(pivotTable);
         assertEquals(1, pivotTable.getRows().size());
@@ -54,7 +56,7 @@ public class BahmniObservationsToTabularViewMapperTest {
 
         Set<EncounterTransaction.Concept> conceptNames = new HashSet<>();
         conceptNames.add(heightConcept);
-        PivotTable pivotTable = bahmniObservationsToTabularViewMapper.constructTable(conceptNames, bahmniObservations);
+        PivotTable pivotTable = bahmniObservationsToTabularViewMapper.constructTable(conceptNames, bahmniObservations, groupByConcept);
 
         assertNotNull(pivotTable);
         assertEquals(1, pivotTable.getRows().size());
@@ -86,7 +88,7 @@ public class BahmniObservationsToTabularViewMapperTest {
         conceptNames.add(systolicConcept);
         conceptNames.add(diastolicConcept);
 
-        PivotTable pivotTable = bahmniObservationsToTabularViewMapper.constructTable(conceptNames, bahmniObservations);
+        PivotTable pivotTable = bahmniObservationsToTabularViewMapper.constructTable(conceptNames, bahmniObservations, groupByConcept);
 
         assertNotNull(pivotTable);
         assertEquals(1, pivotTable.getRows().size());
@@ -118,7 +120,7 @@ public class BahmniObservationsToTabularViewMapperTest {
         conceptNames.add(heightConcept);
         conceptNames.add(weightConcept);
 
-        PivotTable pivotTable = bahmniObservationsToTabularViewMapper.constructTable(conceptNames, bahmniObservations);
+        PivotTable pivotTable = bahmniObservationsToTabularViewMapper.constructTable(conceptNames, bahmniObservations, groupByConcept);
 
         assertNotNull(pivotTable);
         assertEquals(2, pivotTable.getRows().size());
@@ -131,10 +133,31 @@ public class BahmniObservationsToTabularViewMapperTest {
 
     @Test
     public void shouldRetrunEmptyTableIfThereAreNoObservations() throws Exception {
-        PivotTable pivotTable = bahmniObservationsToTabularViewMapper.constructTable(null, null);
+        PivotTable pivotTable = bahmniObservationsToTabularViewMapper.constructTable(null, null, groupByConcept);
 
         assertNotNull(pivotTable);
         assertEquals(0, pivotTable.getRows().size());
         assertEquals(0, pivotTable.getHeaders().size());
+    }
+
+    @Test
+    public void shouldRetrunEmptyTableIfAllTheObservationValuesAreNull() throws Exception {
+        EncounterTransaction.Concept heightConcept = new ETConceptBuilder().withName("HEIGHT").withUuid("height uuid").withSet(false).withClass("Misc").build();
+        EncounterTransaction.Concept weightConcept = new ETConceptBuilder().withName("WEIGHT").withUuid("weight uuid").withSet(false).withClass("Misc").build();
+
+        BahmniObservation height = new BahmniObservationBuilder().withConcept(heightConcept).withValue(null).build();
+        BahmniObservation weight = new BahmniObservationBuilder().withConcept(weightConcept).withValue(null).build();
+        ArrayList<BahmniObservation> bahmniObservations = new ArrayList<>();
+        bahmniObservations.add(height);
+        bahmniObservations.add(weight);
+
+        Set<EncounterTransaction.Concept> conceptNames = new HashSet<>();
+        conceptNames.add(heightConcept);
+        conceptNames.add(weightConcept);
+        PivotTable pivotTable = bahmniObservationsToTabularViewMapper.constructTable(conceptNames, bahmniObservations, "test concept");
+
+        assertNotNull(pivotTable);
+        assertEquals(0, pivotTable.getRows().size());
+        assertEquals(2, pivotTable.getHeaders().size());
     }
 }

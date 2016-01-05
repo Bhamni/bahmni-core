@@ -86,8 +86,8 @@ public class ConceptMapperTest {
     @Test
     public void should_not_map_empty_answers() throws Exception {
         List<KeyValue> answers = new ArrayList<>();
-        answers.add(new KeyValue("Answer.1", ""));
-        answers.add(new KeyValue("Answer.2", "Answer"));
+        answers.add(new KeyValue("1", ""));
+        answers.add(new KeyValue("2", "Answer"));
         ConceptRow conceptRow = new ConceptRow();
         conceptRow.answers = answers;
         Concept mappedConcept = conceptMapper.map(conceptRow);

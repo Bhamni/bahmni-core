@@ -1,6 +1,5 @@
 package org.bahmni.module.bahmnicore.web.v1_0.search;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

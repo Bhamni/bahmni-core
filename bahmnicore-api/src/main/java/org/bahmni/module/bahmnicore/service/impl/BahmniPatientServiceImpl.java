@@ -49,7 +49,7 @@ public class BahmniPatientServiceImpl implements BahmniPatientService {
 
     @Override
     public List<PatientResponse> search(PatientSearchParameters searchParameters) {
-        return patientDao.getPatients(searchParameters.getIdentifier(), searchParameters.getName(), searchParameters.getCustomAttribute(), searchParameters.getAddressFieldName(), searchParameters.getAddressFieldValue(), searchParameters.getLength(), searchParameters.getStart(), searchParameters.getPatientAttributes());
+        return patientDao.getPatients(searchParameters.getIdentifier(), searchParameters.getIdentifierPrefix(), searchParameters.getName(), searchParameters.getCustomAttribute(), searchParameters.getAddressFieldName(), searchParameters.getAddressFieldValue(), searchParameters.getLength(), searchParameters.getStart(), searchParameters.getPatientAttributes());
     }
 
     @Override

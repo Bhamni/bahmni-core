@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 public class ConceptCommon {
@@ -13,6 +14,7 @@ public class ConceptCommon {
     private String description;
     private String className;
     private String dataType;
+    private String locale;
     private List<ConceptReferenceTerm> conceptReferenceTermsList = new ArrayList<>();
     private String uuid;
 
@@ -86,5 +88,13 @@ public class ConceptCommon {
 
     public void setUuid(String uuid) {
         this.uuid = uuid;
+    }
+
+    public void setLocale(String locale) {
+        this.locale = locale;
+    }
+
+    public String getLocale() {
+        return locale;
     }
 }

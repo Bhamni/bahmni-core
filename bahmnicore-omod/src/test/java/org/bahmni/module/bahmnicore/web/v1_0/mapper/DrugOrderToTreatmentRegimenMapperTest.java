@@ -1,10 +1,13 @@
 package org.bahmni.module.bahmnicore.web.v1_0.mapper;
 
+import org.junit.Ignore;
+import org.openmrs.Concept;
 import org.bahmni.test.builder.ConceptBuilder;
 import org.bahmni.test.builder.DrugOrderBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.openmrs.ConceptName;
 import org.openmrs.DrugOrder;
 import org.openmrs.Order;
 import org.openmrs.api.context.Context;
@@ -551,6 +554,176 @@ public class DrugOrderToTreatmentRegimenMapperTest {
     public Date getOnlyDate(Date date) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         return sdf.parse(sdf.format(date));
+    }
+
+    @Test
+    public void shouldMapDrugOrdersWhichStartOnSameDateAndOneEndsInFiveDaysAnotherContinues() throws Exception {
+        ArrayList<Order> drugOrders = new ArrayList<>();
+        Date now = new Date();
+        DrugOrder ibeprofen = new DrugOrderBuilder().withDrugName("Ibeprofen").withDateActivated(now).withDose(1000.0).withAutoExpireDate(addDays(now, 5)).withConcept(new ConceptBuilder().withName("Ibeprofen").withSet(false).withDataType("N/A").build()).build();
+        DrugOrder paracetemol = new DrugOrderBuilder().withDrugName("Paracetemol").withDateActivated(now).withDose(200.0).withConcept(new ConceptBuilder().withName("Paracetemol").withSet(false).withDataType("N/A").build()).build();
+        drugOrders.add(ibeprofen);
+        drugOrders.add(paracetemol);
+
+        TreatmentRegimen treatmentRegimen = drugOrderToTreatmentRegimenMapper.map(drugOrders, null);
+
+        assertNotNull(treatmentRegimen);
+        assertEquals(2, treatmentRegimen.getHeaders().size());
+        Iterator<EncounterTransaction.Concept> headerIterator = treatmentRegimen.getHeaders().iterator();
+        assertEquals("Ibeprofen", headerIterator.next().getName());
+        assertEquals("Paracetemol", headerIterator.next().getName());
+        assertEquals(2, treatmentRegimen.getRows().size());
+        Iterator<RegimenRow> rowIterator = treatmentRegimen.getRows().iterator();
+
+        RegimenRow startDateRow = rowIterator.next();
+        assertEquals(getOnlyDate(now), startDateRow.getDate());
+        assertEquals("1000.0", startDateRow.getDrugs().get("Ibeprofen"));
+        assertEquals("200.0", startDateRow.getDrugs().get("Paracetemol"));
+
+        RegimenRow stoppedDateRow = rowIterator.next();
+        assertEquals(getOnlyDate(addDays(now, 5)), stoppedDateRow.getDate());
+        assertEquals("Stop", stoppedDateRow.getDrugs().get("Ibeprofen"));
+        assertEquals("200.0", stoppedDateRow.getDrugs().get("Paracetemol"));
+    }
+
+    @Test
+    public void shouldMapDrugOrdersWhichStartOnDifferentDatesAndOneEndsInFiveDaysAnotherContinues() throws Exception {
+        ArrayList<Order> drugOrders = new ArrayList<>();
+        Date now = new Date();
+        DrugOrder ibeprofen = new DrugOrderBuilder().withDrugName("Ibeprofen").withDateActivated(now).withDose(1000.0).withAutoExpireDate(addDays(now, 5)).withConcept(new ConceptBuilder().withName("Ibeprofen").withSet(false).withDataType("N/A").build()).build();
+        DrugOrder paracetemol = new DrugOrderBuilder().withDrugName("Paracetemol").withDateActivated(addDays(now, 2)).withDose(200.0).withConcept(new ConceptBuilder().withName("Paracetemol").withSet(false).withDataType("N/A").build()).build();
+        drugOrders.add(ibeprofen);
+        drugOrders.add(paracetemol);
+
+        TreatmentRegimen treatmentRegimen = drugOrderToTreatmentRegimenMapper.map(drugOrders, null);
+
+        assertNotNull(treatmentRegimen);
+        assertEquals(2, treatmentRegimen.getHeaders().size());
+        Iterator<EncounterTransaction.Concept> headerIterator = treatmentRegimen.getHeaders().iterator();
+        assertEquals("Ibeprofen", headerIterator.next().getName());
+        assertEquals("Paracetemol", headerIterator.next().getName());
+        assertEquals(3, treatmentRegimen.getRows().size());
+        Iterator<RegimenRow> rowIterator = treatmentRegimen.getRows().iterator();
+
+        RegimenRow startDateRow = rowIterator.next();
+        assertEquals(getOnlyDate(now), startDateRow.getDate());
+        assertEquals("1000.0", startDateRow.getDrugs().get("Ibeprofen"));
+        assertEquals(null, startDateRow.getDrugs().get("Paracetemol"));
+
+        RegimenRow secondRow = rowIterator.next();
+        assertEquals(getOnlyDate(addDays(now, 2)), secondRow.getDate());
+        assertEquals("1000.0", secondRow.getDrugs().get("Ibeprofen"));
+        assertEquals("200.0", secondRow.getDrugs().get("Paracetemol"));
+
+        RegimenRow stoppedDateRow = rowIterator.next();
+        assertEquals(getOnlyDate(addDays(now, 5)), stoppedDateRow.getDate());
+        assertEquals("Stop", stoppedDateRow.getDrugs().get("Ibeprofen"));
+        assertEquals("200.0", stoppedDateRow.getDrugs().get("Paracetemol"));
+    }
+
+
+    @Test
+    public void shouldMapDrugOrderWhichHaveNoStopDate() throws Exception {
+        ArrayList<Order> drugOrders = new ArrayList<>();
+        Date now = new Date();
+        DrugOrder paracetemol = new DrugOrderBuilder().withDrugName("Paracetemol").withDateActivated(now).withDose(200.0).withConcept(new ConceptBuilder().withName("Paracetemol").withSet(false).withDataType("N/A").build()).build();
+        drugOrders.add(paracetemol);
+
+        TreatmentRegimen treatmentRegimen = drugOrderToTreatmentRegimenMapper.map(drugOrders, null);
+
+        assertNotNull(treatmentRegimen);
+        assertEquals(1, treatmentRegimen.getHeaders().size());
+        Iterator<EncounterTransaction.Concept> headerIterator = treatmentRegimen.getHeaders().iterator();
+        assertEquals("Paracetemol", headerIterator.next().getName());
+        assertEquals(1, treatmentRegimen.getRows().size());
+        Iterator<RegimenRow> rowIterator = treatmentRegimen.getRows().iterator();
+
+        RegimenRow startDateRow = rowIterator.next();
+        assertEquals(getOnlyDate(now), startDateRow.getDate());
+        assertEquals("200.0", startDateRow.getDrugs().get("Paracetemol"));
+    }
+
+    @Test
+    public void shouldMapDrugOrdersWhichStartOnDifferentDatesAndOneStoppedBeforeAnotherStartsContinues() throws Exception {
+        ArrayList<Order> drugOrders = new ArrayList<>();
+        Date now = new Date();
+        DrugOrder ibeprofen = new DrugOrderBuilder().withDrugName("Ibeprofen").withDateActivated(now).withDose(1000.0).withAutoExpireDate(addDays(now, 2)).withConcept(new ConceptBuilder().withName("Ibeprofen").withSet(false).withDataType("N/A").build()).build();
+        DrugOrder paracetemol = new DrugOrderBuilder().withDrugName("Paracetemol").withDateActivated(addDays(now, 5)).withDose(200.0).withConcept(new ConceptBuilder().withName("Paracetemol").withSet(false).withDataType("N/A").build()).build();
+        drugOrders.add(ibeprofen);
+        drugOrders.add(paracetemol);
+
+        TreatmentRegimen treatmentRegimen = drugOrderToTreatmentRegimenMapper.map(drugOrders, null);
+
+        assertNotNull(treatmentRegimen);
+        assertEquals(2, treatmentRegimen.getHeaders().size());
+        Iterator<EncounterTransaction.Concept> headerIterator = treatmentRegimen.getHeaders().iterator();
+        assertEquals("Ibeprofen", headerIterator.next().getName());
+        assertEquals("Paracetemol", headerIterator.next().getName());
+        assertEquals(3, treatmentRegimen.getRows().size());
+        Iterator<RegimenRow> rowIterator = treatmentRegimen.getRows().iterator();
+
+        RegimenRow startDateRow = rowIterator.next();
+        assertEquals(getOnlyDate(now), startDateRow.getDate());
+        assertEquals("1000.0", startDateRow.getDrugs().get("Ibeprofen"));
+        assertEquals(null, startDateRow.getDrugs().get("Paracetemol"));
+
+        RegimenRow secondRow = rowIterator.next();
+        assertEquals(getOnlyDate(addDays(now, 2)), secondRow.getDate());
+        assertEquals("Stop", secondRow.getDrugs().get("Ibeprofen"));
+        assertEquals(null, secondRow.getDrugs().get("Paracetemol"));
+
+        RegimenRow stoppedDateRow = rowIterator.next();
+        assertEquals(getOnlyDate(addDays(now, 5)), stoppedDateRow.getDate());
+        assertEquals(null, stoppedDateRow.getDrugs().get("Ibeprofen"));
+        assertEquals("200.0", stoppedDateRow.getDrugs().get("Paracetemol"));
+    }
+
+
+    @Test
+    public void shouldFetchTheAsTheOrderSpecifiedInTheConceptNames() throws Exception {
+        ArrayList<Order> drugOrders = new ArrayList<>();
+        Date now = new Date();
+        DrugOrder ibeprofen = new DrugOrderBuilder().withDrugName("Ibeprofen").withDateActivated(now).withDose(1000.0).withAutoExpireDate(addDays(now, 2)).withConcept(new ConceptBuilder().withName("Ibeprofen").withSet(false).withDataType("N/A").build()).build();
+        DrugOrder paracetemol = new DrugOrderBuilder().withDrugName("Paracetemol").withDateActivated(addDays(now, 5)).withDose(200.0).withConcept(new ConceptBuilder().withName("Paracetemol").withSet(false).withDataType("N/A").build()).build();
+        drugOrders.add(ibeprofen);
+        drugOrders.add(paracetemol);
+
+        ConceptName paracetamolConceptName = new ConceptName("Paracetemol", new Locale("en", "in"));
+        ConceptName ibeprofenConceptName = new ConceptName("Ibeprofen", new Locale("en", "in"));
+
+        Concept paracetemolConcept= new ConceptBuilder().withName(paracetamolConceptName).withDescription("Description").withClass("Some").withDataType("N/A").withShortName("Paracetemol").build();;
+        Concept ibeprofenConcept= new ConceptBuilder().withName(ibeprofenConceptName).withDescription("Description").withClass("Some").withDataType("N/A").withShortName("Paracetemol").build();;
+
+        Set<Concept> concepts = new LinkedHashSet<>();
+        concepts.add(paracetemolConcept);
+        concepts.add(ibeprofenConcept);
+
+        TreatmentRegimen treatmentRegimen = drugOrderToTreatmentRegimenMapper.map(drugOrders, concepts);
+
+        assertNotNull(treatmentRegimen);
+        assertEquals(2, treatmentRegimen.getHeaders().size());
+        Iterator<EncounterTransaction.Concept> headerIterator = treatmentRegimen.getHeaders().iterator();
+        assertEquals("Paracetemol", headerIterator.next().getName());
+        assertEquals("Ibeprofen", headerIterator.next().getName());
+        assertEquals(false, headerIterator.hasNext());
+        assertEquals(3, treatmentRegimen.getRows().size());
+
+        Iterator<RegimenRow> rowIterator = treatmentRegimen.getRows().iterator();
+
+        RegimenRow startDateRow = rowIterator.next();
+        assertEquals(getOnlyDate(now), startDateRow.getDate());
+        assertEquals("1000.0", startDateRow.getDrugs().get("Ibeprofen"));
+        assertEquals(null, startDateRow.getDrugs().get("Paracetemol"));
+
+        RegimenRow secondRow = rowIterator.next();
+        assertEquals(getOnlyDate(addDays(now, 2)), secondRow.getDate());
+        assertEquals("Stop", secondRow.getDrugs().get("Ibeprofen"));
+        assertEquals(null, secondRow.getDrugs().get("Paracetemol"));
+
+        RegimenRow stoppedDateRow = rowIterator.next();
+        assertEquals(getOnlyDate(addDays(now, 5)), stoppedDateRow.getDate());
+        assertEquals(null, stoppedDateRow.getDrugs().get("Ibeprofen"));
+        assertEquals("200.0", stoppedDateRow.getDrugs().get("Paracetemol"));
     }
 
 }

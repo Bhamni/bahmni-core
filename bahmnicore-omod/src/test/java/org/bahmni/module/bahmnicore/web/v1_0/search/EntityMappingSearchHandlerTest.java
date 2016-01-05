@@ -20,6 +20,7 @@ import org.openmrs.module.webservices.rest.web.resource.impl.EmptySearchResult;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -42,6 +43,8 @@ public class EntityMappingSearchHandlerTest {
     String PROGRAM_OBS_TEMPLATE = "program_obsTemplate";
     String ENTITY1_UUID = "entity1-uuid";
     String ENTITY2_UUID = "entity2-uuid";
+    String ENTITY3_UUID = "entity3-uuid";
+    String ENTITY4_UUID = "entity4-uuid";
     EntityMappingType programObsTemplateMappingType;
 
     @Before
@@ -49,16 +52,14 @@ public class EntityMappingSearchHandlerTest {
         when(requestContext.getParameter("mappingType")).thenReturn(PROGRAM_OBS_TEMPLATE);
         when(requestContext.getParameter("entityUuid")).thenReturn(ENTITY1_UUID);
         programObsTemplateMappingType = new EntityMappingType(1, null, PROGRAM_OBS_TEMPLATE, "org.openmrs.Program", "org.openmrs.Concept");
-
         when(entityMappingDao.getEntityMappingTypeByName(PROGRAM_OBS_TEMPLATE)).thenReturn(programObsTemplateMappingType);
-
     }
 
     @Test
     public void shouldGetEntityWithMappingsWhenThereAreEntityMappings() throws Exception {
         EntityMapping entityMapping = new EntityMapping(null, null, ENTITY1_UUID, ENTITY2_UUID, programObsTemplateMappingType);
 
-        when(entityMappingDao.getEntityMappings(ENTITY1_UUID, PROGRAM_OBS_TEMPLATE)).thenReturn(Collections.singletonList(entityMapping));
+        when(entityMappingDao.getMappingsOfEntity(ENTITY1_UUID, PROGRAM_OBS_TEMPLATE)).thenReturn(Collections.singletonList(entityMapping));
 
         Program program = new Program();
         Concept concept = new Concept();
@@ -76,7 +77,7 @@ public class EntityMappingSearchHandlerTest {
 
     @Test
     public void shouldGetEntityWithZeroMappingsWhenThereIsNoEntityMapping() throws Exception {
-        when(entityMappingDao.getEntityMappings(ENTITY1_UUID, PROGRAM_OBS_TEMPLATE)).thenReturn(new ArrayList<EntityMapping>());
+        when(entityMappingDao.getMappingsOfEntity(ENTITY1_UUID, PROGRAM_OBS_TEMPLATE)).thenReturn(new ArrayList<EntityMapping>());
 
         Program program = new Program();
         Concept concept = new Concept();
@@ -94,10 +95,41 @@ public class EntityMappingSearchHandlerTest {
     }
 
     @Test
+    public void shouldGetAllEntityMappingsGivenAnEntityMappingType() throws Exception {
+        List<EntityMapping> entityMappingList = new ArrayList<EntityMapping>();
+        when(requestContext.getParameter("entityUuid")).thenReturn(null);
+        EntityMapping entityMappingOne = new EntityMapping(null, null, ENTITY1_UUID, ENTITY2_UUID, programObsTemplateMappingType);
+        EntityMapping entityMappingTwo = new EntityMapping(null, null, ENTITY3_UUID, ENTITY4_UUID, programObsTemplateMappingType);
+        entityMappingList.add(entityMappingOne);
+        entityMappingList.add(entityMappingTwo);
+
+        when(entityMappingDao.getAllEntityMappings(PROGRAM_OBS_TEMPLATE)).thenReturn(entityMappingList);
+
+        Program programOne = new Program();
+        Program programTwo = new Program();
+        Concept concept = new Concept();
+
+        when(entityDao.getByUuid(ENTITY1_UUID, Program.class)).thenReturn(programOne);
+        when(entityDao.getByUuid(ENTITY2_UUID, Concept.class)).thenReturn(concept);
+        when(entityDao.getByUuid(ENTITY3_UUID, Program.class)).thenReturn(programTwo);
+        when(entityDao.getByUuid(ENTITY4_UUID, Concept.class)).thenReturn(concept);
+
+        AlreadyPaged pageableResult = (AlreadyPaged) entityMappingSearchHandler.search(requestContext);
+        List<Entity> entityWithMappings = new ArrayList<>();
+        entityWithMappings.add((Entity) pageableResult.getPageOfResults().get(0));
+        entityWithMappings.add((Entity) pageableResult.getPageOfResults().get(1));
+
+        assertNotNull(entityWithMappings);
+        assertEquals(programOne, entityWithMappings.get(0).getEntity());
+        assertEquals(programTwo, entityWithMappings.get(1).getEntity());
+
+    }
+
+    @Test
     public void shouldGetWithZeroMappingsWhenThereIsNoEntityMappingType() throws Exception {
 
         when(entityMappingDao.getEntityMappingTypeByName(PROGRAM_OBS_TEMPLATE)).thenReturn(null);
-        when(entityMappingDao.getEntityMappings(ENTITY1_UUID, PROGRAM_OBS_TEMPLATE)).thenReturn(new ArrayList<EntityMapping>());
+        when(entityMappingDao.getMappingsOfEntity(ENTITY1_UUID, PROGRAM_OBS_TEMPLATE)).thenReturn(new ArrayList<EntityMapping>());
 
         PageableResult pageableResult = entityMappingSearchHandler.search(requestContext);
 

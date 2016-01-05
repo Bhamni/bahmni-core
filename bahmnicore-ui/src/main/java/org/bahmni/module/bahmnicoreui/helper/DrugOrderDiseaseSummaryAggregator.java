@@ -3,7 +3,6 @@ package org.bahmni.module.bahmnicoreui.helper;
 import org.apache.commons.lang3.StringUtils;
 import org.bahmni.module.bahmnicore.dao.VisitDao;
 import org.bahmni.module.bahmnicore.service.BahmniDrugOrderService;
-import org.bahmni.module.bahmnicore.service.OrderService;
 import org.bahmni.module.bahmnicoreui.contract.DiseaseDataParams;
 import org.bahmni.module.bahmnicoreui.contract.DiseaseSummaryData;
 import org.bahmni.module.bahmnicoreui.mapper.DiseaseSummaryDrugOrderMapper;
@@ -41,7 +40,7 @@ public class DrugOrderDiseaseSummaryAggregator {
         DiseaseSummaryData diseaseSummaryData = new DiseaseSummaryData();
         List<Concept> concepts = conceptHelper.getConceptsForNames(diseaseDataParams.getDrugConcepts());
         if (!concepts.isEmpty()) {
-            List<DrugOrder> drugOrders = drugOrderService.getPrescribedDrugOrdersForConcepts(patient, true, getVisits(patient, diseaseDataParams), concepts);
+            List<DrugOrder> drugOrders = drugOrderService.getPrescribedDrugOrdersForConcepts(patient, true, getVisits(patient, diseaseDataParams), concepts, diseaseDataParams.getStartDate(), diseaseDataParams.getEndDate() );
             diseaseSummaryData.addTabularData(diseaseSummaryDrugOrderMapper.map(drugOrders, diseaseDataParams.getGroupBy()));
             diseaseSummaryData.addConceptDetails(conceptHelper.getConceptDetails(concepts));
         }

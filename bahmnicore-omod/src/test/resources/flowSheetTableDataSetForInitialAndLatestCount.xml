@@ -48,6 +48,7 @@
                   uuid="9bc5693a-f558-40c9-8177-14pw42119c92"/>
     <concept concept_id="301" retired="false" datatype_id="1" class_id="11" is_set="false" creator="1"
              date_created="2008-08-15 15:27:51.0" version="" uuid="0cbe2eoa-cd5f-4f46-ik59-26227c9265ab"/>
+    <concept_numeric concept_id="301" hi_normal="108" low_normal="98" units="F" precise="0"/>
     <concept_name concept_id="301" name="Temperature" locale="en" creator="1" date_created="2004-08-12 00:00:00.0"
                   concept_name_id="3001" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false"
                   uuid="9bc5693a-f558-40c9-8177-142a4bpq9c93"/>

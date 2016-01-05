@@ -1,5 +1,6 @@
 package org.bahmni.module.bahmnicore.service.impl;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.bahmni.module.bahmnicore.contract.drugorder.ConceptData;
@@ -44,6 +45,7 @@ import org.openmrs.module.emrapi.utils.HibernateLazyLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
 import java.util.*;
 
 @Service
@@ -100,13 +102,19 @@ public class BahmniDrugOrderServiceImpl implements BahmniDrugOrderService {
 
     @Override
     public List<DrugOrder> getActiveDrugOrders(String patientUuid) {
-        return getActiveDrugOrders(patientUuid, new Date());
+        return getActiveDrugOrders(patientUuid, new Date(), null, null);
     }
 
-    private List<DrugOrder> getActiveDrugOrders(String patientUuid, Date asOfDate) {
+    @Override
+    public List<DrugOrder> getActiveDrugOrders(String patientUuid, Set<Concept> conceptsToFilter, Set<Concept> conceptsToExclude) {
+        return getActiveDrugOrders(patientUuid, new Date(), conceptsToFilter, conceptsToExclude);
+    }
+
+    private List<DrugOrder> getActiveDrugOrders(String patientUuid, Date asOfDate, Set<Concept> conceptsToFilter, Set<Concept> conceptsToExclude) {
         Patient patient = openmrsPatientService.getPatientByUuid(patientUuid);
-        List<Order> orders = orderService.getActiveOrders(patient, orderService.getOrderTypeByName("Drug order"),
-                orderService.getCareSettingByName(CareSetting.CareSettingType.OUTPATIENT.toString()), asOfDate);
+        CareSetting careSettingByName = orderService.getCareSettingByName(CareSetting.CareSettingType.OUTPATIENT.toString());
+        List<Order> orders = orderDao.getActiveOrders(patient, orderService.getOrderTypeByName("Drug order"),
+                careSettingByName, asOfDate, conceptsToFilter, conceptsToExclude);
         return getDrugOrders(orders);
     }
 
@@ -123,22 +131,35 @@ public class BahmniDrugOrderServiceImpl implements BahmniDrugOrderService {
     }
 
     @Override
-    public List<DrugOrder> getPrescribedDrugOrders(String patientUuid, Boolean includeActiveVisit, Integer numberOfVisits) {
+    public List<DrugOrder> getPrescribedDrugOrders(List<String> visitUuids, String patientUuid, Boolean includeActiveVisit, Integer numberOfVisits, Date startDate, Date endDate, Boolean getEffectiveOrdersOnly) {
+        if(CollectionUtils.isNotEmpty(visitUuids)) {
+            return orderDao.getPrescribedDrugOrders(visitUuids);
+        } else {
+            Patient patient = openmrsPatientService.getPatientByUuid(patientUuid);
+            return orderDao.getPrescribedDrugOrders(patient, includeActiveVisit, numberOfVisits, startDate, endDate, getEffectiveOrdersOnly);
+        }
+    }
+
+    public Map<String,DrugOrder> getDiscontinuedDrugOrders(List<DrugOrder> drugOrders){
+        return orderDao.getDiscontinuedDrugOrders(drugOrders);
+    }
+
+    @Override
+    public List<DrugOrder> getInactiveDrugOrders(String patientUuid, Set<Concept> concepts, Set<Concept> drugConceptsToBeExcluded) {
         Patient patient = openmrsPatientService.getPatientByUuid(patientUuid);
-        return orderDao.getPrescribedDrugOrders(patient, includeActiveVisit, numberOfVisits);
+        CareSetting careSettingByName = orderService.getCareSettingByName(CareSetting.CareSettingType.OUTPATIENT.toString());
+        Date asOfDate = new Date();
+        List<Order> orders = orderDao.getInactiveOrders(patient, orderService.getOrderTypeByName("Drug order"),
+                careSettingByName, asOfDate, concepts, drugConceptsToBeExcluded);
+        return getDrugOrders(orders);
     }
 
     @Override
-    public List<DrugOrder> getPrescribedDrugOrders(List<String> visitUuids) {
-        return orderDao.getPrescribedDrugOrders(visitUuids);
-    }
-
-    @Override
-    public List<DrugOrder> getPrescribedDrugOrdersForConcepts(Patient patient, Boolean includeActiveVisit, List<Visit> visits, List<Concept> concepts) {
+    public List<DrugOrder> getPrescribedDrugOrdersForConcepts(Patient patient, Boolean includeActiveVisit, List<Visit> visits, List<Concept> concepts, Date startDate, Date endDate) {
         if(concepts.isEmpty() || concepts == null){
             return new ArrayList<>();
         }
-        return orderDao.getPrescribedDrugOrdersForConcepts(patient, includeActiveVisit, visits, concepts);
+        return orderDao.getPrescribedDrugOrdersForConcepts(patient, includeActiveVisit, visits, concepts, startDate , endDate);
     }
 
     @Override
@@ -155,10 +176,10 @@ public class BahmniDrugOrderServiceImpl implements BahmniDrugOrderService {
     }
 
     @Override
-    public List<Order> getAllDrugOrders(String patientUuid, Set<Concept> conceptsForDrugs) {
+    public List<Order> getAllDrugOrders(String patientUuid, Set<Concept> conceptsForDrugs, Date startDate, Date endDate, Set<Concept> drugConceptsToBeExcluded) throws ParseException {
         Patient patientByUuid = openmrsPatientService.getPatientByUuid(patientUuid);
         OrderType orderTypeByUuid = orderService.getOrderTypeByUuid(OrderType.DRUG_ORDER_TYPE_UUID);
-        return orderDao.getAllOrders(patientByUuid, orderTypeByUuid, conceptsForDrugs);
+        return orderDao.getAllOrders(patientByUuid, orderTypeByUuid, conceptsForDrugs, startDate, endDate, drugConceptsToBeExcluded);
     }
 
     private List<EncounterTransaction.Concept> fetchOrderAttributeConcepts() {
@@ -219,7 +240,7 @@ public class BahmniDrugOrderServiceImpl implements BahmniDrugOrderService {
     }
 
     private List<DrugOrder> checkOverlappingOrderAndUpdate(List<DrugOrder> newDrugOrders, String patientUuid, Date orderDate) {
-        List<DrugOrder> activeDrugOrders = getActiveDrugOrders(patientUuid, orderDate);
+        List<DrugOrder> activeDrugOrders = getActiveDrugOrders(patientUuid, orderDate, null, null);
         List<DrugOrder> drugOrdersToRemove = new ArrayList<>();
         for (DrugOrder newDrugOrder : newDrugOrders) {
             for (DrugOrder activeDrugOrder : activeDrugOrders) {

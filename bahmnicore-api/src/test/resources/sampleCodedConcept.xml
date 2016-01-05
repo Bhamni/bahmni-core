@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+
+    <concept concept_id="90" retired="0" datatype_id="4" class_id="1" is_set="false" creator="1" date_created="2013-12-04 11:36:42" uuid="63230431-2fe5-49fc-b535-ae42bc909747" />
+    <concept_name concept_id="90" name="List of Diagnoses" locale="en" creator="1" date_created="2005-01-01 00:00:00.0" concept_name_id="1001" voided="false" uuid="0a2d4cb7-955b-4837-80f7-0ebb94092afb" concept_name_type="FULLY_SPECIFIED" locale_preferred="0"/>
+
+    <concept concept_id="901" retired="0" datatype_id="4" class_id="1" is_set="false" creator="1" date_created="2013-12-04 11:36:42" uuid="65230431-2fe5-49fc-b535-ae42bc90970e" />
+    <concept_name concept_id="901" name="Dengue Fever" locale="en" creator="1" date_created="2005-01-01 00:00:00.0" concept_name_id="1002" voided="false" uuid="5d2d4cb7-955b-4837-81d7-0ebb94092afc" concept_name_type="FULLY_SPECIFIED" locale_preferred="0"/>
+    <concept_answer concept_answer_id="1001" concept_id="90" answer_concept="901" creator="1" date_created="2008-08-18 12:34:26.0" uuid="ef230431-2fe5-49fc-b535-ae42bc909747"/>
+
+    <concept concept_id="902" retired="0" datatype_id="4" class_id="1" is_set="false" creator="1" date_created="2013-12-04 11:36:42" uuid="65230431-2fe5-49fc-b535-ae42bc90974f" />
+    <concept_name concept_id="902" name="Abdominal Aortic Aneurism" locale="en" creator="1" date_created="2005-01-01 00:00:00.0" concept_name_id="1003" voided="false" uuid="5d2d4cb7-955e-4837-30f7-0ebb94092afc" concept_name_type="FULLY_SPECIFIED" locale_preferred="0"/>
+    <concept_answer concept_answer_id="1002" concept_id="90" answer_concept="902" creator="1" date_created="2008-08-18 12:34:26.0" uuid="65230431-2fe5-49fc-b535-ae42bc909747"/>
+
+    <concept concept_id="903" retired="0" datatype_id="4" class_id="1" is_set="false" creator="1" date_created="2013-12-04 11:36:42" uuid="65230431-2fe5-49fc-b535-ae54bc909747" />
+    <concept_name concept_id="903" name="Abscess, Skin" locale="en" creator="1" date_created="2005-01-01 00:00:00.0" concept_name_id="1004" voided="false" uuid="5d2d4cb7-955b-4837-90f7-3ebb94092afc" concept_name_type="FULLY_SPECIFIED" locale_preferred="0"/>
+    <concept_answer concept_answer_id="1003" concept_id="90" answer_concept="903" creator="1" date_created="2008-08-18 12:34:26.0" uuid="45230431-2fe5-49fc-b535-ae42bc909747"/>
+
+
+    <concept concept_id="904" retired="0" datatype_id="4" class_id="1" is_set="false" creator="1" date_created="2013-12-04 11:36:42" uuid="65230431-2fe5-49fc-b535-ae42bc90979d" />
+    <concept_name concept_id="904" name="Acne" locale="en" creator="1" date_created="2005-01-01 00:00:00.0" concept_name_id="1005" voided="false" uuid="5d2d4cb7-d55b-4837-80f7-0eee94092afc" concept_name_type="FULLY_SPECIFIED" locale_preferred="0"/>
+    <concept_name concept_id="904" name="acne" locale="en" creator="1" date_created="2005-01-01 00:00:00.0" concept_name_id="1006" voided="false" uuid="5d2d4cb7-355b-4837-80f7-0ebbac092afc" concept_name_type="SHORT" locale_preferred="0"/>
+    <concept_answer concept_answer_id="1004" concept_id="90" answer_concept="904" creator="1" date_created="2008-08-18 12:34:26.0" uuid="12230431-2fe5-49fc-b535-ae42bc909747"/>
+
+
+    <concept concept_id="905" retired="0" datatype_id="4" class_id="1" is_set="false" creator="1" date_created="2013-12-04 11:36:42" uuid="65230431-2fe5-49fc-b535-ae43ec909735" />
+    <concept_name concept_id="905" name="Acute Porphyria (voided)" locale="en" creator="1" date_created="2005-01-01 00:00:00.0" concept_name_id="1007" voided="true" uuid="5d2d4cb7-93fb-3837-80f7-0ebb94092afc" concept_name_type="FULLY_SPECIFIED" locale_preferred="0"/>
+    <concept_name concept_id="905" name="Acne" locale="en" creator="1" date_created="2005-01-01 00:00:00.0" concept_name_id="1008" voided="true" uuid="5d2d4cb7-93fb-7843-80f7-0ebb94092afc" concept_name_type="SHORT" locale_preferred="0"/>
+    <concept_answer concept_answer_id="1005" concept_id="90" answer_concept="905" creator="1" date_created="2008-08-18 12:34:26.0" uuid="a2230431-2fe5-49fc-b535-ae42bc909747"/>
+</dataset>

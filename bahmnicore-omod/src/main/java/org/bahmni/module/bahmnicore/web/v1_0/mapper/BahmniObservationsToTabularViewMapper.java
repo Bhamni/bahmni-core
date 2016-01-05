@@ -8,14 +8,11 @@ import org.openmrs.module.bahmniemrapi.pivottable.contract.PivotTable;
 import org.openmrs.module.emrapi.encounter.domain.EncounterTransaction;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Component
 public class BahmniObservationsToTabularViewMapper {
-    public PivotTable constructTable(Set<EncounterTransaction.Concept> conceptNames, Collection<BahmniObservation> bahmniObservations) {
+    public PivotTable constructTable(Set<EncounterTransaction.Concept> conceptNames, Collection<BahmniObservation> bahmniObservations, String groupByConcept) {
         PivotTable pivotTable = new PivotTable();
         if (bahmniObservations == null) {
             return pivotTable;
@@ -24,12 +21,31 @@ public class BahmniObservationsToTabularViewMapper {
         List<PivotRow> rows = new ArrayList<>();
 
         for (BahmniObservation bahmniObservation : bahmniObservations) {
-            rows.add(constructRow(bahmniObservation, conceptNames));
+            PivotRow pivotRow = constructRow(bahmniObservation, conceptNames);
+            if (isNonNullRow(groupByConcept, pivotRow)) {
+                rows.add(pivotRow);
+            }
         }
 
         pivotTable.setRows(rows);
         pivotTable.setHeaders(conceptNames);
         return pivotTable;
+    }
+
+    private boolean isNonNullRow(String groupByConcept, PivotRow pivotRow) {
+        Map<String, ArrayList<BahmniObservation>> pivotRowColumns = pivotRow.getColumns();
+        boolean nonNullRow = false;
+
+        for (String key : pivotRowColumns.keySet()) {
+            if (!key.equals(groupByConcept) && pivotRowColumns.get(key) != null) {
+                ArrayList<BahmniObservation> obs = pivotRowColumns.get(key);
+                for (BahmniObservation ob : obs) {
+                    if (ob.getValue() != null)
+                        nonNullRow = true;
+                }
+            }
+        }
+        return nonNullRow;
     }
 
     private PivotRow constructRow(BahmniObservation bahmniObservation, Set<EncounterTransaction.Concept> conceptNames) {

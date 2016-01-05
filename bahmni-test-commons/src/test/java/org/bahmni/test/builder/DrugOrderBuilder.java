@@ -13,9 +13,24 @@
  */
 package org.bahmni.test.builder;
 
-import org.openmrs.*;
+import org.openmrs.Concept;
+import org.openmrs.ConceptName;
+import org.openmrs.Drug;
+import org.openmrs.DrugOrder;
+import org.openmrs.Order;
+import org.openmrs.OrderFrequency;
+import org.openmrs.OrderType;
+import org.openmrs.Person;
+import org.openmrs.PersonName;
+import org.openmrs.User;
+import org.openmrs.Visit;
+import org.springframework.util.ReflectionUtils;
 
-import java.util.*;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
+import java.util.UUID;
 
 public class DrugOrderBuilder {
     private DrugOrder order;
@@ -138,6 +153,11 @@ public class DrugOrderBuilder {
         return this;
     }
 
+    public DrugOrderBuilder withPreviousOrder(DrugOrder previousOrder){
+        order.setPreviousOrder(previousOrder);
+        return this;
+    }
+
     public DrugOrderBuilder withConcept(Concept concept) {
         order.setConcept(concept);
         return this;
@@ -145,6 +165,13 @@ public class DrugOrderBuilder {
 
     public DrugOrderBuilder withOrderAction(Order.Action action) {
         order.setAction(action);
+        return this;
+    }
+
+    public DrugOrderBuilder withOrderNumber(String orderNum) {
+        java.lang.reflect.Field orderNumberField = ReflectionUtils.findField(DrugOrder.class, "orderNumber");
+        orderNumberField.setAccessible(true);
+        ReflectionUtils.setField(orderNumberField,order,orderNum);
         return this;
     }
 }

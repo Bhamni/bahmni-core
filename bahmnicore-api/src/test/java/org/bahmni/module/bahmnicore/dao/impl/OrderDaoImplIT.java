@@ -1,7 +1,9 @@
 package org.bahmni.module.bahmnicore.dao.impl;
 
 import org.bahmni.module.bahmnicore.BaseIntegrationTest;
+import org.bahmni.module.bahmnicore.dao.ApplicationDataDirectory;
 import org.bahmni.module.bahmnicore.service.OrderService;
+import org.bahmni.module.bahmnicore.util.BahmniDateUtil;
 import org.junit.Test;
 import org.openmrs.*;
 import org.openmrs.api.ConceptService;
@@ -12,10 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
@@ -41,7 +40,7 @@ public class OrderDaoImplIT extends BaseIntegrationTest {
         executeDataSet("patientWithDiscontinuedOrders.xml");
         Patient patient = Context.getPatientService().getPatient(1001);
 
-        List<DrugOrder> drugOrdersInLastVisit = orderDao.getPrescribedDrugOrders(patient, true, null);
+        List<DrugOrder> drugOrdersInLastVisit = orderDao.getPrescribedDrugOrders(patient, true, null, null, null, false);
 
         assertThat(drugOrdersInLastVisit.size(), is(3));
         assertThat(getOrderIds(drugOrdersInLastVisit), hasItems(15, 16, 18));
@@ -52,7 +51,7 @@ public class OrderDaoImplIT extends BaseIntegrationTest {
         executeDataSet("patientWithOrderRevisedInSameEncounter.xml");
         Patient patient = Context.getPatientService().getPatient(1001);
 
-        List<DrugOrder> drugOrdersInLastVisit = orderDao.getPrescribedDrugOrders(patient, true, null);
+        List<DrugOrder> drugOrdersInLastVisit = orderDao.getPrescribedDrugOrders(patient, true, null, null, null, false);
 
         assertThat(drugOrdersInLastVisit.size(), is(1));
         assertThat(getOrderIds(drugOrdersInLastVisit), hasItems(16));
@@ -63,7 +62,7 @@ public class OrderDaoImplIT extends BaseIntegrationTest {
         executeDataSet("patientWithOrderRevisedInDifferentEncounter.xml");
         Patient patient = Context.getPatientService().getPatient(1001);
 
-        List<DrugOrder> drugOrdersInLastVisit = orderDao.getPrescribedDrugOrders(patient, true, null);
+        List<DrugOrder> drugOrdersInLastVisit = orderDao.getPrescribedDrugOrders(patient, true, null, null, null, false);
 
         assertThat(drugOrdersInLastVisit.size(), is(2));
         assertThat(getOrderIds(drugOrdersInLastVisit), hasItems(15, 16));
@@ -74,15 +73,15 @@ public class OrderDaoImplIT extends BaseIntegrationTest {
         executeDataSet("patientWithOrders.xml");
         Patient patient = Context.getPatientService().getPatient(1001);
 
-        List<DrugOrder> drugOrdersInLastVisit = orderDao.getPrescribedDrugOrders(patient, false, 1);
+        List<DrugOrder> drugOrdersInLastVisit = orderDao.getPrescribedDrugOrders(patient, false, 1, null, null, false);
         assertThat(drugOrdersInLastVisit.size(), is(equalTo(1)));
         assertThat(getOrderIds(drugOrdersInLastVisit), hasItems(17));
 
-        List<DrugOrder> drugOrdersInLastTwoVisit = orderDao.getPrescribedDrugOrders(patient, false, 2);
+        List<DrugOrder> drugOrdersInLastTwoVisit = orderDao.getPrescribedDrugOrders(patient, false, 2, null, null, false);
         assertThat(drugOrdersInLastTwoVisit.size(), is(equalTo(3)));
         assertThat(getOrderIds(drugOrdersInLastTwoVisit), hasItems(15, 16, 17));
 
-        List<DrugOrder> drugOrders = orderDao.getPrescribedDrugOrders(patient, false, null);
+        List<DrugOrder> drugOrders = orderDao.getPrescribedDrugOrders(patient, false, null, null, null, false);
         assertThat(drugOrders.size(), is(equalTo(3)));
         assertThat(getOrderIds(drugOrders), hasItems(15, 16, 17));
     }
@@ -92,14 +91,36 @@ public class OrderDaoImplIT extends BaseIntegrationTest {
         executeDataSet("patientWithOrders.xml");
         Patient patient = Context.getPatientService().getPatient(1001);
 
-        List<DrugOrder> drugOrders = orderDao.getPrescribedDrugOrders(patient, true, null);
-        assertThat(drugOrders.size(), is(equalTo(4)));
-        assertThat(getOrderIds(drugOrders), hasItems(15, 16, 17, 19));
+        List<DrugOrder> drugOrders = orderDao.getPrescribedDrugOrders(patient, true, null, null, null, false);
+        assertThat(drugOrders.size(), is(equalTo(7)));
+        assertThat(getOrderIds(drugOrders), hasItems(15, 16, 17, 19, 21, 23, 24));
 
 
-        drugOrders = orderDao.getPrescribedDrugOrders(patient, null, null);
+        drugOrders = orderDao.getPrescribedDrugOrders(patient, null, null, null, null, false);
         assertThat(drugOrders.size(), is(equalTo(3)));
         assertThat(getOrderIds(drugOrders), hasItems(15, 16, 17));
+    }
+
+    @Test
+    public void getPrescribedDrugOrders_ShouldFetchAllPrescribedDrugOrdersWithInGivenDateRange() throws Exception{
+        executeDataSet("patientWithOrders.xml");
+        Patient patient = Context.getPatientService().getPatient(1001);
+
+        Date startDate = BahmniDateUtil.convertToDate("2013-01-01T00:00:00.000", BahmniDateUtil.DateFormatType.UTC);
+        Date endDate = BahmniDateUtil.convertToDate("2013-09-09T00:00:00.000", BahmniDateUtil.DateFormatType.UTC);
+
+        List<DrugOrder> drugOrders = orderDao.getPrescribedDrugOrders(patient, true, null, startDate, null, false);
+        assertThat(drugOrders.size(), is(equalTo(6)));
+        assertThat(getOrderIds(drugOrders), hasItems(16, 17, 19, 21, 23, 24));
+
+        drugOrders = orderDao.getPrescribedDrugOrders(patient, true, null, startDate, endDate, false);
+        assertThat(drugOrders.size(), is(equalTo(2)));
+        assertThat(getOrderIds(drugOrders), hasItems(16, 17));
+
+        drugOrders = orderDao.getPrescribedDrugOrders(patient, true, null, null, endDate, false);
+        assertThat(drugOrders.size(), is(equalTo(3)));
+        assertThat(getOrderIds(drugOrders), hasItems(15, 16, 17));
+
     }
 
     @Test
@@ -125,9 +146,30 @@ public class OrderDaoImplIT extends BaseIntegrationTest {
         List<Visit> visits = orderService.getVisitsWithOrders(patient, "DrugOrder", true, 1);
         assertEquals(1, visits.size());
 
-        List<DrugOrder> result = orderDao.getPrescribedDrugOrdersForConcepts(patient, true, visits, concepts);
+        List<DrugOrder> result = orderDao.getPrescribedDrugOrdersForConcepts(patient, true, visits, concepts, null, null);
         assertEquals(2, result.size());
         assertThat(getOrderIds(result), hasItems(55, 57));
+
+    }
+
+    @Test
+    public void shouldFetchAllPrescribedDrugOrdersForGivenConceptsForGivenNoOfVisitsWithinGivenDateRange() throws Exception {
+        executeDataSet("patientWithOrders.xml");
+        Date startDate = BahmniDateUtil.convertToDate("2013-08-07T00:00:00.000", BahmniDateUtil.DateFormatType.UTC);
+        Date endDate = BahmniDateUtil.convertToDate("2013-08-09T00:00:00.000", BahmniDateUtil.DateFormatType.UTC);
+
+        Patient patient = patientService.getPatient(2);
+
+        List<Concept> concepts = new ArrayList<>();
+        concepts.add(conceptService.getConcept(25));
+        concepts.add(conceptService.getConcept(26));
+
+        List<Visit> visits = orderService.getVisitsWithOrders(patient, "DrugOrder", true, 1);
+        assertEquals(1, visits.size());
+
+        List<DrugOrder> result = orderDao.getPrescribedDrugOrdersForConcepts(patient, true, visits, concepts, startDate, endDate);
+        assertEquals(1, result.size());
+        assertThat(getOrderIds(result), hasItems(57));
 
     }
 
@@ -217,7 +259,58 @@ public class OrderDaoImplIT extends BaseIntegrationTest {
         assertThat(allOrdersForVisits, hasItems(firstOrder, secondOrder));
     }
 
+    @Test
+    public void getActiveDrugOrdersForPatient() throws Exception {
+        executeDataSet("patientWithOrders.xml");
+        Patient patient = Context.getPatientService().getPatient(1001);
+        OrderType orderType = Context.getOrderService().getOrderType(1);
+        List<Order> activeOrders = orderDao.getActiveOrders(patient, orderType, null, new Date(), null, null);
 
+        assertEquals(activeOrders.size(), 2);
+        assertEquals(activeOrders.get(0).getUuid(), "cba00378-0c03-11e4-bb80-f18addb6f836");
+        assertEquals(activeOrders.get(1).getUuid(), "cba00378-0c03-11e4-bb80-f18addb6f838");
+    }
+    @Test
+    public void getActiveDrugOrdersForPatientFilteredByDrugConcepts() throws Exception {
+        executeDataSet("patientWithOrders.xml");
+        Patient patient = Context.getPatientService().getPatient(1001);
+        OrderType orderType = Context.getOrderService().getOrderType(1);
+        Concept concept = Context.getConceptService().getConcept(16);
+        HashSet<Concept> concepts = new HashSet<Concept>();
+        concepts.add(concept);
+
+        List<Order> activeOrders = orderDao.getActiveOrders(patient, orderType, null, new Date(), concepts, null);
+
+        assertEquals(activeOrders.size(), 1);
+        assertEquals(activeOrders.get(0).getUuid(), "cba00378-0c03-11e4-bb80-f18addb6f836");
+    }
+
+    @Test
+    public void getInactiveDrugOrdersForPatient() throws Exception {
+        executeDataSet("patientWithOrders.xml");
+        Patient patient = Context.getPatientService().getPatient(1001);
+        OrderType orderType = Context.getOrderService().getOrderType(1);
+        List<Order> activeOrders = orderDao.getInactiveOrders(patient, orderType, null, new Date(), null, null);
+
+        assertEquals(activeOrders.size(), 2);
+        assertEquals(activeOrders.get(0).getUuid(), "cba00378-0c03-11e4-bb80-f18addb6f837");
+        assertEquals(activeOrders.get(1).getUuid(), "cba00378-0c03-11e4-bb80-f18addb6f839");
+    }
+
+    @Test
+    public void getInactiveDrugOrdersForPatientFilteredByDrugConcepts() throws Exception {
+        executeDataSet("patientWithOrders.xml");
+        Patient patient = Context.getPatientService().getPatient(1001);
+        OrderType orderType = Context.getOrderService().getOrderType(1);
+        Concept concept = Context.getConceptService().getConcept(16);
+        HashSet<Concept> concepts = new HashSet<Concept>();
+        concepts.add(concept);
+
+        List<Order> activeOrders = orderDao.getInactiveOrders(patient, orderType, null, new Date(), concepts, null);
+
+        assertEquals(activeOrders.size(), 1);
+        assertEquals(activeOrders.get(0).getUuid(), "cba00378-0c03-11e4-bb80-f18addb6f839");
+    }
 
     private boolean visitWithUuidExists(String uuid, List<Visit> visits) {
         boolean exists = false;

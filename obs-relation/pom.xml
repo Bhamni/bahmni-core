@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.bahmni.module</groupId>
         <artifactId>bahmni</artifactId>
-        <version>0.78-SNAPSHOT</version>
+        <version>0.79-SNAPSHOT</version>
     </parent>
     <artifactId>obs-relationship</artifactId>
     <packaging>jar</packaging>
@@ -47,9 +47,46 @@
         <dependency>
             <groupId>org.bahmni.test</groupId>
             <artifactId>bahmni-test-commons</artifactId>
-            <version>0.78-SNAPSHOT</version>
+            <version>0.79-SNAPSHOT</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.7.5.201505241946</version>
+                <executions>
+                    <execution>
+                        <id>check</id>
+                        <goals>
+                            <goal>report</goal>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <rule>
+                                    <element>BUNDLE</element>
+                                    <limits>
+                                        <limit>
+                                            <counter>LINE</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0.00</minimum>
+                                        </limit>
+                                        <limit>
+                                            <counter>BRANCH</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0.00</minimum>
+                                        </limit>
+                                    </limits>
+                                </rule>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

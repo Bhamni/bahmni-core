@@ -32,7 +32,17 @@ public class DiseaseTemplateServiceImplIT extends BaseIntegrationTest {
 
     @Test
     public void get_disease_template_for_observation_template_concept() throws Exception {
-        DiseaseTemplate diseaseTemplate = diseaseTemplateService.diseaseTemplateFor("b2a59310-58e8-11e4-8ed6-0800200c9a66", "Blood Pressure");
+        DiseaseTemplatesConfig diseaseTemplatesConfig = new DiseaseTemplatesConfig();
+        List<DiseaseTemplateConfig> diseaseTemplateConfigList = new ArrayList<>();
+        DiseaseTemplateConfig diseaseTemplateConfig = new DiseaseTemplateConfig();
+        diseaseTemplateConfig.setTemplateName("Blood Pressure");
+        diseaseTemplateConfigList.add(diseaseTemplateConfig);
+        diseaseTemplatesConfig.setPatientUuid("b2a59310-58e8-11e4-8ed6-0800200c9a66");
+        diseaseTemplatesConfig.setStartDate(null);
+        diseaseTemplatesConfig.setEndDate(null);
+        diseaseTemplatesConfig.setDiseaseTemplateConfigList(diseaseTemplateConfigList);
+
+        DiseaseTemplate diseaseTemplate = diseaseTemplateService.diseaseTemplateFor(diseaseTemplatesConfig);
         assertEquals(1, diseaseTemplate.getObservationTemplates().size());
         ObservationTemplate observationTemplate = diseaseTemplate.getObservationTemplates().get(0);
         assertEquals(1, observationTemplate.getBahmniObservations().size());
@@ -42,7 +52,17 @@ public class DiseaseTemplateServiceImplIT extends BaseIntegrationTest {
 
     @Test
     public void get_disease_template_ignores_invalid_template_name() throws Exception {
-        DiseaseTemplate diseaseTemplate = diseaseTemplateService.diseaseTemplateFor("b2a59310-58e8-11e4-8ed6-0800200c9a66", "Non existing Concept");
+        DiseaseTemplatesConfig diseaseTemplatesConfig = new DiseaseTemplatesConfig();
+        List<DiseaseTemplateConfig> diseaseTemplateConfigList = new ArrayList<>();
+        DiseaseTemplateConfig diseaseTemplateConfig = new DiseaseTemplateConfig();
+        diseaseTemplateConfig.setTemplateName("Non existing Concept");
+        diseaseTemplateConfigList.add(diseaseTemplateConfig);
+        diseaseTemplatesConfig.setPatientUuid("b2a59310-58e8-11e4-8ed6-0800200c9a66");
+        diseaseTemplatesConfig.setStartDate(null);
+        diseaseTemplatesConfig.setEndDate(null);
+        diseaseTemplatesConfig.setDiseaseTemplateConfigList(diseaseTemplateConfigList);
+
+        DiseaseTemplate diseaseTemplate = diseaseTemplateService.diseaseTemplateFor(diseaseTemplatesConfig);
         assertEquals("Non existing Concept", diseaseTemplate.getConcept().getName());
         assertEquals(0, diseaseTemplate.getObservationTemplates().size());
     }

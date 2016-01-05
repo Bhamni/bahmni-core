@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+    <concept concept_id="2004" retired="false" datatype_id="4" class_id="1" is_set="false" creator="1" date_created="2005-01-01 00:00:00.0" uuid="49310077-e601-4326-bb05-c6e11fe3d9ba"/>
+    <concept_name concept_id="2004" name="T" locale="en" creator="1" date_created="2005-01-01 00:00:00.0" concept_name_id="241" voided="false" uuid="49310077-e601-4326-bb05-c6e11fe3d9ba" concept_name_type="FULLY_SPECIFIED" locale_preferred="0"/>
+
+    <concept concept_id="2005" retired="false" datatype_id="4" class_id="1" is_set="false" creator="1" date_created="2005-01-01 00:00:00.0" uuid="a9310077-e601-4326-bb05-c6e11fe3d9ba"/>
+    <concept_name concept_id="2005" name="H" locale="en" creator="1" date_created="2005-01-01 00:00:00.0" concept_name_id="242" voided="false" uuid="b9310077-e601-4326-bb05-c6e11fe3d9ba" concept_name_type="FULLY_SPECIFIED" locale_preferred="0"/>
+
+    <concept concept_id="3010" retired="false" datatype_id="4" class_id="1" is_set="false" creator="1" date_created="2005-01-01 00:00:00.0" uuid="59310077-e601-4326-bb06-c6e11fe3d9ba"/>
+    <concept_name concept_id="3010" name="All TB Drugs" locale="en" creator="1" date_created="2005-01-01 00:00:00.0" concept_name_id="243" voided="false" uuid="79310077-e601-4326-bb05-c6e11fe3d9ba" concept_name_type="FULLY_SPECIFIED" locale_preferred="0"/>
+
+    <concept_set concept_set="3010" concept_id="2005" concept_set_id="2011" sort_weight="1" creator="1" date_created="2005-01-01 00:00:00.0" uuid="49310077-eeee-4326-bb05-c6e11fd3d9ba" ></concept_set>
+    <concept_set concept_set="3010" concept_id="2004" concept_set_id="2012" sort_weight="1" creator="1" date_created="2005-01-01 00:00:00.0" uuid="49310077-eeee-4326-bb05-c6e11f33d9ba" ></concept_set>
+
+    <concept concept_id="2006" retired="false" datatype_id="10" class_id="1" is_set="false" creator="1" date_created="2005-01-01 00:00:00.0" uuid="49310077-1111-4326-bb05-c6e11fe3d9ba"/>
+    <concept_name concept_id="2006" name="dispensed" locale="en" creator="1" date_created="2005-01-01 00:00:00.0" concept_name_id="264" voided="false" uuid="11110077-e601-4326-bb05-c6e11fe3d9ba" concept_name_type="FULLY_SPECIFIED" locale_preferred="0"/>
+
+    <concept concept_id="2007" retired="false" datatype_id="4" class_id="1" is_set="false" creator="1" date_created="2005-01-01 00:00:00.0" uuid="49310077-e602-4326-bb05-c6e11fe3d9ba"/>
+    <concept_name concept_id="2007" name="DrugOther" locale="en" creator="1" date_created="2005-01-01 00:00:00.0" concept_name_id="245" voided="false" uuid="49310077-e602-4326-bb05-c6e11fe3d9ba" concept_name_type="FULLY_SPECIFIED" locale_preferred="0"/>
+
+    <drug drug_id="4001" concept_id="2004" dosage_form="51" name="Isoniazid" combination="true" creator="1"
+          date_created="2005-02-24 00:00:00.0" retired="false" uuid="42f00efa-26fe-102b-80cb-0017b9a871b2"/>
+    <drug drug_id="2001" concept_id="2005" dosage_form="51" name="Thioacetazone" combination="true" creator="1"
+          date_created="2005-02-24 00:00:00.0" retired="false" uuid="42f00b94-26fe-102b-80cb-0017a47871b2"/>
+</dataset>

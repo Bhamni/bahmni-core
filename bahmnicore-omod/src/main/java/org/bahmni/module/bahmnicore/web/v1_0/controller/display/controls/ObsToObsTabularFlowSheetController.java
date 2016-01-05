@@ -2,10 +2,13 @@ package org.bahmni.module.bahmnicore.web.v1_0.controller.display.controls;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
+import org.bahmni.module.bahmnicore.extensions.BahmniExtensions;
 import org.bahmni.module.bahmnicore.service.BahmniObsService;
+import org.bahmni.module.bahmnicore.util.BahmniDateUtil;
 import org.bahmni.module.bahmnicore.web.v1_0.mapper.BahmniObservationsToTabularViewMapper;
 import org.openmrs.Concept;
 import org.openmrs.api.ConceptService;
+import org.openmrs.module.bahmniemrapi.drugogram.contract.BaseTableExtension;
 import org.openmrs.module.bahmniemrapi.encountertransaction.contract.BahmniObservation;
 import org.openmrs.module.bahmniemrapi.pivottable.contract.PivotTable;
 import org.openmrs.module.emrapi.encounter.ConceptMapper;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.text.ParseException;
 import java.util.*;
 
 @Controller
@@ -29,16 +33,18 @@ public class ObsToObsTabularFlowSheetController {
     private ConceptService conceptService;
     private BahmniObservationsToTabularViewMapper bahmniObservationsToTabularViewMapper;
     private ConceptMapper conceptMapper;
+    private BahmniExtensions bahmniExtensions;
 
     private static Logger logger = Logger.getLogger(ObsToObsTabularFlowSheetController.class);
 
     @Autowired
     public ObsToObsTabularFlowSheetController(BahmniObsService bahmniObsService, ConceptService conceptService,
-                                              BahmniObservationsToTabularViewMapper bahmniObservationsToTabularViewMapper) {
+                                              BahmniObservationsToTabularViewMapper bahmniObservationsToTabularViewMapper, BahmniExtensions bahmniExtensions) {
         this.bahmniObsService = bahmniObsService;
         this.conceptService = conceptService;
         this.bahmniObservationsToTabularViewMapper = bahmniObservationsToTabularViewMapper;
         this.conceptMapper = new ConceptMapper();
+        this.bahmniExtensions = bahmniExtensions;
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -50,25 +56,78 @@ public class ObsToObsTabularFlowSheetController {
             @RequestParam(value = "groupByConcept", required = true) String groupByConcept,
             @RequestParam(value = "conceptNames", required = false) List<String> conceptNames,
             @RequestParam(value = "initialCount", required = false) Integer initialCount,
-            @RequestParam(value = "latestCount", required = false) Integer latestCount) {
+            @RequestParam(value = "latestCount", required = false) Integer latestCount,
+            @RequestParam(value = "name", required = false) String groovyExtension,
+            @RequestParam(value = "startDate", required = false) String startDateStr,
+            @RequestParam(value = "endDate", required = false) String endDateStr) throws ParseException {
 
         Concept rootConcept = conceptService.getConceptByName(conceptSet);
         Concept childConcept = conceptService.getConceptByName(groupByConcept);
         validate(conceptSet, groupByConcept, rootConcept, childConcept);
+        Date startDate = BahmniDateUtil.convertToDate(startDateStr, BahmniDateUtil.DateFormatType.UTC);
+        Date endDate = BahmniDateUtil.convertToDate(endDateStr, BahmniDateUtil.DateFormatType.UTC);
 
-        Collection<BahmniObservation> bahmniObservations = bahmniObsService.observationsFor(patientUuid, rootConcept, childConcept, numberOfVisits);
+        Collection<BahmniObservation> bahmniObservations = bahmniObsService.observationsFor(patientUuid, rootConcept, childConcept, numberOfVisits, startDate, endDate);
 
-        Set<EncounterTransaction.Concept> leafConcepts = new HashSet<>();
+        Set<EncounterTransaction.Concept> leafConcepts = new LinkedHashSet<>();
         if (CollectionUtils.isEmpty(conceptNames)) {
             getAllLeafConcepts(rootConcept, leafConcepts);
         } else {
             getSpecifiedLeafConcepts(rootConcept, conceptNames, leafConcepts);
         }
+        if (!CollectionUtils.isEmpty(conceptNames)) {
+            leafConcepts = sortConcepts(conceptNames, leafConcepts);
+        }
         if (conceptNames != null && !conceptNames.contains(groupByConcept)) {
             leafConcepts.add(conceptMapper.map(childConcept));
         }
         bahmniObservations = filterDataByCount(bahmniObservations, initialCount, latestCount);
-        return bahmniObservationsToTabularViewMapper.constructTable(leafConcepts, bahmniObservations);
+        PivotTable pivotTable = bahmniObservationsToTabularViewMapper.constructTable(leafConcepts, bahmniObservations, groupByConcept);
+        BaseTableExtension<PivotTable> extension = bahmniExtensions.getExtension(groovyExtension + ".groovy");
+        extension.update(pivotTable, patientUuid);
+        setNoramlRangeForHeaders(pivotTable.getHeaders());
+        return pivotTable;
+    }
+
+    private void setNoramlRangeForHeaders(Set<EncounterTransaction.Concept> headers) {
+        for (EncounterTransaction.Concept header : headers) {
+            if(header.getConceptClass().equals("Concept Details")){
+                List<Concept> setMembers = conceptService.getConceptsByConceptSet(conceptService.getConceptByUuid(header.getUuid()));
+                Concept primaryConcept = getNumeric(setMembers);
+                if(primaryConcept==null) continue;
+                header.setHiNormal(getHiNormal(primaryConcept));
+                header.setLowNormal(getLowNormal(primaryConcept));
+            }
+        }
+    }
+
+    private Double getLowNormal(Concept primaryConcept) {
+        return conceptService.getConceptNumeric(primaryConcept.getConceptId()).getLowNormal();
+    }
+
+    private Double getHiNormal(Concept primaryConcept) {
+        return conceptService.getConceptNumeric(primaryConcept.getConceptId()).getHiNormal();
+    }
+
+    private Concept getNumeric(List<Concept> setMembers) {
+        for (Concept setMember : setMembers) {
+            if(setMember.getDatatype().isNumeric()){
+                return setMember;
+            }
+        }
+        return null;
+    }
+
+    private Set<EncounterTransaction.Concept> sortConcepts(List<String> conceptNames, Set<EncounterTransaction.Concept> leafConcepts) {
+        Set<EncounterTransaction.Concept> sortedConcepts = new LinkedHashSet<>();
+        for (String conceptName: conceptNames){
+            for (EncounterTransaction.Concept leafConcept : leafConcepts) {
+                if (conceptName.equals(leafConcept.getName())) {
+                    sortedConcepts.add(leafConcept);
+                }
+            }
+        }
+        return sortedConcepts;
     }
 
     private Collection<BahmniObservation> filterDataByCount(Collection<BahmniObservation> bahmniObservations, Integer initialCount, Integer latestCount) {

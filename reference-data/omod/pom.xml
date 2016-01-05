@@ -5,7 +5,7 @@
     <parent>
         <artifactId>reference-data</artifactId>
         <groupId>org.bahmni.module</groupId>
-        <version>0.78-SNAPSHOT</version>
+        <version>0.79-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -126,9 +126,19 @@
         <dependency>
             <groupId>org.bahmni.test</groupId>
             <artifactId>bahmni-test-commons</artifactId>
-            <version>0.78-SNAPSHOT</version>
+            <version>0.79-SNAPSHOT</version>
             <type>test-jar</type>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>addresshierarchy-api</artifactId>
+            <version>${addressHierarchyVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>addresshierarchy-omod</artifactId>
+            <version>${addressHierarchyVersion}</version>
         </dependency>
     </dependencies>
 
@@ -157,6 +167,39 @@
             </plugins>
         </pluginManagement>
         <plugins>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.7.5.201505241946</version>
+                <executions>
+                    <execution>
+                        <id>check</id>
+                        <goals>
+                            <goal>report</goal>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <rule>
+                                    <element>BUNDLE</element>
+                                    <limits>
+                                        <limit>
+                                            <counter>LINE</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0.14</minimum>
+                                        </limit>
+                                        <limit>
+                                            <counter>BRANCH</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0.13</minimum>
+                                        </limit>
+                                    </limits>
+                                </rule>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.openmrs.maven.plugins</groupId>
                 <artifactId>maven-openmrs-plugin</artifactId>

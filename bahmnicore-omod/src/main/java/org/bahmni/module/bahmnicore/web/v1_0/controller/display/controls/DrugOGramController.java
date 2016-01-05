@@ -1,13 +1,15 @@
 package org.bahmni.module.bahmnicore.web.v1_0.controller.display.controls;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.bahmni.module.bahmnicore.extensions.BahmniExtensions;
 import org.bahmni.module.bahmnicore.service.BahmniDrugOrderService;
+import org.bahmni.module.bahmnicore.util.BahmniDateUtil;
 import org.bahmni.module.bahmnicore.web.v1_0.mapper.DrugOrderToTreatmentRegimenMapper;
 import org.openmrs.Concept;
 import org.openmrs.Order;
 import org.openmrs.api.ConceptService;
+import org.openmrs.module.bahmniemrapi.drugogram.contract.BaseTableExtension;
 import org.openmrs.module.bahmniemrapi.drugogram.contract.TreatmentRegimen;
-import org.openmrs.module.bahmniemrapi.drugogram.contract.TreatmentRegimenExtension;
 import org.openmrs.module.webservices.rest.web.RestConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,7 +19,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.text.ParseException;
-import java.util.HashSet;
+import java.util.Date;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -41,18 +44,38 @@ public class DrugOGramController {
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     public TreatmentRegimen getRegimen(@RequestParam(value = "patientUuid", required = true) String patientUuid,
-                              @RequestParam(value = "drugs", required = false) List<String> drugs) throws ParseException {
+                                       @RequestParam(value = "drugs", required = false) List<String> drugs,
+                                       @RequestParam(value = "startDate", required = false) String startDateStr,
+                                       @RequestParam(value = "endDate", required = false) String endDateStr) throws ParseException {
         Set<Concept> conceptsForDrugs = getConceptsForDrugs(drugs);
-        List<Order> allDrugOrders = bahmniDrugOrderService.getAllDrugOrders(patientUuid, conceptsForDrugs);
+        Date startDate = BahmniDateUtil.convertToDate(startDateStr, BahmniDateUtil.DateFormatType.UTC);
+        Date endDate = BahmniDateUtil.convertToDate(endDateStr, BahmniDateUtil.DateFormatType.UTC);
+
+        List<Order> allDrugOrders = bahmniDrugOrderService.getAllDrugOrders(patientUuid, conceptsForDrugs, startDate, endDate, null);
+        if (!CollectionUtils.isEmpty(conceptsForDrugs)) {
+            conceptsForDrugs = filterConceptsForDrugOrders(conceptsForDrugs, allDrugOrders);
+        }
         TreatmentRegimen treatmentRegimen = drugOrderToTreatmentRegimenMapper.map(allDrugOrders, conceptsForDrugs);
-        TreatmentRegimenExtension extension = bahmniExtensions.getTreatmentRegimenExtension();
+        BaseTableExtension<TreatmentRegimen> extension = bahmniExtensions.getExtension("TreatmentRegimenExtension.groovy");
         extension.update(treatmentRegimen);
         return treatmentRegimen;
     }
 
+    private Set<Concept> filterConceptsForDrugOrders(Set<Concept> conceptsForDrugs, List<Order> allDrugOrders) {
+        Set<Concept> drugConcepts = new LinkedHashSet<>();
+        for (Concept conceptsForDrug : conceptsForDrugs) {
+            for (Order drugOrder : allDrugOrders) {
+                if (conceptsForDrug.equals(drugOrder.getConcept()) && !drugConcepts.contains(conceptsForDrug)){
+                    drugConcepts.add(conceptsForDrug);
+                }
+            }
+        }
+        return drugConcepts;
+    }
+
     private Set<Concept> getConceptsForDrugs(List<String> drugs) {
         if (drugs == null) return null;
-        Set<Concept> drugConcepts = new HashSet<>();
+        Set<Concept> drugConcepts = new LinkedHashSet<>();
         for (String drug : drugs) {
             Concept concept = conceptService.getConceptByName(drug);
             getDrugs(concept, drugConcepts);

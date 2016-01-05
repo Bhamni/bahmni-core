@@ -12,10 +12,7 @@ import org.openmrs.module.bahmniemrapi.laborder.contract.LabOrderResults;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.core.Is.is;
@@ -84,13 +81,38 @@ public class LabOrderResultsServiceIT extends BaseIntegrationTest {
         Collection<String> concepts = new ArrayList<>();
         concepts.add("Blood Panel");
 
-        List<LabOrderResult> results = labOrderResultsService.getAllForConcepts(patient, concepts, null);
+        List<LabOrderResult> results = labOrderResultsService.getAllForConcepts(patient, concepts, null, null, null);
 
         assertEquals(results.size(), 2);
         assertOrderPresent(results, "Haemoglobin", "Blood Panel", 16, "System OpenMRS", "99.0", 200.0, 300.0, true, null, true, null);
         assertOrderPresent(results, "ESR", "Blood Panel", 16, "System OpenMRS", "10.0", null, null, false, "Some Notes", false, null);
 
     }
+
+    @Test
+    public void shouldGetLabOrdersForParticularConceptsWithinGivenDateRange() throws Exception{
+        executeDataSet("diagnosisMetadata.xml");
+        executeDataSet("dispositionMetadata.xml");
+        executeDataSet("labOrderTestData.xml");
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+        Date startDate = simpleDateFormat.parse("2008-08-17T00:00:00.000");
+        Date endDate = simpleDateFormat.parse("2008-08-20T00:00:00.000");
+
+        Patient patient = Context.getPatientService().getPatient(1000000);
+
+        Collection<String> concepts = new ArrayList<>();
+        concepts.add("Blood Panel");
+        concepts.add("Urea Nitrogen");
+
+        List<LabOrderResult> results = labOrderResultsService.getAllForConcepts(patient, concepts, null, startDate, endDate);
+
+        assertEquals(results.size(), 3);
+        assertOrderPresent(results, "Haemoglobin", "Blood Panel", 16, "System OpenMRS", "99.0", 200.0, 300.0, true, null, true, null);
+        assertOrderPresent(results, "ESR", "Blood Panel", 16, "System OpenMRS", "10.0", null, null, false, "Some Notes", false, null);
+        assertOrderPresent(results, "Urea Nitrogen", null, 16, null, null, null, null, null, null, false, null);
+    }
+
 
     @Test
     public void shouldMapTestOrdersAndResultsForGivenVisit() throws Exception {

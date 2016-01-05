@@ -61,16 +61,23 @@ public class DiseaseTemplateControllerIT extends BaseIntegrationTest {
 
     @Test
     public void getDiseaseTemplate_shouldReturnEmptyObservationTemplatesForIncorrectTemplateName() throws Exception {
-        DiseaseTemplate diseaseTemplate = deserialize(handle(newGetRequest("/rest/v1/bahmnicore/diseaseTemplate",
-                new Parameter("patientUuid", "86526ed5-3c11-11de-a0ba-001e378eb67a"),
-                new Parameter("diseaseName", "Non Existing Concept"))),
-                new TypeReference<DiseaseTemplate>() {});
+        String dataJson = "{\n" +
+                "  \"diseaseTemplateConfigList\" : [{" +
+                "\"templateName\": \"Non Existing Concept\"" + "}],\n" +
+                "  \"patientUuid\": \"86526ed5-3c11-11de-a0ba-001e378eb67a\"\n" +
+                "}";
+        DiseaseTemplate diseaseTemplate = deserialize(handle(newPostRequest("/rest/v1/bahmnicore/diseaseTemplate", dataJson)), new TypeReference<DiseaseTemplate>() {});
         assertEquals(0, diseaseTemplate.getObservationTemplates().size());
     }
 
     @Test
     public void getDiseaseTemplate_shouldReturnObsForADiseaseTemplateWithIntakeAndProgressAcrossAllVisits() throws Exception {
-        DiseaseTemplate diseaseTemplates = deserialize(handle(newGetRequest("/rest/v1/bahmnicore/diseaseTemplate", new Parameter("patientUuid", "86526ed5-3c11-11de-a0ba-001e378eb67a"), new Parameter("diseaseName", "Breast Cancer"))), new TypeReference<DiseaseTemplate>() {});
+        String dataJson = "{\n" +
+                "  \"diseaseTemplateConfigList\" : [{" +
+                "\"templateName\": \"Breast Cancer\"" + "}],\n" +
+                "  \"patientUuid\": \"86526ed5-3c11-11de-a0ba-001e378eb67a\"\n" +
+                "}";
+        DiseaseTemplate diseaseTemplates = deserialize(handle(newPostRequest("/rest/v1/bahmnicore/diseaseTemplate", dataJson)), new TypeReference<DiseaseTemplate>() {});
         assertNotNull(diseaseTemplates);
         assertEquals("Breast Cancer", diseaseTemplates.getConcept().getName());
         assertEquals(4, diseaseTemplates.getObservationTemplates().size());

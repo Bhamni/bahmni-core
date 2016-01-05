@@ -274,6 +274,14 @@ public class BahmniEncounterTransaction {
         return this;
     }
 
+    public BahmniEncounterTransaction updateDrugOrderIfScheduledDateNotSet(Date date) {
+        for (EncounterTransaction.DrugOrder drugOrder : getDrugOrders()) {
+            if (drugOrder.getScheduledDate() == null)
+                drugOrder.setScheduledDate(date);
+        }
+        return this;
+    }
+
     public BahmniEncounterTransaction updateDiagnosisDates(Date encounterDate) {
         for (BahmniDiagnosis diagnosis : getBahmniDiagnoses()) {
             if (diagnosis.getDiagnosisDateTime() == null)
@@ -310,6 +318,50 @@ public class BahmniEncounterTransaction {
 
     public void setReason(String reason) {
         this.reason = reason;
+    }
+
+    public boolean hasPastDrugOrders() {
+        List<EncounterTransaction.DrugOrder> drugOrders = encounterTransaction.getDrugOrders();
+
+        for(EncounterTransaction.DrugOrder drugOrder: drugOrders){
+            if(drugOrder.getScheduledDate().before(this.getEncounterDateTime())){
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public BahmniEncounterTransaction cloneForPastDrugOrders() {
+        BahmniEncounterTransaction previousBahmniEncounterTransaction = new BahmniEncounterTransaction();
+        previousBahmniEncounterTransaction.setDrugOrders(getDrugOrders());
+        previousBahmniEncounterTransaction.setEncounterTypeUuid(getEncounterTypeUuid());
+        previousBahmniEncounterTransaction.setLocationUuid(getLocationUuid());
+        previousBahmniEncounterTransaction.setPatientUuid(getPatientUuid());
+        previousBahmniEncounterTransaction.setProviders(getProviders());
+        previousBahmniEncounterTransaction.setVisitType(getVisitType());
+        previousBahmniEncounterTransaction.setVisitTypeUuid(getVisitTypeUuid());
+
+        EncounterTransaction.DrugOrder oldestDrugOrder = getOldestDrugOrder();
+        previousBahmniEncounterTransaction.setEncounterDateTime(oldestDrugOrder == null ? null : oldestDrugOrder.getScheduledDate());
+        return previousBahmniEncounterTransaction;
+    }
+
+    public void clearDrugOrders() {
+        encounterTransaction.setDrugOrders(new ArrayList<EncounterTransaction.DrugOrder>());
+    }
+
+    private EncounterTransaction.DrugOrder getOldestDrugOrder() {
+        if(getDrugOrders().size()==0)
+            return null;
+
+        EncounterTransaction.DrugOrder oldestDrugOrder = getDrugOrders().get(0);
+        for (EncounterTransaction.DrugOrder drugOrder : getDrugOrders()) {
+            if (drugOrder.getScheduledDate().before(oldestDrugOrder.getScheduledDate())) {
+                oldestDrugOrder = drugOrder;
+            }
+        }
+        return oldestDrugOrder;
     }
 }
 

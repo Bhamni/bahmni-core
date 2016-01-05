@@ -2,11 +2,9 @@ package org.bahmni.module.bahmnicore.extensions;
 
 import groovy.lang.GroovyClassLoader;
 import org.apache.log4j.Logger;
-import org.bahmni.module.bahmnicore.dao.impl.ApplicationDataDirectory;
+import org.bahmni.module.bahmnicore.dao.ApplicationDataDirectory;
 import org.bahmni.module.bahmnicore.dao.impl.ApplicationDataDirectoryImpl;
-import org.bahmni.module.bahmnicore.encounterModifier.EncounterModifier;
-import org.openmrs.module.bahmniemrapi.drugogram.contract.BaseTreatmentRegimenExtension;
-import org.openmrs.module.bahmniemrapi.drugogram.contract.TreatmentRegimenExtension;
+import org.openmrs.module.bahmniemrapi.drugogram.contract.BaseTableExtension;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -26,16 +24,16 @@ public class BahmniExtensions {
 		applicationDataDirectory = new ApplicationDataDirectoryImpl();
 	}
 
-	public TreatmentRegimenExtension getTreatmentRegimenExtension() {
+	public <T> BaseTableExtension<T> getExtension(String groovyExtensionFileName) {
 		File treatmentRegimenExtensionGroovyPath = applicationDataDirectory
-				.getFileFromConfig("openmrs"+ File.separator +"treatmentRegimenExtension" + File.separator + "TreatmentRegimenExtension.groovy");
+				.getFileFromConfig("openmrs"+ File.separator +"treatmentRegimenExtension" + File.separator + groovyExtensionFileName);
 		if (!treatmentRegimenExtensionGroovyPath.exists()) {
-			return new BaseTreatmentRegimenExtension();
+			return new BaseTableExtension<T>();
 		}
 
 		try {
 			Class clazz = groovyClassLoader.parseClass(treatmentRegimenExtensionGroovyPath);
-			return (TreatmentRegimenExtension) clazz.newInstance();
+			return (BaseTableExtension<T>)clazz.newInstance();
 		}
 		catch (IOException e) {
 			log.error("Problem with the groovy class " + treatmentRegimenExtensionGroovyPath, e);
@@ -46,8 +44,7 @@ public class BahmniExtensions {
 		catch (IllegalAccessException e) {
 			log.error("Problem with the groovy class " + treatmentRegimenExtensionGroovyPath, e);
 		}
-
-		return new BaseTreatmentRegimenExtension();
+		return new BaseTableExtension<T>();
 	}
 
 }

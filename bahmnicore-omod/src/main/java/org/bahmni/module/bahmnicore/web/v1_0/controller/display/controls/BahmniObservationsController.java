@@ -1,7 +1,8 @@
-package org.bahmni.module.bahmnicore.web.v1_0.controller;
+package org.bahmni.module.bahmnicore.web.v1_0.controller.display.controls;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.bahmni.module.bahmnicore.service.BahmniObsService;
+import org.bahmni.module.bahmnicore.util.BahmniDateUtil;
 import org.bahmni.module.bahmnicore.util.MiscUtils;
 import org.openmrs.Concept;
 import org.openmrs.Visit;
@@ -17,7 +18,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.text.ParseException;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -40,24 +43,30 @@ public class BahmniObservationsController extends BaseRestController {
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     public Collection<BahmniObservation> get(@RequestParam(value = "patientUuid", required = true) String patientUUID,
-                                       @RequestParam(value = "concept", required = true) List<String> rootConceptNames,
-                                       @RequestParam(value = "scope", required = false) String scope,
-                                       @RequestParam(value = "numberOfVisits", required = false) Integer numberOfVisits,
-                                       @RequestParam(value = "obsIgnoreList", required = false) List<String> obsIgnoreList,
-                                       @RequestParam(value = "filterObsWithOrders", required = false, defaultValue = "true") Boolean filterObsWithOrders) {
+                                             @RequestParam(value = "concept", required = true) List<String> rootConceptNames,
+                                             @RequestParam(value = "scope", required = false) String scope,
+                                             @RequestParam(value = "numberOfVisits", required = false) Integer numberOfVisits,
+                                             @RequestParam(value = "obsIgnoreList", required = false) List<String> obsIgnoreList,
+                                             @RequestParam(value = "filterObsWithOrders", required = false, defaultValue = "true") Boolean filterObsWithOrders,
+                                             @RequestParam(value = "startDate", required = false) String startDateStr,
+                                             @RequestParam(value = "endDate", required = false) String endDateStr) throws ParseException {
 
-        List<Concept> rootConcepts = MiscUtils.getConceptsForNames(rootConceptNames,conceptService);
+        List<Concept> rootConcepts = MiscUtils.getConceptsForNames(rootConceptNames, conceptService);
+        Date startDate = BahmniDateUtil.convertToDate(startDateStr, BahmniDateUtil.DateFormatType.UTC);
+        Date endDate = BahmniDateUtil.convertToDate(endDateStr, BahmniDateUtil.DateFormatType.UTC);
+
         if (ObjectUtils.equals(scope, LATEST)) {
-            return bahmniObsService.getLatest(patientUUID, rootConcepts, numberOfVisits, obsIgnoreList, filterObsWithOrders, null);
+            return bahmniObsService.getLatest(patientUUID, rootConcepts, numberOfVisits, obsIgnoreList, filterObsWithOrders,
+                    null, startDate, endDate);
         } else if (ObjectUtils.equals(scope, INITIAL)) {
-            return bahmniObsService.getInitial(patientUUID, rootConcepts, numberOfVisits, obsIgnoreList, filterObsWithOrders, null);
+            return bahmniObsService.getInitial(patientUUID, rootConcepts, numberOfVisits, obsIgnoreList, filterObsWithOrders, null, startDate, endDate);
         } else {
-            return bahmniObsService.observationsFor(patientUUID, rootConcepts, numberOfVisits, obsIgnoreList, filterObsWithOrders, null);
+            return bahmniObsService.observationsFor(patientUUID, rootConcepts, numberOfVisits, obsIgnoreList, filterObsWithOrders, null, startDate, endDate);
         }
 
     }
 
-    @RequestMapping(method = RequestMethod.GET,params = {"visitUuid"})
+    @RequestMapping(method = RequestMethod.GET, params = {"visitUuid"})
     @ResponseBody
     public Collection<BahmniObservation> get(@RequestParam(value = "visitUuid", required = true) String visitUuid,
                                              @RequestParam(value = "scope", required = false) String scope,
@@ -67,8 +76,8 @@ public class BahmniObservationsController extends BaseRestController {
 
         Visit visit = visitService.getVisitByUuid(visitUuid);
         if (ObjectUtils.equals(scope, INITIAL)) {
-            return bahmniObsService.getInitialObsByVisit(visit,  MiscUtils.getConceptsForNames(conceptNames, conceptService), obsIgnoreList, filterObsWithOrders);
-        } else  if (ObjectUtils.equals(scope, LATEST)) {
+            return bahmniObsService.getInitialObsByVisit(visit, MiscUtils.getConceptsForNames(conceptNames, conceptService), obsIgnoreList, filterObsWithOrders);
+        } else if (ObjectUtils.equals(scope, LATEST)) {
             return bahmniObsService.getLatestObsByVisit(visit, MiscUtils.getConceptsForNames(conceptNames, conceptService), obsIgnoreList, filterObsWithOrders);
         } else {
             // Sending conceptName and obsIgnorelist, kinda contradicts, since we filter directly on concept names (not on root concept)

@@ -3,6 +3,7 @@ package org.bahmni.module.referencedata.labconcepts.mapper;
 
 import org.bahmni.module.referencedata.labconcepts.contract.Concept;
 import org.bahmni.module.referencedata.labconcepts.contract.ConceptReferenceTerm;
+import org.bahmni.module.referencedata.labconcepts.model.ConceptMetaData;
 import org.openmrs.*;
 import org.openmrs.api.context.Context;
 
@@ -25,15 +26,15 @@ public class ConceptMapper {
         conceptCommonMapper = new ConceptCommonMapper();
     }
 
-    public org.openmrs.Concept map(Concept conceptData, ConceptClass conceptClass, ConceptDatatype conceptDatatype, List<ConceptAnswer> answers, org.openmrs.Concept existingConcept) {
-        org.openmrs.Concept concept = conceptCommonMapper.map(conceptData, conceptClass, existingConcept);
+    public org.openmrs.Concept map(Concept conceptData, ConceptMetaData conceptMetaData, List<ConceptAnswer> answers) {
+        org.openmrs.Concept concept = conceptCommonMapper.map(conceptData, conceptMetaData);
         for (String conceptName : conceptData.getSynonyms()) {
-            concept = addConceptName(concept, getConceptName(conceptName));
+            concept = addConceptName(concept, getConceptName(conceptName, conceptMetaData.getLocale()));
         }
-        if (conceptDatatype.isNumeric()) {
-            concept = conceptNumericMapper.map(concept, conceptData, existingConcept);
+        if (conceptMetaData.getConceptDatatype().isNumeric()) {
+            concept = conceptNumericMapper.map(concept, conceptData, conceptMetaData.getExistingConcept());
         }
-        concept.setDatatype(conceptDatatype);
+        concept.setDatatype(conceptMetaData.getConceptDatatype());
         concept = conceptAnswerMapper.map(concept, answers);
         return concept;
     }

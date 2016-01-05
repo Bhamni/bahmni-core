@@ -30,4 +30,8 @@ public class Entity <T1,T2> {
     public void setMappings(List<T2> mappings) {
         this.mappings = mappings;
     }
+
+    public void addMapping(Object mappedEntity) {
+        mappings.add((T2) mappedEntity);
+    }
 }

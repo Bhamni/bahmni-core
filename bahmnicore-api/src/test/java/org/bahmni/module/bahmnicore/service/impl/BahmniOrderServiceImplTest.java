@@ -109,7 +109,7 @@ public class BahmniOrderServiceImplTest {
         Order order = createOrder();
         when(orderService.getOrderByUuid("someOrderUuid")).thenReturn(order);
         bahmniOrderService.ordersForOrderUuid(personUUID, Arrays.asList(concept), null, "someOrderUuid");
-        verify(bahmniObsService).observationsFor(personUUID, Arrays.asList(concept), null, null, false, order);
+        verify(bahmniObsService).observationsFor(personUUID, Arrays.asList(concept), null, null, false, order, null, null);
     }
 
     @Test

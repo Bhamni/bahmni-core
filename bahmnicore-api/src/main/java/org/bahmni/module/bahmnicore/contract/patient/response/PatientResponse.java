@@ -8,6 +8,16 @@ public class PatientResponse {
 
     private String uuid;
     private Date birthDate;
+
+    public int getPersonId() {
+        return personId;
+    }
+
+    public void setPersonId(int personId) {
+        this.personId = personId;
+    }
+
+    private int personId;
     private Date deathDate;
     private String identifier;
     private String addressFieldValue;

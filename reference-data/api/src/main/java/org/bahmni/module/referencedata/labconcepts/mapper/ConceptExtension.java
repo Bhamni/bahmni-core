@@ -12,6 +12,7 @@ import org.openmrs.api.context.Context;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class ConceptExtension {
     public static String getDescription(Concept concept) {
@@ -30,9 +31,12 @@ public class ConceptExtension {
         return concept.getName(Context.getLocale()).getName();
     }
 
-    public static ConceptDescription constructDescription(String description) {
+    public static ConceptDescription constructDescription(String description, Locale locale) {
         if (StringUtils.isBlank(description)) return null;
-        ConceptDescription conceptDescription = new ConceptDescription(description, Context.getLocale());
+        if (locale == null) {
+            locale = Context.getLocale();
+        }
+        ConceptDescription conceptDescription = new ConceptDescription(description, locale);
         return conceptDescription;
     }
 
@@ -44,9 +48,23 @@ public class ConceptExtension {
         return conceptName;
     }
 
+    public static ConceptName getConceptName(String name, Locale locale) {
+        ConceptName conceptName = new ConceptName();
+        conceptName.setName(name);
+        conceptName.setLocale(locale != null ? locale: Context.getLocale());
+        return conceptName;
+    }
+
     public static ConceptName getConceptName(String name, ConceptNameType conceptNameType) {
         ConceptName conceptName = getConceptName(name);
         conceptName.setConceptNameType(conceptNameType);
+        return conceptName;
+    }
+
+    public static ConceptName getConceptName(String name, ConceptNameType conceptNameType, Locale locale) {
+        ConceptName conceptName = getConceptName(name, conceptNameType);
+        conceptName.setConceptNameType(conceptNameType);
+        conceptName.setLocale(locale != null ? locale: Context.getLocale());
         return conceptName;
     }
 
@@ -62,17 +80,16 @@ public class ConceptExtension {
     public static org.openmrs.Concept addConceptName(org.openmrs.Concept concept, ConceptName conceptName) {
         if (conceptName.getName() == null) return concept;
         for (ConceptName name : concept.getNames()) {
-            if (isFullySpecifiedName(conceptName) && isFullySpecifiedName(name) && !name.getName().equals(conceptName.getName())) {
+            if (isFullySpecifiedName(conceptName) && isFullySpecifiedName(name) && !name.getName().equals(conceptName.getName()) && name.getLocale().equals(conceptName.getLocale())) {
                 name.setName(conceptName.getName());
                 return concept;
-            } else if (isShortName(conceptName) && isShortName(name) && !name.getName().equals(conceptName.getName())) {
+            } else if (isShortName(conceptName) && isShortName(name) && !name.getName().equals(conceptName.getName()) && name.getLocale().equals(conceptName.getLocale())) {
                 name.setName(conceptName.getName());
                 return concept;
-            } else if (name.getName().equals(conceptName.getName())) {
+            } else if (name.getName().equals(conceptName.getName()) && name.getLocale().equals(conceptName.getLocale())) {
                 return concept;
             }
         }
-
         concept.addName(conceptName);
         return concept;
     }

@@ -5,7 +5,7 @@
     <parent>
         <artifactId>bahmni</artifactId>
         <groupId>org.bahmni.module</groupId>
-        <version>0.78-SNAPSHOT</version>
+        <version>0.79-SNAPSHOT</version>
     </parent>
 
     <artifactId>admin</artifactId>
@@ -16,7 +16,7 @@
         <dependency>
             <groupId>org.bahmni.module</groupId>
             <artifactId>bahmni-migrator</artifactId>
-            <version>0.78-SNAPSHOT</version>
+            <version>0.79-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>net.sf.opencsv</groupId>
@@ -52,7 +52,7 @@
         <dependency>
             <groupId>org.bahmni.module</groupId>
             <artifactId>bahmni-emr-api</artifactId>
-            <version>0.78-SNAPSHOT</version>
+            <version>0.79-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.openmrs.module</groupId>
@@ -210,6 +210,41 @@
                 <filtering>true</filtering>
             </testResource>
         </testResources>
+        <plugins>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.7.5.201505241946</version>
+                <executions>
+                    <execution>
+                        <id>check</id>
+                        <goals>
+                            <goal>report</goal>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <rule>
+                                    <element>BUNDLE</element>
+                                    <limits>
+                                        <limit>
+                                            <counter>LINE</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0.35</minimum>
+                                        </limit>
+                                        <limit>
+                                            <counter>BRANCH</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0.37</minimum>
+                                        </limit>
+                                    </limits>
+                                </rule>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 
 </project>

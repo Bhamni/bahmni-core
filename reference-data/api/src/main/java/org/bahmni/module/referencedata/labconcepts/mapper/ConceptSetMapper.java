@@ -2,6 +2,7 @@ package org.bahmni.module.referencedata.labconcepts.mapper;
 
 import org.bahmni.module.referencedata.labconcepts.contract.*;
 import org.bahmni.module.referencedata.labconcepts.contract.ConceptSet;
+import org.bahmni.module.referencedata.labconcepts.model.ConceptMetaData;
 import org.openmrs.*;
 import org.openmrs.Concept;
 import org.openmrs.ConceptReferenceTerm;
@@ -23,10 +24,10 @@ public class ConceptSetMapper {
         setMemberMapper = new SetMemberMapper();
     }
 
-    public Concept map(ConceptSet conceptSet, List<Concept> childConcepts, ConceptClass conceptClass, ConceptDatatype conceptDatatype, Concept existingConcept) {
-        Concept concept = conceptCommonMapper.map(conceptSet, conceptClass, existingConcept);
+    public Concept map(ConceptSet conceptSet, List<Concept> childConcepts, ConceptMetaData conceptMetaData) {
+        Concept concept = conceptCommonMapper.map(conceptSet, conceptMetaData);
         concept.setSet(true);
-        concept.setDatatype(conceptDatatype);
+        concept.setDatatype(conceptMetaData.getConceptDatatype());
         concept = setMemberMapper.map(concept, childConcepts);
         return concept;
     }

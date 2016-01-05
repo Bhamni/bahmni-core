@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+    <encounter_type encounter_type_id="1" name="REG" description="Some desc" creator="1" date_created="2005-01-01 00:00:00.0" retired="false" uuid="759799ab-c9a5-435e-b671-77773ada74e4"/>
+    <encounter_type encounter_type_id="2" name="Consultation" description="Some desc 2" creator="1" date_created="2005-01-01 00:00:00.0" retired="false" uuid="4ee21921-01cc-4720-a6bf-a61a17c4d05b"/>
+
+    <person person_id="1001" gender="M" dead="false" creator="1" birthdate_estimated="0" date_created="2008-08-15 15:57:09.0" voided="false" void_reason="" uuid="75e04d42-3ca8-11e3-bf2b-0800271c1b75"/>
+    <patient patient_id="1001" creator="1" date_created="2005-09-22 00:00:00.0" changed_by="1" date_changed="2008-08-18 12:29:59.0" voided="false" void_reason=""/>
+
+    <concept concept_id="2635" retired="false" datatype_id="1" class_id="5" is_set="false" creator="1"
+             date_created="2004-08-12 00:00:00.0" version="" changed_by="1" date_changed="2005-02-25 11:43:43.0"
+             uuid="d102c80f-9zz9-4da3-bb88-8122ce8868d1"/>
+    <concept_name concept_id="2635" name="BLOOD" locale="en" creator="1" date_created="2004-08-12 00:00:00.0"
+                  concept_name_id="1441" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false"
+                  uuid="d102c8hh-1aa9-4ty3-bb88-8122ce8868d2"/>
+
+
+    <visit visit_id="1" date_started="2001-09-22 00:00:00" date_created="2001-09-22 00:00:00" patient_id="1001" visit_type_id="1" date_stopped="2002-10-08 04:08:16" location_id="2" creator="1" changed_by="1" voided_by="1" uuid="8244fcd2-f20f-11e3-b47b-c6959a4485cd" voided="0"/>
+    <visit visit_id="2" date_started="2003-09-22 00:00:00" date_created="2003-09-22 00:00:00" patient_id="1001" visit_type_id="1" date_stopped="2004-10-08 04:08:16" location_id="2" creator="1" changed_by="1" voided_by="1" uuid="317295fa-f208-11e3-b47b-c6959a4485cd" voided="0"/>
+
+    <encounter encounter_id="15" encounter_type="2" patient_id="1001" visit_id="1" location_id="2" encounter_datetime="2004-09-01 00:00:00.0" creator="1" date_created="2004-08-18 14:09:05.0" voided="false" uuid="4aaf37ee-f208-11e3-b47b-c6959a4485cd"/>
+    <encounter encounter_id="16" encounter_type="2" patient_id="1001" visit_id="2" location_id="2" encounter_datetime="2008-08-01 00:00:00.0" creator="1" date_created="2008-08-18 14:09:05.0" voided="false" uuid="6d0ae386-707a-4629-9850-f15206e63ab0"/>
+
+    <orders order_id="15" order_type_id="15" patient_id="1001" encounter_id="15" urgency="ROUTINE" concept_id="24" orderer="1" care_setting="1" order_action="NEW" order_number="1" instructions="non-expiring" date_activated="2008-08-08 00:00:00.0" creator="1" date_created="2008-08-19 12:20:22.5" voided="false" uuid="6d0ae386-707a-4629-9850-f15206e63ab0"/>
+    <orders order_id="16" order_type_id="15" patient_id="1001" encounter_id="15" urgency="ROUTINE" concept_id="24" orderer="1" care_setting="1" order_action="REVISE" order_number="2" previous_order_id="15" instructions="expire-date in future" date_activated="2013-08-08 00:00:00.0" auto_expire_date="2099-08-08 00:00:00.0" creator="1" date_created="2008-08-19 12:20:22.4" voided="false" uuid="92c1bdef-72d4-49d9-8a1f-804892f6nncf"/>
+    <orders order_id="17" order_type_id="15" patient_id="1001" encounter_id="16" urgency="ROUTINE" concept_id="24" orderer="1" care_setting="1" order_action="DISCONTINUE" order_number="3" previous_order_id="16" order_reason="2635" order_reason_non_coded="Bleeding" instructions="another expire-date in future" date_activated="2013-08-08 00:00:00.0" auto_expire_date="2099-08-08 00:00:00.0" creator="1" date_created="2008-08-19 12:20:22.3" voided="false"  uuid="adb9d548-f22a-11e3-b47b-c6nn9a4485cd"/>
+
+
+    <drug_order order_id="15" drug_inventory_id="3" dose="125.0" dispense_as_written="true" as_needed="false" frequency="2"/>
+    <drug_order order_id="16" drug_inventory_id="3" dose="225.0" dispense_as_written="true" as_needed="false" frequency="2"/>
+    <drug_order order_id="17" drug_inventory_id="3" dose="515.0" dispense_as_written="true" as_needed="false" frequency="2"/>
+
+</dataset>

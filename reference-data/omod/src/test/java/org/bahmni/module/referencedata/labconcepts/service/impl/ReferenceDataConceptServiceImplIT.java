@@ -17,15 +17,15 @@ import org.openmrs.api.APIException;
 import org.openmrs.api.ConceptInUseException;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.context.Context;
+import org.openmrs.util.LocaleUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 public class ReferenceDataConceptServiceImplIT extends BaseIntegrationTest {
 
@@ -259,7 +259,7 @@ public class ReferenceDataConceptServiceImplIT extends BaseIntegrationTest {
         assertEquals(2, conceptService.getConceptByUuid("5d2d4cb7-mm3b-0037-70f7-0dmimmm22222").getNames().size());
         Concept savedConcept = referenceDataConceptService.saveConcept(concept);
 
-        assertEquals(2, savedConcept.getNames().size());
+        assertEquals(4, savedConcept.getNames().size());
         assertEquals(uniqueName, savedConcept.getName(Context.getLocale()).getName());
         assertEquals(displayName, savedConcept.getShortNames().iterator().next().getName());
         assertEquals("Finding", savedConcept.getConceptClass().getName());
@@ -332,7 +332,7 @@ public class ReferenceDataConceptServiceImplIT extends BaseIntegrationTest {
         assertEquals(uniqueName, savedConcept.getName(Context.getLocale()).getName());
         assertEquals(displayName, savedConcept.getShortNameInLocale(Context.getLocale()).getName());
         assertEquals("Finding", savedConcept.getConceptClass().getName());
-        assertEquals(2, savedConcept.getNames().size());
+        assertEquals(3, savedConcept.getNames().size());
     }
 
     @Test
@@ -392,8 +392,6 @@ public class ReferenceDataConceptServiceImplIT extends BaseIntegrationTest {
     public void migrate_concept_datatype_to_numeric() throws Exception {
         org.bahmni.module.referencedata.labconcepts.contract.Concept concept = new org.bahmni.module.referencedata.labconcepts.contract.Concept();
         concept.setUuid("kf2d4cb7-t3tb-oo37-70f7-0dmimmm22222");
-        String uniqueName = "Updated Numeric Concept";
-        concept.setUniqueName(uniqueName);
         concept.setClassName("Finding");
         concept.setDataType("Numeric");
         concept.setUnits("unit");
@@ -403,7 +401,7 @@ public class ReferenceDataConceptServiceImplIT extends BaseIntegrationTest {
         assertNotEquals(ConceptDatatype.NUMERIC_UUID, existingConcept.getDatatype().getUuid());
         Concept savedConcept = referenceDataConceptService.saveConcept(concept);
 
-        assertEquals(uniqueName, savedConcept.getName(Context.getLocale()).getName());
+        assertEquals("First Child", savedConcept.getName(Context.getLocale()).getName());
         assertEquals("Finding", savedConcept.getConceptClass().getName());
         assertEquals(0, savedConcept.getSetMembers().size());
         assertEquals(ConceptDatatype.NUMERIC_UUID, savedConcept.getDatatype().getUuid());

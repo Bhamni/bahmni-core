@@ -6,6 +6,8 @@ import org.openmrs.module.bahmnimapping.model.EntityMappingType;
 import java.util.List;
 
 public interface EntityMappingDao {
-    List<EntityMapping> getEntityMappings(String entity1Uuid, String mappingTypeName);
+    List<EntityMapping> getMappingsOfEntity(String entity1Uuid, String mappingTypeName);
+    List<EntityMapping> getAllEntityMappings(String mappingTypeName);
     EntityMappingType getEntityMappingTypeByName(String name);
+
 }

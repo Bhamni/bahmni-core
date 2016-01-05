@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.bahmni.module</groupId>
         <artifactId>bahmni</artifactId>
-        <version>0.78-SNAPSHOT</version>
+        <version>0.79-SNAPSHOT</version>
     </parent>
     <artifactId>openelis-atomfeed-client-omod</artifactId>
     <packaging>jar</packaging>
@@ -113,6 +113,39 @@
             </plugins>
         </pluginManagement>
         <plugins>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.7.5.201505241946</version>
+                <executions>
+                    <execution>
+                        <id>check</id>
+                        <goals>
+                            <goal>report</goal>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <rule>
+                                    <element>BUNDLE</element>
+                                    <limits>
+                                        <limit>
+                                            <counter>LINE</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0.24</minimum>
+                                        </limit>
+                                        <limit>
+                                            <counter>BRANCH</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0.17</minimum>
+                                        </limit>
+                                    </limits>
+                                </rule>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.openmrs.maven.plugins</groupId>
                 <artifactId>maven-openmrs-plugin</artifactId>
@@ -299,7 +332,7 @@
         <dependency>
             <groupId>org.bahmni.module</groupId>
             <artifactId>web-clients</artifactId>
-            <version>0.78-SNAPSHOT</version>
+            <version>0.79-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
@@ -341,6 +374,18 @@
             <artifactId>emrapi-api</artifactId>
             <version>${emrapi-omod.version}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>addresshierarchy-api</artifactId>
+            <version>${addressHierarchyVersion}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>addresshierarchy-omod</artifactId>
+            <version>${addressHierarchyVersion}</version>
+            <type>jar</type>
         </dependency>
     </dependencies>
 

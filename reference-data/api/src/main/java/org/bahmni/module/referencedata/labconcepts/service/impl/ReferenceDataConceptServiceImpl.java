@@ -9,8 +9,6 @@ import org.bahmni.module.referencedata.labconcepts.service.ReferenceDataConceptR
 import org.bahmni.module.referencedata.labconcepts.service.ReferenceDataConceptService;
 import org.bahmni.module.referencedata.labconcepts.validator.ConceptValidator;
 import org.openmrs.ConceptAnswer;
-import org.openmrs.ConceptClass;
-import org.openmrs.ConceptDatatype;
 import org.openmrs.ConceptMap;
 import org.openmrs.api.ConceptService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,16 +41,16 @@ public class ReferenceDataConceptServiceImpl implements ReferenceDataConceptServ
 
     @Override
     public org.openmrs.Concept saveConcept(Concept conceptData) {
-        ConceptMetaData conceptMetaData = conceptMetaDataService.getConceptMetaData(conceptData.getUniqueName(), conceptData.getUuid(), conceptData.getClassName(), conceptData.getDataType());
-        org.openmrs.Concept mappedConcept = getConcept(conceptData, conceptMetaData.getConceptClass(), conceptMetaData.getConceptDatatype(), conceptMetaData.getExistingConcept());
+        ConceptMetaData conceptMetaData = conceptMetaDataService.getConceptMetaData(conceptData);
+        org.openmrs.Concept mappedConcept = getConcept(conceptData, conceptMetaData);
         return conceptService.saveConcept(mappedConcept);
     }
 
 
     @Override
     public org.openmrs.Concept saveConcept(ConceptSet conceptSet) {
-        ConceptMetaData conceptMetaData = conceptMetaDataService.getConceptMetaData(conceptSet.getUniqueName(), conceptSet.getUuid(), conceptSet.getClassName(), conceptSet.getDataType());
-        org.openmrs.Concept mappedConceptSet = getConceptSet(conceptSet, conceptMetaData.getConceptClass(), conceptMetaData.getExistingConcept(), conceptMetaData.getConceptDatatype());
+        ConceptMetaData conceptMetaData = conceptMetaDataService.getConceptMetaData(conceptSet);
+        org.openmrs.Concept mappedConceptSet = getConceptSet(conceptSet, conceptMetaData);
         return conceptService.saveConcept(mappedConceptSet);
     }
 
@@ -67,18 +65,18 @@ public class ReferenceDataConceptServiceImpl implements ReferenceDataConceptServ
         return concepts;
     }
 
-    private org.openmrs.Concept getConceptSet(ConceptSet conceptSet, ConceptClass conceptClass, org.openmrs.Concept existingConcept, ConceptDatatype conceptDatatype) {
+    private org.openmrs.Concept getConceptSet(ConceptSet conceptSet, ConceptMetaData conceptMetaData) {
         List<org.openmrs.Concept> setMembers = getSetMembers(conceptSet.getChildren());
-        conceptValidator.validate(conceptSet, conceptClass, conceptDatatype, notFound);
-        org.openmrs.Concept mappedConceptSet = conceptSetMapper.map(conceptSet, setMembers, conceptClass, conceptDatatype, existingConcept);
+        conceptValidator.validate(conceptSet, conceptMetaData.getConceptClass(), conceptMetaData.getConceptDatatype(), notFound);
+        org.openmrs.Concept mappedConceptSet = conceptSetMapper.map(conceptSet, setMembers,conceptMetaData);
         clearAndAddConceptMappings(conceptSet, mappedConceptSet);
         return mappedConceptSet;
     }
 
-    private org.openmrs.Concept getConcept(Concept conceptData, ConceptClass conceptClass, ConceptDatatype conceptDatatype, org.openmrs.Concept existingConcept) {
+    private org.openmrs.Concept  getConcept(Concept conceptData, ConceptMetaData conceptMetaData) {
         List<ConceptAnswer> conceptAnswers = getConceptAnswers(conceptData.getAnswers());
-        conceptValidator.validate(conceptData, conceptClass, conceptDatatype, notFound);
-        org.openmrs.Concept mappedConcept = conceptMapper.map(conceptData, conceptClass, conceptDatatype, conceptAnswers, existingConcept);
+        conceptValidator.validate(conceptData, conceptMetaData.getConceptClass(), conceptMetaData.getConceptDatatype(), notFound);
+        org.openmrs.Concept mappedConcept = conceptMapper.map(conceptData, conceptMetaData, conceptAnswers);
         clearAndAddConceptMappings(conceptData, mappedConcept);
         return mappedConcept;
     }

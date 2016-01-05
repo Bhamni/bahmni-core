@@ -83,7 +83,7 @@ public class BahmniDrugOrder implements Comparable<BahmniDrugOrder>{
     }
 
     public EncounterTransaction.Concept getOrderReasonConcept() {
-        return drugOrder.getConcept();
+        return drugOrder.getOrderReasonConcept();
     }
 
     public String getOrderReasonText() {
@@ -149,6 +149,14 @@ public class BahmniDrugOrder implements Comparable<BahmniDrugOrder>{
 
     public void setCreatorName(String creatorName) {
         this.creatorName = creatorName;
+    }
+
+    public void setOrderReasonConcept(EncounterTransaction.Concept concept ) {
+        this.drugOrder.setOrderReasonConcept(concept);
+
+    }
+    public void  setOrderReasonText(String orderReasonText) {
+        this.drugOrder.setOrderReasonText(orderReasonText);
     }
 
     @Override

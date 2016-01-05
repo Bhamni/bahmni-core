@@ -51,7 +51,10 @@ public class ConceptRow extends CSVEntity {
     @CSVHeader(name = "Low Normal", optional = true)
     public String lowNormal;
 
-    public ConceptRow(String uuid, String name, String description, String conceptClass, String shortName, String dataType, String units, String hiNormal, String lowNormal, List<ConceptReferenceTermRow> referenceTermRows, List<KeyValue> synonyms, List<KeyValue> answers) {
+    @CSVHeader(name = "locale", optional = true)
+    public String locale;
+
+    public ConceptRow(String uuid, String name, String description, String conceptClass, String shortName, String dataType, String units, String hiNormal, String lowNormal, List<ConceptReferenceTermRow> referenceTermRows, List<KeyValue> synonyms, List<KeyValue> answers, String locale) {
         this.uuid = uuid;
         this.name = name;
         this.description = description;
@@ -64,7 +67,8 @@ public class ConceptRow extends CSVEntity {
         this.hiNormal = hiNormal;
         this.lowNormal = lowNormal;
         this.referenceTerms = referenceTermRows;
-        String[] aRow = {uuid, name, description, conceptClass, shortName, dataType, units, hiNormal, lowNormal};
+        this.locale = locale;
+        String[] aRow = {uuid, name, description, conceptClass, shortName, dataType, units, hiNormal, lowNormal,locale};
         String[] synonymsRow = getStringArray(synonyms);
         String[] answersRow = getStringArray(answers);
         aRow = ArrayUtils.addAll(aRow, ArrayUtils.addAll(synonymsRow, answersRow));
@@ -90,7 +94,7 @@ public class ConceptRow extends CSVEntity {
         }
 
         //TODO FIX reference terms
-        return new ConceptRow("uuid", "name", "description", "class", "shortname", "datatype", "units", "High Normal", "Low Normal", referenceTermHeaders, synonymHeaders, answerHeaders);
+        return new ConceptRow("uuid", "name", "description", "class", "shortname", "datatype", "units", "High Normal", "Low Normal", referenceTermHeaders, synonymHeaders, answerHeaders,"locale");
     }
 
     public ConceptRow() {
@@ -163,6 +167,14 @@ public class ConceptRow extends CSVEntity {
 
     public void setLowNormal(String lowNormal) {
         this.lowNormal = lowNormal;
+    }
+
+    public String getLocale() {
+        return locale;
+    }
+
+    public void setLocale(String locale) {
+        this.locale = locale;
     }
 
     public void adjust(int maxSynonyms, int maxAnswers, int maxReferenceTerms) {

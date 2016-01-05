@@ -16,11 +16,16 @@
         <require_module>org.ict4h.openmrs.openmrs-atomfeed</require_module>
         <require_module>org.openmrs.module.webservices.rest</require_module>
         <require_module>org.openmrs.module.emrapi</require_module>
+        <require_module>org.openmrs.module.addresshierarchy</require_module>
     </require_modules>
     <activator>feed.FeedActivator</activator>
     <advice>
         <point>org.openmrs.api.ConceptService</point>
         <class>org.bahmni.module.referencedata.labconcepts.advice.ConceptServiceEventInterceptor</class>
+    </advice>
+    <advice>
+        <point>org.openmrs.module.addresshierarchy.service.AddressHierarchyService</point>
+        <class>org.bahmni.module.referencedata.addresshierarchy.AddressHierarchyEntryEventInterceptor</class>
     </advice>
     <!-- Module Activator -->
     <!-- Internationalization -->
