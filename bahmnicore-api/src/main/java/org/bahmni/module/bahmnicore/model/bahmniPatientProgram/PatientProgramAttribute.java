@@ -17,11 +17,11 @@ public class PatientProgramAttribute extends BaseAttribute<ProgramAttributeType,
         setPatientProgramAttributeId(id);
     }
 
-    public PatientProgram getPatientProgram() {
+    public BahmniPatientProgram getPatientProgram() {
         return getOwner();
     }
 
-    public void setPatientProgram(PatientProgram patientProgram) {
+    public void setPatientProgram(BahmniPatientProgram patientProgram) {
         setOwner(new BahmniPatientProgram(patientProgram));
     }
 

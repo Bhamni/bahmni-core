@@ -24,4 +24,36 @@
         <!--  default properties must be set in the hibernate.default.properties -->
     </bean>
 
+    <!-- Services accessible via Context.getService() -->
+    <bean parent="serviceContext">
+        <property name="moduleService">
+            <list>
+                <value>org.openmrs.api.ProgramWorkflowService</value>
+                <bean
+                        class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+                    <property name="transactionManager">
+                        <ref bean="transactionManager" />
+                    </property>
+                    <property name="target">
+                        <bean class="org.bahmni.module.bahmnicore.service.impl.BahmniProgramWorkflowServiceImpl">
+                            <property name="programWorkflowDAO">
+                                <bean class="org.bahmni.module.bahmnicore.dao.impl.BahmniHibernateProgramWorkflowDAOImpl">
+                                    <property name="sessionFactory">
+                                        <ref bean="sessionFactory" />
+                                    </property>
+                                </bean>
+                            </property>
+                        </bean>
+                    </property>
+                    <property name="preInterceptors">
+                        <ref bean="serviceInterceptors" />
+                    </property>
+                    <property name="transactionAttributeSource">
+                        <ref bean="transactionAttributeSource" />
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
 </beans>

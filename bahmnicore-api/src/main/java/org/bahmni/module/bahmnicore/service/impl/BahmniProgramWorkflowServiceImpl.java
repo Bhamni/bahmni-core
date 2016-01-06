@@ -2,65 +2,44 @@ package org.bahmni.module.bahmnicore.service.impl;
 
 import org.bahmni.module.bahmnicore.dao.BahmniProgramWorkflowDAO;
 import org.bahmni.module.bahmnicore.model.bahmniPatientProgram.PatientProgramAttribute;
-import org.bahmni.module.bahmnicore.model.bahmniPatientProgram.BahmniPatientProgram;
 import org.bahmni.module.bahmnicore.model.bahmniPatientProgram.ProgramAttributeType;
 import org.bahmni.module.bahmnicore.service.BahmniProgramWorkflowService;
 import org.openmrs.api.impl.ProgramWorkflowServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Component
 @Transactional
 public class BahmniProgramWorkflowServiceImpl extends ProgramWorkflowServiceImpl implements BahmniProgramWorkflowService {
 
-    BahmniProgramWorkflowDAO bahmniProgramWorkflowDao;
-
-    @Autowired
-    public BahmniProgramWorkflowServiceImpl(BahmniProgramWorkflowDAO bahmniProgramWorkflowDao) {
-        this.bahmniProgramWorkflowDao = bahmniProgramWorkflowDao;
-        super.setProgramWorkflowDAO(bahmniProgramWorkflowDao);
-    }
-
     @Override
     public List<ProgramAttributeType> getAllProgramAttributeTypes() {
-        return bahmniProgramWorkflowDao.getAllProgramAttributeTypes();
+        return ((BahmniProgramWorkflowDAO)dao).getAllProgramAttributeTypes();
     }
 
     @Override
     public ProgramAttributeType getProgramAttributeType(Integer id) {
-        return bahmniProgramWorkflowDao.getProgramAttributeType(id);
+        return ((BahmniProgramWorkflowDAO)dao).getProgramAttributeType(id);
     }
 
     @Override
     public ProgramAttributeType getProgramAttributeTypeByUuid(String uuid) {
-        return bahmniProgramWorkflowDao.getProgramAttributeTypeByUuid(uuid);
+        return ((BahmniProgramWorkflowDAO)dao).getProgramAttributeTypeByUuid(uuid);
     }
 
     @Override
     public ProgramAttributeType saveProgramAttributeType(ProgramAttributeType type) {
-        return bahmniProgramWorkflowDao.saveProgramAttributeType(type);
+        return ((BahmniProgramWorkflowDAO)dao).saveProgramAttributeType(type);
     }
 
     @Override
     public void purgeProgramAttributeType(ProgramAttributeType type) {
-        bahmniProgramWorkflowDao.purgeProgramAttributeType(type);
+        ((BahmniProgramWorkflowDAO)dao).purgeProgramAttributeType(type);
     }
 
     @Override
     public PatientProgramAttribute getPatientProgramAttributeByUuid(String uuid) {
-        return bahmniProgramWorkflowDao.getPatientProgramAttributeByUuid(uuid);
+        return ((BahmniProgramWorkflowDAO)dao).getPatientProgramAttributeByUuid(uuid);
     }
 
-    @Override
-    public BahmniPatientProgram saveBahmniPatientProgram(BahmniPatientProgram bahmniPatientProgram) {
-        return bahmniProgramWorkflowDao.saveBahmniPatientProgram(bahmniPatientProgram);
-    }
-
-    @Override
-    public BahmniPatientProgram getBahmniPatientProgramByUuid(String uuid) {
-        return bahmniProgramWorkflowDao.getBahmniPatientProgramByUuid(uuid);
-    }
 }

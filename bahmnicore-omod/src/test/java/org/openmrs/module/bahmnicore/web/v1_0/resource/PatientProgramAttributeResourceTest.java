@@ -3,16 +3,11 @@ package org.openmrs.module.bahmnicore.web.v1_0.resource;
 import org.bahmni.module.bahmnicore.model.bahmniPatientProgram.PatientProgramAttribute;
 import org.bahmni.module.bahmnicore.service.BahmniProgramWorkflowService;
 import org.junit.Before;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.webservices.rest.web.resource.impl.BaseDelegatingResourceTest;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-
+@org.springframework.test.context.ContextConfiguration(locations = {"classpath:TestingApplicationContext.xml"}, inheritLocations = true)
 public class PatientProgramAttributeResourceTest extends BaseDelegatingResourceTest<PatientProgramAttributeResource, PatientProgramAttribute> {
-
-    @Autowired
-    BahmniProgramWorkflowService bahmniProgramWorkflowService;
 
     @Before
     public void before() throws Exception {
@@ -21,18 +16,29 @@ public class PatientProgramAttributeResourceTest extends BaseDelegatingResourceT
 
     @Override
     public PatientProgramAttribute newObject() {
-        return bahmniProgramWorkflowService.getPatientProgramAttributeByUuid(RestConstants.PATIENT_PROGRAM_ATTRIBUTE_UUID);
+        return Context.getService(BahmniProgramWorkflowService.class).getPatientProgramAttributeByUuid(getUuidProperty());
+    }
+
+    @Override
+    public void validateDefaultRepresentation() throws Exception {
+        super.validateDefaultRepresentation();
+        assertPropEquals("value", getObject().getValue());
+        assertPropPresent("attributeType");
+        assertPropEquals("voided", getObject().getVoided());
+    }
+
+    @Override
+    public void validateFullRepresentation() throws Exception {
+        super.validateFullRepresentation();
+        assertPropEquals("value", getObject().getValue());
+        assertPropPresent("attributeType");
+        assertPropEquals("voided", getObject().getVoided());
+        assertPropPresent("auditInfo");
     }
 
     @Override
     public String getDisplayProperty() {
-        try {
-            return "Audit Date: " + new SimpleDateFormat("yyyy-MM-dd").parse("2011-04-25");
-        }
-        catch (ParseException ex) {
-            ex.printStackTrace();
-            return null;
-        }
+        return "stage: Stage1";
     }
 
     @Override

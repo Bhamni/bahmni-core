@@ -4,24 +4,28 @@ import org.bahmni.module.bahmnicore.dao.BahmniProgramWorkflowDAO;
 import org.bahmni.module.bahmnicore.model.bahmniPatientProgram.BahmniPatientProgram;
 import org.bahmni.module.bahmnicore.model.bahmniPatientProgram.PatientProgramAttribute;
 import org.bahmni.module.bahmnicore.model.bahmniPatientProgram.ProgramAttributeType;
+import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
+import org.openmrs.Patient;
+import org.openmrs.PatientProgram;
+import org.openmrs.Program;
 import org.openmrs.api.db.DAOException;
 import org.openmrs.api.db.hibernate.HibernateProgramWorkflowDAO;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.openmrs.customdatatype.CustomDatatypeUtil;
 
+import java.util.Date;
 import java.util.List;
 
 public class BahmniHibernateProgramWorkflowDAOImpl extends HibernateProgramWorkflowDAO implements BahmniProgramWorkflowDAO {
-    @Autowired
+
     private SessionFactory sessionFactory;
 
     public void setSessionFactory(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
         super.setSessionFactory(sessionFactory);
+        this.sessionFactory = sessionFactory;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<ProgramAttributeType> getAllProgramAttributeTypes() {
         return sessionFactory.getCurrentSession().createCriteria(ProgramAttributeType.class).list();
@@ -34,7 +38,8 @@ public class BahmniHibernateProgramWorkflowDAOImpl extends HibernateProgramWorkf
 
     @Override
     public ProgramAttributeType getProgramAttributeTypeByUuid(String uuid) {
-        return (ProgramAttributeType) sessionFactory.getCurrentSession().createCriteria(ProgramAttributeType.class).add(Restrictions.eq("uuid", uuid)).uniqueResult();
+        return (ProgramAttributeType) sessionFactory.getCurrentSession().createCriteria(ProgramAttributeType.class).add(
+                Restrictions.eq("uuid", uuid)).uniqueResult();
     }
 
     @Override
@@ -45,8 +50,7 @@ public class BahmniHibernateProgramWorkflowDAOImpl extends HibernateProgramWorkf
 
     @Override
     public PatientProgramAttribute getPatientProgramAttributeByUuid(String uuid) {
-        return (PatientProgramAttribute) sessionFactory.getCurrentSession().createCriteria(PatientProgramAttribute.class).add(Restrictions.eq("uuid", uuid))
-                .uniqueResult();
+        return (PatientProgramAttribute) sessionFactory.getCurrentSession().createCriteria(PatientProgramAttribute.class).add(Restrictions.eq("uuid", uuid)).uniqueResult();
     }
 
     @Override
@@ -55,23 +59,48 @@ public class BahmniHibernateProgramWorkflowDAOImpl extends HibernateProgramWorkf
     }
 
     @Override
-    public BahmniPatientProgram saveBahmniPatientProgram(BahmniPatientProgram bahmniPatientProgram) {
-        if(bahmniPatientProgram.getPatientProgramId() == null) {
-            this.sessionFactory.getCurrentSession().save(bahmniPatientProgram);
-        } else {
-            this.sessionFactory.getCurrentSession().merge(bahmniPatientProgram);
+    public PatientProgram getPatientProgramByUuid(String uuid) {
+        return (BahmniPatientProgram) sessionFactory.getCurrentSession().createCriteria(BahmniPatientProgram.class).add(
+                        Restrictions.eq("uuid", uuid)).uniqueResult();
+    }
+
+    @Override
+    public PatientProgram getPatientProgram(Integer patientProgramId) throws DAOException {
+        return (BahmniPatientProgram)sessionFactory.getCurrentSession().get(BahmniPatientProgram.class, patientProgramId);
+    }
+
+    @Override
+    public PatientProgram savePatientProgram(PatientProgram patientProgram) throws DAOException {
+        CustomDatatypeUtil.saveAttributesIfNecessary((BahmniPatientProgram)patientProgram);
+        return super.savePatientProgram(patientProgram);
+    }
+
+    public List<PatientProgram> getPatientPrograms(Patient patient, Program program, Date minEnrollmentDate,
+                                                   Date maxEnrollmentDate, Date minCompletionDate, Date maxCompletionDate, boolean includeVoided)
+            throws DAOException {
+        Criteria crit = sessionFactory.getCurrentSession().createCriteria(BahmniPatientProgram.class);
+        if (patient != null) {
+            crit.add(Restrictions.eq("patient", patient));
         }
-        return bahmniPatientProgram;
-    }
-
-    @Override
-    public BahmniPatientProgram getBahmniPatientProgram(Integer id) throws DAOException {
-        return (BahmniPatientProgram)this.sessionFactory.getCurrentSession().get(BahmniPatientProgram.class, id);
-    }
-
-    @Override
-    public BahmniPatientProgram getBahmniPatientProgramByUuid(String uuid) {
-//        return (BahmniPatientProgram) sessionFactory.getCurrentSession().createQuery("from PatientProgram pp where pp.uuid = :uuid").setString("uuid", uuid).uniqueResult();
-        return (BahmniPatientProgram) sessionFactory.getCurrentSession().createCriteria(BahmniPatientProgram.class).add(Restrictions.eq("uuid", uuid)).uniqueResult();
+        if (program != null) {
+            crit.add(Restrictions.eq("program", program));
+        }
+        if (minEnrollmentDate != null) {
+            crit.add(Restrictions.ge("dateEnrolled", minEnrollmentDate));
+        }
+        if (maxEnrollmentDate != null) {
+            crit.add(Restrictions.le("dateEnrolled", maxEnrollmentDate));
+        }
+        if (minCompletionDate != null) {
+            crit.add(Restrictions.or(Restrictions.isNull("dateCompleted"), Restrictions.ge("dateCompleted",
+                    minCompletionDate)));
+        }
+        if (maxCompletionDate != null) {
+            crit.add(Restrictions.le("dateCompleted", maxCompletionDate));
+        }
+        if (!includeVoided) {
+            crit.add(Restrictions.eq("voided", false));
+        }
+        return crit.list();
     }
 }
