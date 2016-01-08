@@ -62,8 +62,8 @@ public class BahmniConceptDaoImpl implements BahmniConceptDao {
     @Override
     public Collection<Drug> getDrugByListOfConcepts(Collection<Concept> concepts) {
         return sessionFactory.getCurrentSession()
-                .createQuery("select drug from Drug as drug " +
-                        "where drug.concept in (:conceptIds)")
+                .createQuery("select drug from  Drug as drug, ConceptSet as conceptSet " +
+                        "where drug.concept in (:conceptIds) and conceptSet.concept = drug.concept order by conceptSet.sortWeight")
                 .setParameterList("conceptIds", concepts)
                 .list();
     }
