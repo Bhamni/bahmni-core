@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+    <program_attribute_type program_attribute_type_id="1" name="ProgramId" min_occurs="1" retired="false"
+                            creator="1" date_created="2008-08-15 17:04:50.0" datatype="org.openmrs.customdatatype.datatype.FreeTextDatatype"
+                            uuid="d7477c21-bfc3-4922-9591-e89d8b9c8efb"/>
+
+</dataset>

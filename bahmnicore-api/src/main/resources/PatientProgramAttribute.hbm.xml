@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="org.bahmni.module.bahmnicore.model.bahmniPatientProgram">
+
+    <class name="org.bahmni.module.bahmnicore.model.bahmniPatientProgram.PatientProgramAttribute" table="patient_program_attribute">
+
+        <id name="patientProgramAttributeId" type="int" column="patient_program_attribute_id">
+            <generator class="native">
+                <param name="sequence">patient_program_attribute_id_seq</param>
+            </generator>
+        </id>
+
+        <many-to-one name="patientProgram" class="org.bahmni.module.bahmnicore.model.bahmniPatientProgram.BahmniPatientProgram" not-null="true" column="patient_program_id"/>
+
+        <many-to-one name="attributeType" class="org.bahmni.module.bahmnicore.model.bahmniPatientProgram.ProgramAttributeType" not-null="true"
+                     column="attribute_type_id"/>
+
+        <property name="valueReference" type="text" not-null="false" access="field" column="value_reference"
+                  length="65535"/>
+
+        <many-to-one name="creator" class="org.openmrs.User" not-null="true" column="creator"/>
+
+        <property name="dateCreated" type="java.util.Date" column="date_created" not-null="true" length="19"/>
+
+        <many-to-one name="changedBy" class="org.openmrs.User" column="changed_by"/>
+
+        <property name="dateChanged" type="java.util.Date" column="date_changed" length="19"/>
+
+        <property name="voided" type="java.lang.Boolean" column="voided" length="1" not-null="true"/>
+
+        <many-to-one name="voidedBy" class="org.openmrs.User" column="voided_by"/>
+
+        <property name="dateVoided" type="java.util.Date" column="date_voided" length="19"/>
+
+        <property name="voidReason" type="java.lang.String" column="void_reason" length="255"/>
+
+        <property name="uuid" type="java.lang.String" column="uuid" length="38" unique="true"/>
+
+    </class>
+
+</hibernate-mapping>
