@@ -3824,4 +3824,33 @@
         <comment>Update the wards list sql to use bahmni.primaryIdentifierType global property instead of emr.primaryIdentifierType</comment>
         <sqlFile path="V1_98_WardsListSql.sql"/>
     </changeSet>
+
+    <changeSet id="bahmni-core-201611141540" author="Pankaj, Sidtharthan">
+        <comment>Update the search query to consider patient identifiers created by patient merge</comment>
+        <sqlFile path="V1_95_PatientSearchSql.sql"/>
+    </changeSet>
+    
+    <changeSet id="20170308-1000" author="Sidtharthan, Gaurav">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM concept where concept_id in (select concept_id from concept_name where
+                name = 'Non-Coded Condition' AND concept_name_type = 'FULLY_SPECIFIED' AND voided = FALSE)
+                and retired = FALSE;
+            </sqlCheck>
+        </preConditions>
+        <comment>Add new concept for Non-Coded Condition</comment>
+        <sql>
+            set @concept_id = 0;
+            set @answer_concept_id = 0;
+            set @concept_name_short_id = 0;
+            set @concept_name_full_id = 0;
+            
+            call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Non-Coded Condition',
+            'Non-Coded Condition', 'Text', 'Question', false);
+    
+            update global_property set property_value = (select uuid from concept where concept_id = @concept_id)
+            where property = 'conditionList.nonCodedUuid';
+        </sql>
+    </changeSet>
+    
 </databaseChangeLog>
