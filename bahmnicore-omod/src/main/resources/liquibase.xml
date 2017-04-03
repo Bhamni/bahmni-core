@@ -3871,4 +3871,15 @@
 
         </sql>
     </changeSet>
+    <changeSet id="bahmni-core-2016092916" author="Bindu">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="1">
+                select count(*) from global_property where property_value='en, es, fr, it, pt';
+            </sqlCheck>
+        </preConditions>
+        <comment>Renaming 'pt' to 'pt_BR' for locale.allowed.list property in global_property table</comment>
+        <sql>
+            update global_property set property_value='en, es, fr, it, pt_BR' where property_value='en, es, fr, it, pt';
+        </sql>
+    </changeSet>
 </databaseChangeLog>
