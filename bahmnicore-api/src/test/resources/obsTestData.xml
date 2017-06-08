@@ -39,48 +39,59 @@
 
     <concept concept_id="200" retired="0" datatype_id="5" class_id="1" is_set="1" creator="1" date_created="2013-12-04 11:36:42" uuid="breast_cancer_concept_uuid" />
     <concept_name concept_id="200" name="Breast Cancer" locale="en" creator="1" date_created="2005-01-01 00:00:00.0" concept_name_id="11" voided="false" uuid="6d2d4cb7-955b-4837-80f7-0ebb94092afi" concept_name_type="FULLY_SPECIFIED" locale_preferred="0"/>
+    <concept_name concept_id="200" name="Breast Cancer" locale="sp" creator="1" date_created="2005-01-01 00:00:00.0" concept_name_id="110" voided="false" uuid="ead18179-6c0e-44d7-bd24-47f0df586766" concept_name_type="FULLY_SPECIFIED" locale_preferred="0"/>  
     <concept_set concept_id="200" concept_set="100" concept_set_id="12" creator="1" sort_weight="1" date_created="2005-01-01 00:00:00.0" />
 
     <concept concept_id="790" retired="0" datatype_id="5" class_id="1" is_set="1" creator="1" date_created="2013-12-04 11:36:42" uuid="BC_intake_concept_uuid" />
     <concept_name concept_id="790" name="Breast Cancer Intake" locale="en" creator="1" date_created="2005-01-01 00:00:00.0" concept_name_id="1" voided="false" uuid="5d2d4cb7-955b-4837-80f7-0ebb94092afb" concept_name_type="FULLY_SPECIFIED" locale_preferred="0"/>
+    <concept_name concept_id="790" name="Breast Cancer Intake" locale="sp" creator="1" date_created="2005-01-01 00:00:00.0" concept_name_id="10" voided="false" uuid="53a45b38-820f-4e1f-8e23-6bd387b3859b" concept_name_type="FULLY_SPECIFIED" locale_preferred="0"/>
     <concept_set concept_id="790" concept_set="200" concept_set_id="121" creator="1" sort_weight="1" date_created="2005-01-01 00:00:00.0" />
 
     <concept concept_id="9011" retired="0" datatype_id="1" class_id="1" is_set="0" creator="1" date_created="2013-12-04 11:36:42" uuid="histopathology_value_uuid" />
     <concept_name concept_id="9011" name="Histopathology" locale="en" creator="1" date_created="2005-01-01 00:00:00.0" concept_name_id="3" voided="false" uuid="5d2d4cb7-955b-4837-80f7-0ebb94092afd" concept_name_type="FULLY_SPECIFIED" locale_preferred="0"/>
+    <concept_name concept_id="9011" name="Histopathology" locale="sp" creator="1" date_created="2005-01-01 00:00:00.0" concept_name_id="30" voided="false" uuid="d79cc501-e22f-463d-b7ef-2ba71faa9052" concept_name_type="FULLY_SPECIFIED" locale_preferred="0"/>
     <concept_set concept_id="9011" concept_set="790" concept_set_id="77772" creator="1" sort_weight="1" date_created="2005-01-01 00:00:00.0" />
 
     <concept concept_id="9012" retired="0" datatype_id="2" class_id="1" is_set="0" creator="1" date_created="2013-12-04 11:36:42" uuid="receptor_status_concept_uuid" />
     <concept_name concept_id="9012" name="Receptor Status" locale="en" creator="1" date_created="2005-01-01 00:00:00.0" concept_name_id="4" voided="false" uuid="5d2d4cb7-955b-4837-80f7-0ebb94092afe" concept_name_type="FULLY_SPECIFIED" locale_preferred="0"/>
+    <concept_name concept_id="9012" name="Receptor Status" locale="sp" creator="1" date_created="2005-01-01 00:00:00.0" concept_name_id="40" voided="false" uuid="697fc3e4-5a3e-42b6-8ece-d2cf584bab88" concept_name_type="FULLY_SPECIFIED" locale_preferred="0"/>
     <concept_set concept_id="9012" concept_set="790" concept_set_id="77773" creator="1" sort_weight="2" date_created="2005-01-01 00:00:00.0" />
 
     <concept concept_id="9021" retired="0" datatype_id="1" class_id="1" is_set="0" creator="1" date_created="2013-12-04 11:36:42" uuid="temperature_value_uuid" />
     <concept_name concept_id="9021" name="Temperature" locale="en" creator="1" date_created="2005-01-01 00:00:00.0" concept_name_id="699" voided="false" uuid="5d2d4cb7-955b-4837-80f7-0ebb84093afg" concept_name_type="FULLY_SPECIFIED" locale_preferred="0"/>
+    <concept_name concept_id="9021" name="Temperature" locale="sp" creator="1" date_created="2005-01-01 00:00:00.0" concept_name_id="6990" voided="false" uuid="1fb19f79-c7ad-4d02-8af1-c63488197e1d" concept_name_type="FULLY_SPECIFIED" locale_preferred="0"/>
     <concept_set concept_id="9021" concept_set="790" concept_set_id="5" creator="1" sort_weight="1" date_created="2005-01-01 00:00:00.0" />
 
     <concept concept_id="9022" retired="0" datatype_id="1" class_id="1" is_set="0" creator="1" date_created="2013-12-04 11:36:42" uuid="problem_index_concept_uuid" />
     <concept_name concept_id="9022" name="Problem Index" locale="en" creator="1" date_created="2005-01-01 00:00:00.0" concept_name_id="7" voided="false" uuid="5d2d4cb7-955b-4837-80f7-0ebb94092afh" concept_name_type="FULLY_SPECIFIED" locale_preferred="0"/>
+    <concept_name concept_id="9022" name="Problem Index" locale="sp" creator="1" date_created="2005-01-01 00:00:00.0" concept_name_id="70" voided="false" uuid="1c9bda59-ed45-4187-b3d7-aec29f5d8b7b" concept_name_type="FULLY_SPECIFIED" locale_preferred="0"/>
     <concept_set concept_id="9022" concept_set="790" concept_set_id="6" creator="1" sort_weight="2" date_created="2005-01-01 00:00:00.0" />
 
     <concept concept_id="190" retired="0" datatype_id="5" class_id="1" is_set="1" creator="1" date_created="2013-12-04 11:36:42" uuid="BC_progress_concept_uuid" />
     <concept_name concept_id="190" name="Breast Cancer Progress" locale="en" creator="1" date_created="2005-01-01 00:00:00.0" concept_name_id="111" voided="false" uuid="5d2d4cb7-955b-4837-80f7-0ebb94092qqb" concept_name_type="FULLY_SPECIFIED" locale_preferred="0"/>
+    <concept_name concept_id="190" name="Breast Cancer Progress" locale="sp" creator="1" date_created="2005-01-01 00:00:00.0" concept_name_id="1110" voided="false" uuid="6aeb6397-bb60-4003-ad3f-63c4be170bf4" concept_name_type="FULLY_SPECIFIED" locale_preferred="0"/>
     <concept_set concept_id="190" concept_set="200" concept_set_id="16" creator="1" sort_weight="2" date_created="2005-01-01 00:00:00.0" />
 
     <concept_set concept_id="9011" concept_set="190" concept_set_id="45" creator="1" sort_weight="1" date_created="2005-01-01 00:00:00.0" />
 
     <concept concept_id="19011" retired="0" datatype_id="5" class_id="1" is_set="1" creator="1" date_created="2013-12-04 11:36:42" uuid="5d2d4cb7-955b-4837-80f7-0ebb94011111" />
     <concept_name concept_id="19011" name="Vitals" locale="en" creator="1" date_created="2014-01-01 00:00:00.0" concept_name_id="113" voided="false" uuid="5d2d4cb7-955b-4837-80f7-0ebb9411111" concept_name_type="FULLY_SPECIFIED" locale_preferred="0"/>
+    <concept_name concept_id="19011" name="Vitals" locale="sp" creator="1" date_created="2014-01-01 00:00:00.0" concept_name_id="1130" voided="false" uuid="6fac6096-a6d1-41c4-930f-5fe61a6a83a1" concept_name_type="FULLY_SPECIFIED" locale_preferred="0"/>
     <concept_set concept_id="19011" concept_set="190" concept_set_id="26" creator="1" sort_weight="1" date_created="2005-01-01 00:00:00.0" />
 
     <concept concept_id="19012" retired="0" datatype_id="1" class_id="3" is_set="0" creator="1" date_created="2013-12-04 11:36:42" uuid="5d2d4cb7-955b-4837-80f7-0ebb94022222" />
     <concept_name concept_id="19012" name="Pulse" locale="en" creator="1" date_created="2005-01-01 00:00:00.0" concept_name_id="114" voided="false" uuid="5d2d4cb7-955b-4837-80f7-0ebb94022222" concept_name_type="FULLY_SPECIFIED" locale_preferred="0"/>
+    <concept_name concept_id="19012" name="Pulse" locale="sp" creator="1" date_created="2005-01-01 00:00:00.0" concept_name_id="1140" voided="false" uuid="acda92bd-22fe-4e02-ba09-ccabaf82da68" concept_name_type="FULLY_SPECIFIED" locale_preferred="0"/>
     <concept_set concept_id="19012" concept_set="19011" concept_set_id="113" creator="1" sort_weight="2" date_created="2005-01-01 00:00:00.0" />
 
     <concept concept_id="19021" retired="0" datatype_id="1" class_id="1" is_set="0" creator="1" date_created="2013-12-04 11:36:42" uuid="5d2d4cb7-955b-4837-80f7-0ebb94044444" />
     <concept_name concept_id="19021" name="Weight" locale="en" creator="1" date_created="2005-01-01 00:00:00.0" concept_name_id="6" voided="false" uuid="5d2d4cb7-955b-4837-80f7-0ebb94044444" concept_name_type="FULLY_SPECIFIED" locale_preferred="0"/>
+    <concept_name concept_id="19021" name="Weight" locale="sp" creator="1" date_created="2005-01-01 00:00:00.0" concept_name_id="60" voided="false" uuid="7049b1c9-6e5e-4092-8866-1475f9e856a1" concept_name_type="FULLY_SPECIFIED" locale_preferred="0"/>
     <concept_set concept_id="19021" concept_set="19011" concept_set_id="115" creator="1" sort_weight="1" date_created="2005-01-01 00:00:00.0" />
 
     <concept concept_id="19031" retired="0" datatype_id="1" class_id="1" is_set="0" creator="1" date_created="2013-12-04 11:36:42" uuid="5d2d4cb7-955b-4837-80f7-0ebb94044455" />
     <concept_name concept_id="19031" name="RR" locale="en" creator="1" date_created="2005-01-01 00:00:00.0" concept_name_id="66" voided="false" uuid="5d2d4cb7-955b-4837-80f7-0ebb94044455" concept_name_type="FULLY_SPECIFIED" locale_preferred="0"/>
+    <concept_name concept_id="19031" name="RR" locale="sp" creator="1" date_created="2005-01-01 00:00:00.0" concept_name_id="660" voided="false" uuid="a829dd48-10e8-45b9-ae2e-4e32392578f1" concept_name_type="FULLY_SPECIFIED" locale_preferred="0"/>
     <concept_set concept_id="19031" concept_set="19011" concept_set_id="215" creator="1" sort_weight="1" date_created="2005-01-01 00:00:00.0" />
 
     <location location_id="1" name="OPD Room 1" creator="1" date_created="2005-01-01 00:00:00.0" retired="false" uuid="c36006e5-9fbb-4f20-866b-0ece245615a1"/>
