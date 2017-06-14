@@ -1,5 +1,13 @@
 package org.bahmni.module.bahmnicore.dao.impl;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bahmni.module.bahmnicore.dao.ObsDao;
@@ -14,15 +22,9 @@ import org.openmrs.Obs;
 import org.openmrs.Order;
 import org.openmrs.Person;
 import org.openmrs.api.ConceptNameType;
+import org.openmrs.api.context.Context;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
 
 @Repository
 public class ObsDaoImpl implements ObsDao {
@@ -73,6 +75,7 @@ public class ObsDaoImpl implements ObsDao {
                 " where obs.person.uuid = :patientUuid " +
                 " and cn.concept = obs.concept.conceptId " +
                 " and cn.name in (:conceptNames) " +
+                " and cn.locale = :locale " +
                 " and cn.conceptNameType = :conceptNameType " +
                 " and cn.voided = false and obs.voided = false ");
 
@@ -107,6 +110,7 @@ public class ObsDaoImpl implements ObsDao {
         queryToGetObservations.setString("patientUuid", patientUuid);
         queryToGetObservations.setParameterList("conceptNames", conceptNames);
         queryToGetObservations.setParameter("conceptNameType", ConceptNameType.FULLY_SPECIFIED);
+        queryToGetObservations.setString("locale", Context.getLocale().getLanguage());
         if (null != obsIgnoreList && obsIgnoreList.size() > 0) {
             queryToGetObservations.setParameterList("obsIgnoreList", obsIgnoreList);
         }
@@ -133,6 +137,7 @@ public class ObsDaoImpl implements ObsDao {
                         " where obs.person.uuid = :patientUuid " +
                         " and cn.concept = obs.concept.conceptId " +
                         " and cn.name = (:conceptName) " +
+                        " and cn.locale = :locale " +
                         " and cn.conceptNameType = :conceptNameType " +
                         " and cn.voided = false " +
                         " and obs.voided = false" +
@@ -142,6 +147,8 @@ public class ObsDaoImpl implements ObsDao {
         queryToGetObservations.setString("patientUuid", patientUuid);
         queryToGetObservations.setParameter("conceptName", conceptName);
         queryToGetObservations.setParameter("conceptNameType", ConceptNameType.FULLY_SPECIFIED);
+        queryToGetObservations.setString("locale", Context.getLocale().getLanguage());
+        
         return queryToGetObservations.list();
     }
 
@@ -155,29 +162,34 @@ public class ObsDaoImpl implements ObsDao {
                         "where obs.voided = false and obs.concept.conceptId in " +
                         "   ( select cs.concept.conceptId\n" +
                         "     from ConceptName cn, ConceptSet cs\n" +
-                        "     where cs.conceptSet.conceptId = cn.concept.conceptId and cn.conceptNameType='FULLY_SPECIFIED' and cn.name=:conceptName)\n" +
+                        "     where cs.conceptSet.conceptId = cn.concept.conceptId and cn.conceptNameType='FULLY_SPECIFIED' " +
+                        "	  and cn.locale = :locale and cn.name=:conceptName)\n" +
                         "   and obs.person.uuid=:patientUuid and v.visitId =:visitId order by enc.encounterId desc";
         Query queryToGetObs = sessionFactory.getCurrentSession().createQuery(queryString);
         queryToGetObs.setString("conceptName", conceptName);
         queryToGetObs.setString("patientUuid", patientUuid);
         queryToGetObs.setInteger("visitId", visitId);
-
+        queryToGetObs.setString("locale", Context.getLocale().getLanguage());
+        
         return queryToGetObs.list();
     }
 
     @Override
     public List<Obs> getObsForConceptsByEncounter(String encounterUuid, List<String> conceptNames) {
         if (encounterUuid == null) return new ArrayList<>();
-
+        
         String queryString =
                 "select obs\n" +
                         "from Obs obs, ConceptName cn \n" +
                         "where obs.voided = false and obs.encounter.uuid =:encounterUuid " +
                         "and obs.concept.conceptId = cn.concept.conceptId  " +
-                        "and cn.name in (:conceptNames) and cn.conceptNameType='FULLY_SPECIFIED'";
+                        "and cn.name in (:conceptNames) " +
+                        "and cn.locale = :locale " +
+                        "and cn.conceptNameType='FULLY_SPECIFIED'";
         Query queryToGetObs = sessionFactory.getCurrentSession().createQuery(queryString);
         queryToGetObs.setParameterList("conceptNames", conceptNames);
         queryToGetObs.setString("encounterUuid", encounterUuid);
+        queryToGetObs.setString("locale", Context.getLocale().getLanguage());
 
         return queryToGetObs.list();
     }
@@ -301,7 +313,8 @@ public class ObsDaoImpl implements ObsDao {
                 "WHERE pp.uuid = (:patientProgramUuid) " +
                 "AND o.voided = false " +
                 "AND cn.concept_name_type='FULLY_SPECIFIED' " +
-                "AND cn.name IN (:conceptNames)");
+                "AND cn.name IN (:conceptNames) " +
+                "AND cn.locale = :locale");
         if(null != startDate) {
             queryString.append(" AND o.obs_datetime >= STR_TO_DATE(:startDate, '%Y-%m-%d')");
         }
@@ -319,6 +332,7 @@ public class ObsDaoImpl implements ObsDao {
         Query queryToGetObs = sessionFactory.getCurrentSession().createSQLQuery(queryString.toString()).addEntity(Obs.class);
         queryToGetObs.setParameterList("conceptNames", conceptNames);
         queryToGetObs.setString("patientProgramUuid", patientProgramUuid);
+        queryToGetObs.setString("locale", Context.getLocale().getLanguage());
         if(null != startDate) {
             queryToGetObs.setString("startDate", dateFormat.format(startDate));
         }

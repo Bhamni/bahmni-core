@@ -7,4 +7,5 @@ public interface PatientDocumentService {
     public String saveDocument(Integer patientId, String encounterTypeName, String content, String format, String fileType);
     public ResponseEntity<Object> retriveImage(String patientUuid);
 
+    void delete(String fileName);
 }

@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.bahmni.module</groupId>
         <artifactId>bahmni</artifactId>
-        <version>0.89-SNAPSHOT</version>
+        <version>0.90-SNAPSHOT</version>
     </parent>
     <artifactId>bahmni-mapping</artifactId>
     <packaging>jar</packaging>

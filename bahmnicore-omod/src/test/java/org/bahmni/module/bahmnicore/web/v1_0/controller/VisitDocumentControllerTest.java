@@ -13,6 +13,7 @@ import org.openmrs.Visit;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
+import org.openmrs.api.context.UserContext;
 import org.openmrs.module.bahmniemrapi.document.contract.VisitDocumentRequest;
 import org.openmrs.module.bahmniemrapi.document.service.VisitDocumentService;
 import org.openmrs.module.bahmniemrapi.visitlocation.BahmniVisitLocationService;
@@ -20,9 +21,7 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @PrepareForTest(Context.class)
 @RunWith(PowerMockRunner.class)
@@ -39,6 +38,8 @@ public class VisitDocumentControllerTest {
     VisitDocumentService visitDocumentService;
     @Mock
     BahmniVisitLocationService bahmniVisitLocationService;
+    @Mock
+    UserContext userContext;
 
     @Before
     public void setUp() throws Exception {
@@ -94,5 +95,23 @@ public class VisitDocumentControllerTest {
         visitDocumentController.save(visitDocumentRequest);
 
         verify(bahmniVisitLocationService).getVisitLocationUuid("location-uuid");
+    }
+
+    @Test
+    public void shouldCallDeleteWithGivenFileNameIfUserIsAuthenticated() throws Exception {
+        PowerMockito.mockStatic(Context.class);
+        when(Context.getUserContext()).thenReturn(userContext);
+        when(userContext.isAuthenticated()).thenReturn(true);
+        visitDocumentController.deleteDocument("testFile.png");
+        verify(patientDocumentService, times(1)).delete("testFile.png");
+    }
+
+    @Test
+    public void shouldNotCallDeleteWithGivenFileNameIfUserIsNotAuthenticated() throws Exception {
+        PowerMockito.mockStatic(Context.class);
+        when(Context.getUserContext()).thenReturn(userContext);
+        when(userContext.isAuthenticated()).thenReturn(false);
+        visitDocumentController.deleteDocument("testFile.png");
+        verifyZeroInteractions(patientDocumentService);
     }
 }

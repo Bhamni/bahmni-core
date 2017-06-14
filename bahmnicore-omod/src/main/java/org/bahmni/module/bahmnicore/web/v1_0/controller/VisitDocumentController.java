@@ -17,10 +17,7 @@ import org.openmrs.module.webservices.rest.web.v1_0.controller.BaseRestControlle
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 
@@ -60,8 +57,15 @@ public class VisitDocumentController extends BaseRestController {
         }
         HashMap<String, String> savedDocument = new HashMap<>();
         String url = patientDocumentService.saveDocument(patient.getId(), encounterTypeName, document.getContent(),
-                                                            document.getFormat(), document.getFileType());
+                document.getFormat(), document.getFileType());
         savedDocument.put("url", url);
         return savedDocument;
+    }
+
+    @RequestMapping(method = RequestMethod.DELETE, value = baseVisitDocumentUrl)
+    @ResponseBody
+    public void deleteDocument(@RequestParam(value = "filename") String fileName) {
+        if (Context.getUserContext().isAuthenticated())
+            patientDocumentService.delete(fileName);
     }
 }

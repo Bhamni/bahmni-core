@@ -20,11 +20,7 @@ import org.springframework.stereotype.Service;
 import javax.imageio.ImageIO;
 import javax.xml.bind.DatatypeConverter;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -55,7 +51,7 @@ public class PatientDocumentServiceImpl implements PatientDocumentService {
         try {
             if (content == null || content.isEmpty()) return null;
 
-            String basePath = BahmniCoreProperties.getProperty("bahmnicore.documents.baseDirectory");
+            String basePath = getBasePath();
             String relativeFilePath = createFilePath(basePath, patientId, encounterTypeName, format);
 
             File outputFile = new File(String.format("%s/%s", basePath, relativeFilePath));
@@ -66,6 +62,10 @@ public class PatientDocumentServiceImpl implements PatientDocumentService {
         } catch (IOException e) {
             throw new BahmniCoreException("[%s] : Could not save patient Document ", e);
         }
+    }
+
+    private String getBasePath() {
+        return BahmniCoreProperties.getProperty("bahmnicore.documents.baseDirectory");
     }
 
     private String createFileName(Integer patientId, String encounterTypeName, Object format) {
@@ -134,6 +134,28 @@ public class PatientDocumentServiceImpl implements PatientDocumentService {
     public ResponseEntity<Object> retriveImage(String patientUuid) {
         File file = getPatientImageFile(patientUuid);
         return readImage(file);
+    }
+
+    @Override
+    public void delete(String fileName) {
+        File file = new File(getBasePath() + "/" + fileName);
+        deleteThumbnailFile(file);
+        deleteFile(file);
+    }
+
+    private void deleteThumbnailFile(File file) {
+        String absolutePath = file.getAbsolutePath();
+        String nameWithoutExtension = FilenameUtils.removeExtension(absolutePath);
+        String extension = FilenameUtils.getExtension(absolutePath);
+        FileUtils.deleteQuietly(new File(String.format("%s_thumbnail.%s", nameWithoutExtension, extension)));
+    }
+
+    private void deleteFile(File file) {
+        boolean deleted = FileUtils.deleteQuietly(file);
+        if (deleted)
+            log.info(String.format("%s file is deleted successfully", file.getAbsolutePath()));
+        else
+            log.warn(String.format("Unable to delete %s", file.getAbsolutePath()));
     }
 
     private File getPatientImageFile(String patientUuid) {
