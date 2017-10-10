@@ -175,6 +175,17 @@
             <groupId>org.openmrs.module</groupId>
             <artifactId>legacyui-omod</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>javacv-platform</artifactId>
+            <version>1.3.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>javacv</artifactId>
+            <version>1.3.1</version>
+        </dependency>
 
     </dependencies>
 

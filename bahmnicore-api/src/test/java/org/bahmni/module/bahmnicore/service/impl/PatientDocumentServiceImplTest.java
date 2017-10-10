@@ -1,6 +1,7 @@
 package org.bahmni.module.bahmnicore.service.impl;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.xerces.impl.dv.util.Base64;
 import org.bahmni.module.bahmnicore.bahmniexceptions.FileTypeNotSupportedException;
 import org.bahmni.module.bahmnicore.bahmniexceptions.VideoFormatNotSupportedException;
 import org.bahmni.module.bahmnicore.model.VideoFormats;
@@ -8,6 +9,7 @@ import org.bahmni.module.bahmnicore.properties.BahmniCoreProperties;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.openmrs.Patient;
@@ -21,13 +23,15 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({BahmniCoreProperties.class, FileInputStream.class, FileUtils.class, ImageIO.class})
@@ -36,6 +40,9 @@ public class PatientDocumentServiceImplTest {
     private PatientDocumentServiceImpl patientDocumentService;
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
+
+    @Rule
+    TemporaryFolder temporaryFolder = new TemporaryFolder();
 
 
     @Test
@@ -173,5 +180,25 @@ public class PatientDocumentServiceImplTest {
 
         patientDocumentService = new PatientDocumentServiceImpl();
         patientDocumentService.saveDocument(1, "Consultation", "otherfileContent", "bmp", "image");
+    }
+    
+    @Test
+    public void shouldCreateThumbnailForVideo() throws Exception {
+        PowerMockito.mockStatic(BahmniCoreProperties.class);
+        when(BahmniCoreProperties.getProperty("bahmnicore.documents.baseDirectory")).thenReturn(temporaryFolder.getRoot().getAbsolutePath());
+
+        Patient patient = new Patient();
+        patient.setId(1);
+        patient.setUuid("patient-uuid");
+
+        byte[] allBytes = Files.readAllBytes(Paths.get("src/test/resources/SampleVideo.mov"));
+        String content = Base64.encode(allBytes);
+        patientDocumentService = new PatientDocumentServiceImpl();
+        String url = patientDocumentService.saveDocument(1, "Consultation", content, "mp4", "video");
+        String videoUrl = temporaryFolder.getRoot().getAbsolutePath()  + "/" + url;
+        String thumbnailUrl  = temporaryFolder.getRoot().getAbsolutePath()  + "/" + url.split("\\.")[0] + "_thumbnail.jpg";
+        assertTrue(Files.exists(Paths.get(videoUrl)));
+        assertTrue(Files.exists(Paths.get(thumbnailUrl)));
+        verifyStatic(times(1));
     }
 }
