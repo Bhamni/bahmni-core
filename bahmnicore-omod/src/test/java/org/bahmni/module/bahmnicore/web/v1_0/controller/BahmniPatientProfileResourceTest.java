@@ -163,4 +163,26 @@ public class BahmniPatientProfileResourceTest {
         ResponseEntity<Object> response = spy.update("someUuid", propertiesToCreate);
         Assert.assertEquals(403,response.getStatusCode().value());
     }
+
+    @Test
+    public void shouldThrowExceptionWhenUserDoesNotHaveProperPrivilege() throws Exception {
+        bahmniPatientProfileResource = new BahmniPatientProfileResource(emrPatientProfileService, identifierSourceServiceWrapper);
+        BahmniPatientProfileResource spy = spy(bahmniPatientProfileResource);
+        PatientProfile delegate = mock(PatientProfile.class);
+        doReturn(delegate).when(spy, "mapForUpdatePatient", anyString(), any(SimpleObject.class));
+        when(emrPatientProfileService.save(delegate)).thenThrow(new APIAuthenticationException());
+        doNothing().when(spy).setConvertedProperties(any(PatientProfile.class), any(SimpleObject.class), any(DelegatingResourceDescription.class), any(Boolean.class));
+        Person person = new Person();
+        person.setUuid("personUuid");
+        when(personService.getPersonByUuid("patientUuid")).thenReturn(person);
+        List<Relationship> relationships = Collections.emptyList();
+        when(personService.getRelationshipsByPerson(person)).thenReturn(relationships);
+        Patient patient = mock(Patient.class);
+        when(patient.getUuid()).thenReturn("patientUuid");
+        when(delegate.getPatient()).thenReturn(patient);
+
+        ResponseEntity<Object> response = spy.update("someUuid", propertiesToCreate);
+
+        Assert.assertEquals(403, response.getStatusCode().value());
+    }
 }
