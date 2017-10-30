@@ -15,7 +15,6 @@ public class PersonNameDaoImplIT extends BaseIntegrationTest {
 	PersonNameDaoImpl personNameDao;
 	
 	@Test
-    @Ignore
 	public void shouldRetrievePatientListIfLastNameExists() throws Exception {
 		executeDataSet("apiTestData.xml");
 		String key = "familyName";
@@ -26,7 +25,6 @@ public class PersonNameDaoImplIT extends BaseIntegrationTest {
 	}
 	
 	@Test
-    @Ignore
 	public void shouldReturnMaxOf20Results() throws Exception {
 		executeDataSet("apiTestData.xml");
 		String key = "familyName";

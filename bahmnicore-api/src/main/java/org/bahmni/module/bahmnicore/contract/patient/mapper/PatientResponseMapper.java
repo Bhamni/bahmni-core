@@ -1,15 +1,11 @@
 package org.bahmni.module.bahmnicore.contract.patient.mapper;
 
 import java.util.Objects;
+
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bahmni.module.bahmnicore.contract.patient.response.PatientResponse;
-import org.openmrs.Patient;
-import org.openmrs.PatientIdentifier;
-import org.openmrs.PersonAddress;
-import org.openmrs.PersonAttribute;
-import org.openmrs.Visit;
-import org.openmrs.VisitAttribute;
+import org.openmrs.*;
 import org.openmrs.api.APIException;
 import org.openmrs.api.VisitService;
 import org.openmrs.module.bahmniemrapi.encountertransaction.command.impl.BahmniVisitAttributeService;
@@ -39,7 +35,7 @@ public class PatientResponseMapper {
 
         Integer visitLocationId = bahmniVisitLocationService.getVisitLocation(loginLocationUuid).getLocationId();
         List<Visit> activeVisitsByPatient = visitService.getActiveVisitsByPatient(patient);
-        
+
         patientResponse = new PatientResponse();
         patientResponse.setUuid(patient.getUuid());
         patientResponse.setPersonId(patient.getPatientId());
@@ -56,7 +52,7 @@ public class PatientResponseMapper {
 
         mapExtraIdentifiers(patient, primaryIdentifier);
         mapPersonAttributes(patient, patientSearchResultFields);
-        if(null != patient.getPersonAddress()) {
+        if (null != patient.getPersonAddress()) {
             mapPersonAddress(patient, addressSearchResultFields);
         }
         mapVisitSummary(visitLocationId, activeVisitsByPatient);
@@ -70,7 +66,7 @@ public class PatientResponseMapper {
                 .map(patientIdentifier -> {
                     String identifier = patientIdentifier.getIdentifier();
                     return identifier == null ? ""
-                                              : formKeyPair(patientIdentifier.getIdentifierType().getName(), identifier);
+                            : formKeyPair(patientIdentifier.getIdentifierType().getName(), identifier);
                 })
                 .collect(Collectors.joining(","));
         patientResponse.setExtraIdentifiers(formJsonString(extraIdentifiers));
@@ -99,13 +95,13 @@ public class PatientResponseMapper {
 
     private void mapVisitSummary(Integer visitLocationId, List<Visit> activeVisitsByPatient) {
         patientResponse.setHasBeenAdmitted(false);
-        for(Visit visit:activeVisitsByPatient){
-            if(visit.getLocation().getLocationId().equals(visitLocationId)){
+        for (Visit visit : activeVisitsByPatient) {
+            if (visit.getLocation().getLocationId().equals(visitLocationId)) {
                 patientResponse.setActiveVisitUuid(visit.getUuid());
-                Set<VisitAttribute> visitAttributeSet=visit.getAttributes();
-                for(VisitAttribute visitAttribute:visitAttributeSet){
-                    if(visitAttribute.getAttributeType().getName().equalsIgnoreCase(BahmniVisitAttributeService.ADMISSION_STATUS_ATTRIBUTE_TYPE)
-                            && visitAttribute.getValueReference().equalsIgnoreCase("Admitted")){
+                Set<VisitAttribute> visitAttributeSet = visit.getAttributes();
+                for (VisitAttribute visitAttribute : visitAttributeSet) {
+                    if (visitAttribute.getAttributeType().getName().equalsIgnoreCase(BahmniVisitAttributeService.ADMISSION_STATUS_ATTRIBUTE_TYPE)
+                            && visitAttribute.getValueReference().equalsIgnoreCase("Admitted")) {
                         patientResponse.setHasBeenAdmitted(true);
                         return;
                     }
@@ -115,11 +111,11 @@ public class PatientResponseMapper {
     }
 
     private String formJsonString(String keyPairs) {
-        return "".equals(keyPairs) ? null :"{" + keyPairs + "}";
+        return "".equals(keyPairs) ? null : "{" + keyPairs + "}";
     }
 
     private String formKeyPair(String Key, String value) {
-        return (value== null) ? value : "\"" + Key + "\" : \"" + value.replace("\\","\\\\").replace("\"","\\\"") + "\"";
+        return (value == null) ? value : "\"" + Key + "\" : \"" + value.replace("\\", "\\\\").replace("\"", "\\\"") + "\"";
     }
 
     private String getPersonAddressFieldValue(String addressField, PersonAddress personAddress) {
