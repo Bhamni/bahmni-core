@@ -184,6 +184,11 @@
             <groupId>org.jcodec</groupId>
             <artifactId>jcodec-javase</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.openmrs.api</groupId>
+            <artifactId>openmrs-api</artifactId>
+            <version>2.1.1-SNAPSHOT</version>
+        </dependency>
 
     </dependencies>
 
