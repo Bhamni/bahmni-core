@@ -3,11 +3,10 @@ package org.bahmni.module.bahmnicore.web.v1_0.controller.display.controls;
 import org.apache.commons.lang3.ObjectUtils;
 import org.bahmni.module.bahmnicore.extensions.BahmniExtensions;
 import org.bahmni.module.bahmnicore.obs.ObservationsAdder;
+import org.bahmni.module.bahmnicore.service.BahmniConceptService;
 import org.bahmni.module.bahmnicore.service.BahmniObsService;
-import org.bahmni.module.bahmnicore.util.MiscUtils;
 import org.openmrs.Concept;
 import org.openmrs.Visit;
-import org.openmrs.api.ConceptService;
 import org.openmrs.api.VisitService;
 import org.openmrs.module.bahmniemrapi.encountertransaction.contract.BahmniObservation;
 import org.openmrs.module.webservices.rest.web.RestConstants;
@@ -21,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -31,14 +31,14 @@ public class BahmniObservationsController extends BaseRestController {
     private static final String LATEST = "latest";
     private static final String INITIAL = "initial";
     private BahmniObsService bahmniObsService;
-    private ConceptService conceptService;
     private VisitService visitService;
     private BahmniExtensions bahmniExtensions;
+    private BahmniConceptService bahmniConceptService;
 
     @Autowired
-    public BahmniObservationsController(BahmniObsService bahmniObsService, ConceptService conceptService, VisitService visitService, BahmniExtensions bahmniExtensions) {
+    public BahmniObservationsController(BahmniObsService bahmniObsService, BahmniConceptService bahmniConceptService, VisitService visitService, BahmniExtensions bahmniExtensions) {
         this.bahmniObsService = bahmniObsService;
-        this.conceptService = conceptService;
+        this.bahmniConceptService = bahmniConceptService;
         this.visitService = visitService;
         this.bahmniExtensions = bahmniExtensions;
     }
@@ -50,9 +50,10 @@ public class BahmniObservationsController extends BaseRestController {
                                              @RequestParam(value = "scope", required = false) String scope,
                                              @RequestParam(value = "numberOfVisits", required = false) Integer numberOfVisits,
                                              @RequestParam(value = "obsIgnoreList", required = false) List<String> obsIgnoreList,
+                                             @RequestParam(value = "obsSelectList", required = false) List<String> obsSelectList,
                                              @RequestParam(value = "filterObsWithOrders", required = false, defaultValue = "true") Boolean filterObsWithOrders ) throws ParseException {
 
-        List<Concept> rootConcepts = MiscUtils.getConceptsForNames(rootConceptNames, conceptService);
+        List<Concept> rootConcepts = bahmniConceptService.getConceptsByFullySpecifiedName(rootConceptNames);
 
         Collection<BahmniObservation> observations;
         if (ObjectUtils.equals(scope, LATEST)) {
@@ -63,6 +64,9 @@ public class BahmniObservationsController extends BaseRestController {
             observations = bahmniObsService.observationsFor(patientUUID, rootConcepts, numberOfVisits, obsIgnoreList, filterObsWithOrders, null, null, null);
         }
 
+        if (obsSelectList != null && !obsSelectList.isEmpty()) {
+            observations = filterObservationsByObsSelectList(obsSelectList, observations);
+        }
         sendObsToGroovyScript(getConceptNames(rootConcepts), observations);
 
         return observations;
@@ -78,12 +82,12 @@ public class BahmniObservationsController extends BaseRestController {
 
         Visit visit = visitService.getVisitByUuid(visitUuid);
         if (ObjectUtils.equals(scope, INITIAL)) {
-            return bahmniObsService.getInitialObsByVisit(visit, MiscUtils.getConceptsForNames(conceptNames, conceptService), obsIgnoreList, filterObsWithOrders);
+            return bahmniObsService.getInitialObsByVisit(visit, bahmniConceptService.getConceptsByFullySpecifiedName(conceptNames), obsIgnoreList, filterObsWithOrders);
         } else if (ObjectUtils.equals(scope, LATEST)) {
-            return bahmniObsService.getLatestObsByVisit(visit, MiscUtils.getConceptsForNames(conceptNames, conceptService), obsIgnoreList, filterObsWithOrders);
+            return bahmniObsService.getLatestObsByVisit(visit, bahmniConceptService.getConceptsByFullySpecifiedName(conceptNames), obsIgnoreList, filterObsWithOrders);
         } else {
             // Sending conceptName and obsIgnorelist, kinda contradicts, since we filter directly on concept names (not on root concept)
-            return bahmniObsService.getObservationForVisit(visitUuid, conceptNames, MiscUtils.getConceptsForNames(obsIgnoreList, conceptService), filterObsWithOrders, null);
+            return bahmniObsService.getObservationForVisit(visitUuid, conceptNames, bahmniConceptService.getConceptsByFullySpecifiedName(obsIgnoreList), filterObsWithOrders, null);
         }
     }
 
@@ -98,7 +102,9 @@ public class BahmniObservationsController extends BaseRestController {
     @ResponseBody
     public Collection<BahmniObservation> get(@RequestParam(value = "patientProgramUuid", required = true) String patientProgramUuid,
                                              @RequestParam(value = "concept", required = false) List<String> rootConceptNames,
-                                             @RequestParam(value = "scope", required = false) String scope) throws ParseException {
+                                             @RequestParam(value = "scope", required = false) String scope,
+                                             @RequestParam(value = "obsSelectList", required = false) List<String> obsSelectList
+                                             ) throws ParseException {
         
         Collection<BahmniObservation> observations;
         if (ObjectUtils.equals(scope, LATEST)) {
@@ -108,6 +114,10 @@ public class BahmniObservationsController extends BaseRestController {
         } else {
             observations = bahmniObsService.getObservationsForPatientProgram(patientProgramUuid, rootConceptNames);
         }
+        if (obsSelectList != null && !obsSelectList.isEmpty()) {
+            observations = filterObservationsByObsSelectList(obsSelectList, observations);
+        }
+
         sendObsToGroovyScript(rootConceptNames, observations);
         return observations;
     }
@@ -134,5 +144,30 @@ public class BahmniObservationsController extends BaseRestController {
             conceptNames.add(concept.getName().getName());
         }
         return conceptNames;
+    }
+
+    private Collection<BahmniObservation> filterObservationsByObsSelectList(List<String> obsSelectList, Collection<BahmniObservation> observations) {
+        Collection<BahmniObservation> selectedObservations = new ArrayList<>();
+        for (BahmniObservation observation : observations) {
+            selectedObservations.addAll(filterObservations(observation, obsSelectList));
+        }
+        return selectedObservations;
+    }
+
+    private Collection<BahmniObservation> filterObservations(BahmniObservation observation, List<String> obsSelectList) {
+        Collection<BahmniObservation> selectedObservations = new ArrayList<>();
+        if (obsSelectList.contains(observation.getConcept().getName())) {
+            return Arrays.asList(observation);
+        }
+        if (observation.getGroupMembers().isEmpty()) {
+            return selectedObservations;
+        }
+        for (BahmniObservation bahmniObservation : observation.getGroupMembers()) {
+            Collection<BahmniObservation> obsGroupMembers = filterObservations(bahmniObservation, obsSelectList);
+            if (!obsGroupMembers.isEmpty()) {
+                selectedObservations.addAll(obsGroupMembers);
+            }
+        }
+        return selectedObservations;
     }
 }

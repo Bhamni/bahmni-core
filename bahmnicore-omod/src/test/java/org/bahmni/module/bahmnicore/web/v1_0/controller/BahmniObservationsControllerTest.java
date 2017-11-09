@@ -1,6 +1,7 @@
 package org.bahmni.module.bahmnicore.web.v1_0.controller;
 
 import org.bahmni.module.bahmnicore.extensions.BahmniExtensions;
+import org.bahmni.module.bahmnicore.service.BahmniConceptService;
 import org.bahmni.module.bahmnicore.service.BahmniObsService;
 import org.bahmni.module.bahmnicore.web.v1_0.controller.display.controls.BahmniObservationsController;
 import org.bahmni.test.builder.VisitBuilder;
@@ -9,24 +10,19 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openmrs.Concept;
+import org.openmrs.ConceptName;
 import org.openmrs.Visit;
-import org.openmrs.api.ConceptService;
 import org.openmrs.api.VisitService;
 import org.openmrs.module.bahmniemrapi.builder.BahmniObservationBuilder;
 import org.openmrs.module.bahmniemrapi.encountertransaction.contract.BahmniObservation;
 import org.openmrs.module.emrapi.encounter.domain.EncounterTransaction;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.text.ParseException;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 
 public class BahmniObservationsControllerTest {
@@ -34,11 +30,14 @@ public class BahmniObservationsControllerTest {
     @Mock
     private BahmniObsService bahmniObsService;
     @Mock
-    private ConceptService conceptService;
+    private BahmniConceptService bahmniConceptService;
     @Mock
     private VisitService visitService;
     @Mock
     private BahmniExtensions bahmniExtensions;
+
+    @Mock
+    private Concept openmrsConcept;
 
     private Visit visit;
     private Concept concept;
@@ -49,15 +48,15 @@ public class BahmniObservationsControllerTest {
         MockitoAnnotations.initMocks(this);
         visit = new VisitBuilder().build();
         concept = new Concept();
-        bahmniObservationsController = new BahmniObservationsController(bahmniObsService, conceptService, visitService, bahmniExtensions);
+        bahmniObservationsController = new BahmniObservationsController(bahmniObsService, bahmniConceptService, visitService, bahmniExtensions);
         when(visitService.getVisitByUuid("visitId")).thenReturn(visit);
-        when(conceptService.getConceptByName("Weight")).thenReturn(concept);
     }
 
     @Test
     public void returnLatestObservations() throws Exception {
         BahmniObservation latestObs = new BahmniObservation();
         latestObs.setUuid("initialId");
+        when(bahmniConceptService.getConceptsByFullySpecifiedName(Arrays.asList("Weight"))).thenReturn(Arrays.asList(concept));
         when(bahmniObsService.getLatestObsByVisit(visit, Arrays.asList(concept), null, true)).thenReturn(Arrays.asList(latestObs));
 
         Collection<BahmniObservation> bahmniObservations = bahmniObservationsController.get("visitId", "latest", Arrays.asList("Weight"), null, true);
@@ -75,6 +74,7 @@ public class BahmniObservationsControllerTest {
         initialObs.setUuid("initialId");
         initialObs.setConcept(cpt);
 
+        when(bahmniConceptService.getConceptsByFullySpecifiedName(Arrays.asList("Weight"))).thenReturn(Arrays.asList(concept));
         when(bahmniObsService.getInitialObsByVisit(visit, Arrays.asList(this.concept), null, true)).thenReturn(Arrays.asList(initialObs));
 
         Collection<BahmniObservation> bahmniObservations = bahmniObservationsController.get("visitId", "initial", Arrays.asList("Weight"), null, true);
@@ -120,7 +120,7 @@ public class BahmniObservationsControllerTest {
         List<String> conceptNames = Arrays.asList("Weight");
         when(bahmniExtensions.getExtension("observationsAdder","CurrentMonthOfTreatment.groovy")).thenReturn(null);
 
-        bahmniObservationsController.get(patientProgramUuid, conceptNames, null);
+        bahmniObservationsController.get(patientProgramUuid, conceptNames, null, null);
 
         verify(bahmniObsService, times(1)).getObservationsForPatientProgram(patientProgramUuid, conceptNames);
     }
@@ -131,7 +131,7 @@ public class BahmniObservationsControllerTest {
         String patientProgramUuid = null;
         when(bahmniExtensions.getExtension("observationsAdder","CurrentMonthOfTreatment.groovy")).thenReturn(null);
 
-        bahmniObservationsController.get(patientProgramUuid, null, null);
+        bahmniObservationsController.get(patientProgramUuid, null, null, null);
 
         verify(bahmniObsService, times(0)).getObservationsForPatientProgram(patientProgramUuid, conceptNames);
     }
@@ -142,7 +142,7 @@ public class BahmniObservationsControllerTest {
         String patientProgramUuid = "patientProgramUuid";
         String scope = "latest";
 
-        bahmniObservationsController.get(patientProgramUuid, conceptNames, scope);
+        bahmniObservationsController.get(patientProgramUuid, conceptNames, scope, null);
 
         verify(bahmniObsService, times(1)).getLatestObservationsForPatientProgram(patientProgramUuid, conceptNames);
     }
@@ -154,7 +154,7 @@ public class BahmniObservationsControllerTest {
         String scope = "initial";
         when(bahmniExtensions.getExtension("observationsAdder","CurrentMonthOfTreatment.groovy")).thenReturn(null);
 
-        bahmniObservationsController.get(patientProgramUuid, conceptNames, scope);
+        bahmniObservationsController.get(patientProgramUuid, conceptNames, scope, null);
 
         verify(bahmniObsService, times(1)).getInitialObservationsForPatientProgram(patientProgramUuid, conceptNames);
     }
@@ -172,4 +172,100 @@ public class BahmniObservationsControllerTest {
         assertEquals(expectedBahmniObservation, actualBahmniObservation);
     }
 
+    @Test
+    public void shouldFilterObservationsByTheObsSelectList() throws Exception {
+        BahmniObservation systolicObs = new BahmniObservation();
+        EncounterTransaction.Concept systolicConcept = new EncounterTransaction.Concept("uuid2", "Systolic", false);
+        systolicObs.setConceptSortWeight(0);
+        systolicObs.setConcept(systolicConcept);
+
+        BahmniObservation diastolicObs = new BahmniObservation();
+        EncounterTransaction.Concept diastolicConcept = new EncounterTransaction.Concept("uuid4", "Diastolic", false);
+        diastolicObs.setConcept(diastolicConcept);
+
+        BahmniObservation diastolicDataObs = new BahmniObservation();
+        EncounterTransaction.Concept diastolicDataConcept = new EncounterTransaction.Concept("uuid3", "Diastolic Data", false);
+        diastolicDataObs.setConcept(diastolicDataConcept);
+        diastolicDataObs.setConceptSortWeight(1);
+        diastolicDataObs.addGroupMember(diastolicObs);
+
+        BahmniObservation bloodPressureObs = new BahmniObservation();
+        EncounterTransaction.Concept bloodPressureConcept = new EncounterTransaction.Concept("uuid1", "bloodPressure", true);
+        bloodPressureObs.setConcept(bloodPressureConcept);
+
+
+        List<BahmniObservation> groupMembers = new ArrayList<>();
+        groupMembers.add(diastolicDataObs);
+        groupMembers.add(systolicObs);
+        bloodPressureObs.setGroupMembers(groupMembers);
+
+        Collection<Concept> concepts = new ArrayList<>();
+        concepts.add(openmrsConcept);
+        String patientUuid = "patientUuid";
+        List<String> obsSelectList = new ArrayList<>();
+        obsSelectList.add("Systolic");
+        obsSelectList.add("Diastolic");
+        when(openmrsConcept.getName()).thenReturn(new ConceptName("bloodPressure", Locale.ENGLISH));
+        when(bahmniConceptService.getConceptsByFullySpecifiedName(Arrays.asList("bloodPressure"))).thenReturn(Arrays.asList(openmrsConcept));
+        when(bahmniObsService.getLatest(patientUuid,concepts,1,null ,false, null)).thenReturn(Collections.singletonList(bloodPressureObs));
+
+        String scope = "latest";
+
+        Collection<BahmniObservation> selectedObservations = bahmniObservationsController.get(patientUuid, Arrays.asList("bloodPressure"), scope, 1, null, obsSelectList, false);
+        assertEquals(2,selectedObservations.size());
+
+        Iterator<BahmniObservation> bahmniObservationIterator = selectedObservations.iterator();
+        assertEquals(systolicObs, bahmniObservationIterator.next());
+        assertEquals(diastolicObs,bahmniObservationIterator.next());
+    }
+
+    @Test
+    public void shouldFilterObservationsInAPatientProgramByObsSelectList() throws ParseException {
+        BahmniObservation systolicObs = new BahmniObservation();
+        EncounterTransaction.Concept systolicConcept = new EncounterTransaction.Concept("uuid2", "Systolic", false);
+        systolicObs.setConcept(systolicConcept);
+        systolicObs.setConceptSortWeight(0);
+
+        BahmniObservation diastolicObs = new BahmniObservation();
+        EncounterTransaction.Concept diastolicConcept = new EncounterTransaction.Concept("uuid4", "Diastolic", false);
+        diastolicObs.setConcept(diastolicConcept);
+
+        BahmniObservation diastolicDataObs = new BahmniObservation();
+        EncounterTransaction.Concept diastolicDataConcept = new EncounterTransaction.Concept("uuid3", "Diastolic Data", false);
+        diastolicDataObs.setConcept(diastolicDataConcept);
+        diastolicDataObs.setConceptSortWeight(1);
+        diastolicDataObs.addGroupMember(diastolicObs);
+
+        BahmniObservation bloodPressureObs = new BahmniObservation();
+        EncounterTransaction.Concept bloodPressureConcept = new EncounterTransaction.Concept("uuid1", "bloodPressure", true);
+        bloodPressureObs.setConcept(bloodPressureConcept);
+
+        List<BahmniObservation> groupMembers = new ArrayList<>();
+        groupMembers.add(diastolicDataObs);
+        groupMembers.add(systolicObs);
+        bloodPressureObs.setGroupMembers(groupMembers);
+
+        Collection<Concept> concepts = new ArrayList<>();
+        concepts.add(openmrsConcept);
+        List<String> obsSelectList = new ArrayList<>();
+        obsSelectList.add("Systolic");
+        obsSelectList.add("Diastolic");
+
+        List<String> conceptNames = new ArrayList<String>();
+        conceptNames.add("bloodPressure");
+        String patientProgramUuid = "patientProgramUuid";
+        String scope = "latest";
+
+        when(openmrsConcept.getName()).thenReturn(new ConceptName("bloodPressure", Locale.ENGLISH));
+        when(bahmniConceptService.getConceptsByFullySpecifiedName(Arrays.asList("bloodPressure"))).thenReturn(Arrays.asList(openmrsConcept));
+        when(bahmniExtensions.getExtension("observationsAdder","CurrentMonthOfTreatment.groovy")).thenReturn(null);
+        when(bahmniObsService.getLatestObservationsForPatientProgram(patientProgramUuid, conceptNames)).thenReturn(Collections.singletonList(bloodPressureObs));
+
+        Collection<BahmniObservation> selectedObservations =  bahmniObservationsController.get(patientProgramUuid, conceptNames, scope, obsSelectList);
+        assertEquals(2,selectedObservations.size());
+
+        Iterator<BahmniObservation> bahmniObservationIterator = selectedObservations.iterator();
+        assertEquals(systolicObs, bahmniObservationIterator.next());
+        assertEquals(diastolicObs,bahmniObservationIterator.next());
+    }
 }
