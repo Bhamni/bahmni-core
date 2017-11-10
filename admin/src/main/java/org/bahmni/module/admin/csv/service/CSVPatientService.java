@@ -82,21 +82,15 @@ public class CSVPatientService {
                     throw new RuntimeException("Invalid value for Attribute." + attribute.getKey());
                 }
             } else if (personAttributeType.getFormat().startsWith("java.lang.")) {
-
                 patient.addAttribute(new PersonAttribute(findAttributeType(attribute.getKey()), attribute.getValue()));
-
            } else if (personAttributeType.getFormat().startsWith("org.openmrs.util.AttributableDate")) {
-
                 //Validating the Date format
                 String dateString = attribute.getValue();
                 getDateFromString(dateString);
                 patient.addAttribute(new PersonAttribute(findAttributeType(attribute.getKey()),dateString));
-
             }
-
         }
     }
-
 
     private Concept getConceptByName(String name) {
         List<Concept> concepts = conceptService.getConceptsByName(name);
@@ -129,4 +123,3 @@ public class CSVPatientService {
     }
 
 }
-
