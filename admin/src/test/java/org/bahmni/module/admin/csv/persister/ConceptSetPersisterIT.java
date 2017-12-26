@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -156,5 +157,30 @@ public class ConceptSetPersisterIT extends BaseIntegrationTest {
         Context.flushSession();
         Context.closeSession();
     }
+
+    @Test
+    public void shouldCreateNewConceptSetWithGivenUUID() throws Exception {
+        String uuid = UUID.randomUUID().toString();
+        ConceptSetRow conceptRow = new ConceptSetRow();
+        conceptRow.name = "New concept";
+        conceptRow.conceptClass = "New Class";
+        conceptRow.description = "some description";
+        conceptRow.uuid = uuid;
+
+        Messages persistErrorMessages = conceptSetPersister.persist(conceptRow);
+
+        assertTrue(persistErrorMessages.isEmpty());
+        Context.openSession();
+        Context.authenticate("admin", "test");
+        Concept persistedConcept = conceptService.getConceptByName(conceptRow.name);
+        assertNotNull(persistedConcept);
+        assertEquals(conceptRow.name, persistedConcept.getName(Context.getLocale()).getName());
+        assertEquals(uuid, persistedConcept.getUuid());
+        Context.flushSession();
+        Context.closeSession();
+    }
+
+
+
 
 }

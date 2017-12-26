@@ -19,6 +19,8 @@ public class ConceptCommonMapper {
         org.openmrs.Concept openmrsConcept = new org.openmrs.Concept();
         if (conceptMetaData.getExistingConcept() != null) {
             openmrsConcept = conceptMetaData.getExistingConcept();
+        } else if (StringUtils.isNotBlank(conceptCommon.getUuid())){
+            openmrsConcept.setUuid(conceptCommon.getUuid());
         }
         String displayName = conceptCommon.getDisplayName();
         openmrsConcept = addConceptName(openmrsConcept, getConceptName(conceptCommon.getUniqueName(), ConceptNameType.FULLY_SPECIFIED, conceptMetaData.getLocale()));

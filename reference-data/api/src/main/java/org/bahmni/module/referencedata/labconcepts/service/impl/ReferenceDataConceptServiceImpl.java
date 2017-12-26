@@ -77,7 +77,7 @@ public class ReferenceDataConceptServiceImpl implements ReferenceDataConceptServ
         return mappedConceptSet;
     }
 
-    private org.openmrs.Concept  getConcept(Concept conceptData, ConceptMetaData conceptMetaData) {
+    private org.openmrs.Concept getConcept(Concept conceptData, ConceptMetaData conceptMetaData) {
         List<ConceptAnswer> conceptAnswers = getConceptAnswers(conceptData.getAnswers());
         conceptValidator.validate(conceptData, conceptMetaData.getConceptClass(), conceptMetaData.getConceptDatatype(), notFound);
         org.openmrs.Concept mappedConcept = conceptMapper.map(conceptData, conceptMetaData, conceptAnswers);

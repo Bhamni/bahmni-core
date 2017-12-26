@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -28,9 +29,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class ConceptPersisterIT extends BaseIntegrationTest {
-    
+
     public static final String SAME_AS = "SAME-AS";
-    
+
     @Autowired
     private ConceptPersister conceptPersister;
 
@@ -167,7 +168,7 @@ public class ConceptPersisterIT extends BaseIntegrationTest {
         conceptRow.conceptClass = "New Class";
         conceptRow.dataType = "Coded";
         conceptRow.shortName = "NConcept";
-        ConceptReferenceTermRow conceptReferenceTermRow = new ConceptReferenceTermRow( "org.openmrs.module.emrapi","New Code", SAME_AS);
+        ConceptReferenceTermRow conceptReferenceTermRow = new ConceptReferenceTermRow("org.openmrs.module.emrapi", "New Code", SAME_AS);
         List<ConceptReferenceTermRow> conceptReferenceTermsList = new ArrayList<>(Arrays.asList(conceptReferenceTermRow));
         conceptRow.referenceTerms = conceptReferenceTermsList;
 
@@ -247,7 +248,7 @@ public class ConceptPersisterIT extends BaseIntegrationTest {
         conceptRow.name = "Existing Concept";
         conceptRow.conceptClass = "New Class";
         conceptRow.description = "Some Description";
-        ConceptReferenceTermRow conceptReferenceTermRow = new ConceptReferenceTermRow( "org.openmrs.module.emrapi","New Code", SAME_AS);
+        ConceptReferenceTermRow conceptReferenceTermRow = new ConceptReferenceTermRow("org.openmrs.module.emrapi", "New Code", SAME_AS);
         List<ConceptReferenceTermRow> conceptReferenceTermsList = new ArrayList<>(Arrays.asList(conceptReferenceTermRow));
         conceptRow.referenceTerms = conceptReferenceTermsList;
 
@@ -288,7 +289,7 @@ public class ConceptPersisterIT extends BaseIntegrationTest {
         conceptRow.name = "Existing Concept";
         conceptRow.conceptClass = "New Class";
         conceptRow.description = "Some Description";
-        ConceptReferenceTermRow conceptReferenceTermRow = new ConceptReferenceTermRow( "org.openmrs.module.emrapi","New Code", SAME_AS);
+        ConceptReferenceTermRow conceptReferenceTermRow = new ConceptReferenceTermRow("org.openmrs.module.emrapi", "New Code", SAME_AS);
         List<ConceptReferenceTermRow> conceptReferenceTermsList = new ArrayList<>(Arrays.asList(conceptReferenceTermRow));
         conceptRow.referenceTerms = conceptReferenceTermsList;
 
@@ -328,7 +329,7 @@ public class ConceptPersisterIT extends BaseIntegrationTest {
         conceptRow.name = "New Concept";
         conceptRow.conceptClass = "New Class";
         conceptRow.description = "Some Description";
-        ConceptReferenceTermRow conceptReferenceTermRow = new ConceptReferenceTermRow( "org.openmrs.module.emrapi","New Code", SAME_AS);
+        ConceptReferenceTermRow conceptReferenceTermRow = new ConceptReferenceTermRow("org.openmrs.module.emrapi", "New Code", SAME_AS);
         List<ConceptReferenceTermRow> conceptReferenceTermsList = new ArrayList<>(Arrays.asList(conceptReferenceTermRow));
         conceptRow.referenceTerms = conceptReferenceTermsList;
         conceptRow.dataType = "Numeric";
@@ -368,5 +369,31 @@ public class ConceptPersisterIT extends BaseIntegrationTest {
         }
         Context.flushSession();
         Context.closeSession();
+    }
+
+    @Test
+    public void shouldCreateNewConceptWithGivenUUID() throws Exception {
+        String uuid = UUID.randomUUID().toString();
+        ConceptRow conceptRow = new ConceptRow();
+        conceptRow.name = "New concept";
+        conceptRow.conceptClass = "New Class";
+        conceptRow.description = "New concept description";
+        conceptRow.uuid = uuid;
+
+        Messages errorMessages = conceptPersister.persist(conceptRow);
+
+        assertTrue(errorMessages.isEmpty());
+        Context.openSession();
+        Context.authenticate("admin", "test");
+        Concept persistedConcept = conceptService.getConceptByName(conceptRow.name);
+        assertNotNull(persistedConcept);
+        assertEquals(uuid, persistedConcept.getUuid());
+        assertEquals(conceptRow.name, persistedConcept.getName(Context.getLocale()).getName());
+        assertEquals(conceptRow.conceptClass, persistedConcept.getConceptClass().getName());
+        assertEquals("New concept description", persistedConcept.getDescription().getDescription());
+        assertEquals(0, persistedConcept.getSynonyms().size());
+        Context.flushSession();
+        Context.closeSession();
+
     }
 }
