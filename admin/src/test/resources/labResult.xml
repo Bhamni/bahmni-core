@@ -43,4 +43,29 @@
                   date_created="2005-01-01 00:00:00.0" voided="false" concept_name_type="FULLY_SPECIFIED"
                   uuid="concept-name-uuid-1" locale_preferred="0"/>
     <!--test Eosinophil (Blood)-->
+
+    <!--test Proteins-->
+    <concept concept_id="109" retired="false" datatype_id="4" class_id="11" is_set="false" creator="1"
+             date_created="2005-01-01 00:00:00.0" uuid="7923d0e0-8734-11e3-baa7-0800200c9a67"/>
+    <concept_name concept_name_id="11" concept_id="109" name="+" locale="en" creator="1"
+                  date_created="2005-01-01 00:00:00.0" voided="false" uuid="ff1ce11c-3f8e-11e3-968c-0800271c1b67"
+                  concept_name_type="FULLY_SPECIFIED" locale_preferred="0"/>
+
+    <concept concept_id="110" retired="false" datatype_id="4" class_id="11" is_set="false" creator="1"
+             date_created="2005-01-01 00:00:00.0" uuid="7923d0e0-8734-11e3-baa7-0800200c9a68"/>
+    <concept_name concept_name_id="12" concept_id="110" name="++" locale="en" creator="1"
+                  date_created="2005-01-01 00:00:00.0" voided="false" uuid="ff1ce11c-3f8e-11e3-968c-0800271c1b68"
+                  concept_name_type="FULLY_SPECIFIED" locale_preferred="0"/>
+
+    <concept concept_id="111" retired="false" datatype_id="2" class_id="8" is_set="false" creator="1"
+             date_created="2005-01-01 00:00:00.0" uuid="7923d0e0-8734-11e3-baa7-0800200c9a69"/>
+    <concept_name concept_name_id="13" concept_id="111" name="Proteins" locale="en" creator="1"
+                  date_created="2005-01-01 00:00:00.0" voided="false" uuid="ff1ce11c-3f8e-11e3-968c-0800271c1b69"
+                  concept_name_type="FULLY_SPECIFIED" locale_preferred="0"/>
+    
+    <concept_answer concept_answer_id="1" concept_id="111" answer_concept="109" creator="1" sort_weight="100"
+                 date_created="2005-01-01 00:00:00.0"/>
+    <concept_answer concept_answer_id="2" concept_id="111" answer_concept="110" creator="1" sort_weight="100"
+                 date_created="2005-01-01 00:00:00.0"/>
+    <!--test Proteins-->
 </dataset>
