@@ -33,6 +33,12 @@
         <require_module>org.openmrs.module.episodes</require_module>
         <require_module>org.openmrs.module.auditlog</require_module>
     </require_modules>
+
+    <aware_of_modules>
+        <aware_of_module version="${exti18nVersion}">
+            org.openmrs.module.exti18n
+        </aware_of_module>
+    </aware_of_modules>
     <!-- Extensions -->
 	
     <!-- AOP -->

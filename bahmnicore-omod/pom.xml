@@ -302,6 +302,12 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+          <groupId>org.openmrs.module</groupId>
+          <artifactId>exti18n-api</artifactId>
+          <version>${exti18nVersion}</version>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>

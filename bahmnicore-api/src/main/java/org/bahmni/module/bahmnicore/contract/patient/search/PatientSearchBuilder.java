@@ -1,5 +1,10 @@
 package org.bahmni.module.bahmnicore.contract.patient.search;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import org.bahmni.module.bahmnicore.contract.patient.response.PatientResponse;
 import org.bahmni.module.bahmnicore.customdatatype.datatype.CodedConceptDatatype;
 import org.bahmni.module.bahmnicore.model.bahmniPatientProgram.ProgramAttributeType;
@@ -8,11 +13,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.StandardBasicTypes;
 import org.hibernate.type.Type;
-
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 public class PatientSearchBuilder {
 
@@ -84,15 +84,30 @@ public class PatientSearchBuilder {
 		return this;
 	}
 
-	public PatientSearchBuilder withPatientAddress(String addressFieldName, String addressFieldValue, String[] addressAttributeFields){
-		PatientAddressFieldQueryHelper patientAddressQueryHelper = new PatientAddressFieldQueryHelper(addressFieldName,addressFieldValue, addressAttributeFields);
+	/**
+	 * Searches for patients with the address field LIKE the value provided.
+	 */
+	public PatientSearchBuilder withPatientAddress(String addressFieldName, String addressFieldValue, String[] addressAttributeFields) {
+		PatientAddressFieldQueryHelper patientAddressQueryHelper = new PatientAddressFieldQueryHelper(addressFieldName, addressFieldValue, addressAttributeFields);
 		where = patientAddressQueryHelper.appendToWhereClause(where);
 		select = patientAddressQueryHelper.selectClause(select);
 		groupBy = patientAddressQueryHelper.appendToGroupByClause(groupBy);
 		types.putAll(patientAddressQueryHelper.addScalarQueryResult());
 		return this;
 	}
-
+	
+	/**
+	 * Searches for patients with the address field IN the list of values provided.
+	 */
+	public PatientSearchBuilder withPatientAddressInList(String addressFieldName, List<String> addressFieldValues, String[] addressAttributeFields) {
+		PatientAddressFieldQueryHelper patientAddressQueryHelper = new PatientAddressFieldInListQueryHelper(addressFieldName, addressFieldValues, addressAttributeFields);
+		where = patientAddressQueryHelper.appendToWhereClause(where);
+		select = patientAddressQueryHelper.selectClause(select);
+		groupBy = patientAddressQueryHelper.appendToGroupByClause(groupBy);
+		types.putAll(patientAddressQueryHelper.addScalarQueryResult());
+		return this;
+	}
+	
 	public PatientSearchBuilder withPatientIdentifier(String identifier, Boolean filterOnAllIdentifiers){
 		PatientIdentifierQueryHelper patientIdentifierQueryHelper = new PatientIdentifierQueryHelper(identifier, filterOnAllIdentifiers);
 		join = patientIdentifierQueryHelper.appendToJoinClause(join);

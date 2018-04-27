@@ -1,5 +1,12 @@
 package org.bahmni.module.bahmnicore.dao.impl;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.List;
+
 import org.bahmni.module.bahmnicore.BaseIntegrationTest;
 import org.bahmni.module.bahmnicore.contract.patient.response.PatientResponse;
 import org.bahmni.module.bahmnicore.dao.PatientDao;
@@ -7,14 +14,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.openmrs.Patient;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.List;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertNull;
-import static junit.framework.Assert.assertTrue;
 
 public class BahmniPatientDaoImplLuceneIT extends BaseIntegrationTest {
     @Autowired
@@ -40,14 +40,14 @@ public class BahmniPatientDaoImplLuceneIT extends BaseIntegrationTest {
         assertEquals("Sinha", patient.getFamilyName());
         assertEquals("M", patient.getGender());
         assertEquals("1983-01-30 00:00:00.0", patient.getBirthDate().toString());
-        assertEquals("{\"city_village\" : \"Ramgarh\"}", patient.getAddressFieldValue());
+        assertJsonEquals("{\"city_village\" : \"Ramgarh\"}", patient.getAddressFieldValue());
         assertEquals("2006-01-18 00:00:00.0", patient.getDateCreated().toString());
         assertEquals(null, patient.getDeathDate());
         assertEquals("{\"National ID\" : \"NAT100010\"}", patient.getExtraIdentifiers());
     }
     
     @Test
-    public void shouldSearchByPatientExtraIdentifier() {
+    public void shouldSearchByPatientExtraIdentifier() throws Exception {
         String[] addressResultFields = {"city_village"};
         List<PatientResponse> patients = patientDao.getPatientsUsingLuceneSearch("100010", "", null, "city_village", "", 100, 0, null,"",null,addressResultFields,null, "c36006e5-9fbb-4f20-866b-0ece245615a1", false, true);
         assertEquals(1, patients.size());
@@ -58,7 +58,7 @@ public class BahmniPatientDaoImplLuceneIT extends BaseIntegrationTest {
         assertEquals("Sinha", patient.getFamilyName());
         assertEquals("M", patient.getGender());
         assertEquals("1983-01-30 00:00:00.0", patient.getBirthDate().toString());
-        assertEquals("{\"city_village\" : \"Ramgarh\"}", patient.getAddressFieldValue());
+        assertJsonEquals("{\"city_village\" : \"Ramgarh\"}", patient.getAddressFieldValue());
         assertEquals("2006-01-18 00:00:00.0", patient.getDateCreated().toString());
         assertEquals(null, patient.getDeathDate());
         assertEquals("{\"National ID\" : \"NAT100010\"}", patient.getExtraIdentifiers());
@@ -131,8 +131,8 @@ public class BahmniPatientDaoImplLuceneIT extends BaseIntegrationTest {
         List<PatientResponse> patients = patientDao.getPatientsUsingLuceneSearch("GAN200002", null, null, null, null, 100, 0, new String[]{"caste","givenNameLocal"},null,null,addressResultFields,patientResultFields, "c36006e5-9fbb-4f20-866b-0ece245615a1", false, false);
         assertEquals(1, patients.size());
         PatientResponse patient200002 = patients.get(0);
-        assertTrue("{\"middleNameLocal\" : \"singh\",\"familyNameLocal\" : \"gond\",\"givenNameLocal\" : \"ram\"}".equals(patient200002.getCustomAttribute()));
-        assertTrue("{\"address3\" : \"Dindori\"}".equals(patient200002.getAddressFieldValue()));
+        assertJsonEquals("{\"middleNameLocal\" : \"singh\",\"familyNameLocal\" : \"gond\",\"givenNameLocal\" : \"ram\"}", patient200002.getCustomAttribute());
+        assertJsonEquals("{\"address3\" : \"Dindori\"}",patient200002.getAddressFieldValue());
     }
     
     @Test

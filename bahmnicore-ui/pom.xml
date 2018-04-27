@@ -147,6 +147,12 @@
             <version>${metadatamapping.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+          <groupId>org.openmrs.module</groupId>
+          <artifactId>exti18n-api</artifactId>
+          <version>${exti18nVersion}</version>
+          <scope>test</scope>
+        </dependency>
 
     </dependencies>
 
