@@ -8,6 +8,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.internal.util.collections.Sets;
 import org.openmrs.*;
+import org.openmrs.api.ConceptNameType;
+import org.openmrs.api.ConceptService;
 import org.openmrs.api.VisitService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.bahmniemrapi.visitlocation.BahmniVisitLocationServiceImpl;
@@ -18,8 +20,10 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(Context.class)
@@ -32,6 +36,9 @@ public class PatientResponseMapperTest {
 
     @Mock
     BahmniVisitLocationServiceImpl bahmniVisitLocationService;
+
+    @Mock
+    ConceptService conceptService;
 
     Patient patient;
 
@@ -82,6 +89,31 @@ public class PatientResponseMapperTest {
         PatientResponse patientResponse = patientResponseMapper.map(patient, null, patientResultFields, null, null);
 
         Assert.assertEquals(patientResponse.getCustomAttribute(),"{\"givenNameLocal\" : \"someName\"}");
+    }
+
+    @Test
+    public void shouldMapPersonAttributesForConceptType() throws Exception {
+        PersonAttributeType personAttributeType = new PersonAttributeType();
+        personAttributeType.setName("occupation");
+        personAttributeType.setFormat("org.openmrs.Concept");
+        patient.setAttributes(Sets.newSet(new PersonAttribute(personAttributeType,"100")));
+        String[] patientResultFields = {"occupation"};
+        Concept concept = new Concept();
+        ConceptName conceptName = new ConceptName();
+        conceptName.setName("shortname");
+        Locale defaultLocale = new Locale("en", "GB");
+        conceptName.setLocale(defaultLocale);
+        concept.setShortName(conceptName);
+        conceptName.setConceptNameType(ConceptNameType.SHORT);
+        PowerMockito.mockStatic(Context.class);
+        PowerMockito.when(Context.getLocale()).thenReturn(defaultLocale);
+
+        when(Context.getConceptService()).thenReturn(conceptService);
+        PowerMockito.when(conceptService.getConcept("100")).thenReturn(concept);
+
+        PatientResponse patientResponse = patientResponseMapper.map(patient, null, patientResultFields, null, null);
+
+        Assert.assertEquals(patientResponse.getCustomAttribute(),"{\"occupation\" : \"shortname\"}");
     }
 
     @Test

@@ -74,6 +74,7 @@
     <person_attribute_type person_attribute_type_id="201" name="givenNameLocal" description="caste" format="java.lang.String" searchable="true" creator="1" date_created="2007-05-04 09:59:23.0" retired="false" uuid="b3b6d900-a32e-44c7-91b3-292d976675ab" sort_weight="1"/>
     <person_attribute_type person_attribute_type_id="301" name="middleNameLocal" description="caste" format="java.lang.String" searchable="true" creator="1" date_created="2007-05-04 09:59:23.0" retired="false" uuid="b436d540-a32e-44c7-91b3-292d976675ab" sort_weight="1"/>
     <person_attribute_type person_attribute_type_id="401" name="familyNameLocal" description="caste" format="java.lang.String" searchable="true" creator="1" date_created="2007-05-04 09:59:23.0" retired="false" uuid="z3b6d540-a32e-44c7-91b3-292d976675ab" sort_weight="1"/>
+    <person_attribute_type person_attribute_type_id="501" name="thaluk" description="thaluk" format="org.openmrs.Concept" foreign_key="90" searchable="true" creator="1" date_created="2007-05-04 09:59:23.0" retired="false" uuid="b3b6d540-a32e-44c7-91b3-292d97667ccc" sort_weight="1"/>
 
     <person_attribute person_attribute_id="1" person_id="1024" value="caste1" person_attribute_type_id="1" creator="1" date_created="2008-08-15 15:46:47.0" voided="false" uuid="0768f3da-b692-44b7-a33f-abf2c450474a"/>
     <person_attribute person_attribute_id="2" person_id="1025" value="caste1" person_attribute_type_id="1" creator="1" date_created="2008-08-15 15:46:47.0" voided="false" uuid="56beb8bd-287c-47f2-9786-a7b98c933c0b"/>
@@ -105,6 +106,7 @@
     <person_attribute person_attribute_id="26" person_id="1026" value="singh" person_attribute_type_id="301" creator="1" date_created="2008-08-15 15:57:09.0" voided="false" uuid="438f6ecd-78f1-42a5-8768-e0c219a36a31"/>
     <person_attribute person_attribute_id="27" person_id="1026" value="gond" person_attribute_type_id="401" creator="1" date_created="2008-08-15 15:57:09.0" voided="false" uuid="348f6ecd-78f1-42a5-8768-e0c219a36a32"/>
     <person_attribute person_attribute_id="28" person_id="103" value="go'nd" person_attribute_type_id="1" creator="1" date_created="2008-08-15 15:57:09.0" voided="false" uuid="748f6ecd-78fp-42a5-8768-e0c219a36a32"/>
+    <person_attribute person_attribute_id="201" person_id="103" value="901" person_attribute_type_id="501" creator="1" date_created="2008-08-15 15:57:09.0" voided="false" uuid="748f6ecd-78fp-42a5-8768-e0c219a3bcaa"/>
 
 
     <location location_id="1" name="Unknown_Location" description=" 0" creator="1" retired="0" retired_by=" 0"  uuid="8d6c993e-c2cc-11de-8d13-0010c6dffd0f" date_created="2005-09-22 00:00:00"/>
@@ -216,6 +218,8 @@
 
     <concept concept_id="901" retired="0" datatype_id="4" class_id="1" is_set="1" creator="1" date_created="2013-12-04 11:36:42" uuid="systolic_data_uuid" />
     <concept_name concept_id="901" name="Systolic Data" locale="en" creator="1" date_created="2005-01-01 00:00:00.0" concept_name_id="2" voided="false" uuid="5d2d4cb7-955b-4837-80f7-0ebb94092afc" concept_name_type="FULLY_SPECIFIED" locale_preferred="0"/>
+    <concept_name concept_id="901" name="Systolic Data" locale="en" creator="1" date_created="2005-01-01 00:00:00.0" concept_name_id="200" voided="false" uuid="5d2d4cb7-955b-4837-80f7-0ebb94092acc" concept_name_type="SHORT" locale_preferred="0"/>
+
     <concept_set concept_id="901" concept_set="90" concept_set_id="1" creator="1" sort_weight="1" date_created="2005-01-01 00:00:00.0" />
 
     <concept concept_id="9011" retired="0" datatype_id="1" class_id="1" is_set="0" creator="1" date_created="2013-12-04 11:36:42" uuid="systolic_value_uuid" />
