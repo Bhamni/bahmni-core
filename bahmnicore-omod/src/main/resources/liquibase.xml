@@ -4339,6 +4339,10 @@
                 SELECT count(*) FROM concept WHERE is_set= TRUE AND concept_id = (SELECT concept_id FROM concept_view
                 WHERE concept_full_name = 'Bahmni Initial Diagnosis');
             </sqlCheck>
+            <sqlCheck expectedResult="0">
+                SELECT count(*) FROM concept_set WHERE concept_set = (SELECT concept_id FROM concept_view
+                WHERE concept_full_name = 'Bahmni Initial Diagnosis');
+            </sqlCheck>
         </preConditions>
         <comment>Updating 'Bahmni Initial Diagnosis' concept to non-set concept</comment>
         <sql>
@@ -4356,6 +4360,10 @@
                 SELECT count(*) FROM concept WHERE is_set= TRUE AND concept_id = (SELECT concept_id FROM concept_view
                 WHERE concept_full_name = 'Bahmni Diagnosis Status');
             </sqlCheck>
+            <sqlCheck expectedResult="0">
+                SELECT count(*) FROM concept_set WHERE concept_set = (SELECT concept_id FROM concept_view
+                WHERE concept_full_name = 'Bahmni Diagnosis Status');
+            </sqlCheck>
         </preConditions>
         <comment>Updating 'Bahmni Diagnosis Status' concept to non-set concept</comment>
         <sql>
@@ -4371,6 +4379,10 @@
             </sqlCheck>
             <sqlCheck expectedResult="1">
                 SELECT count(*) FROM concept WHERE is_set= TRUE AND concept_id = (SELECT concept_id FROM concept_view
+                WHERE concept_full_name = 'Bahmni Diagnosis Revised');
+            </sqlCheck>
+            <sqlCheck expectedResult="0">
+                SELECT count(*) FROM concept_set WHERE concept_set = (SELECT concept_id FROM concept_view
                 WHERE concept_full_name = 'Bahmni Diagnosis Revised');
             </sqlCheck>
         </preConditions>
