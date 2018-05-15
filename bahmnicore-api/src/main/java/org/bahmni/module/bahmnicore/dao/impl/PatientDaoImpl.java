@@ -22,20 +22,19 @@ import org.hibernate.search.query.dsl.QueryBuilder;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientIdentifierType;
+import org.openmrs.Person;
+import org.openmrs.PersonName;
 import org.openmrs.RelationshipType;
 import org.openmrs.api.context.Context;
+import org.openmrs.api.db.hibernate.HibernatePatientDAO;
+import org.openmrs.api.db.hibernate.PersonLuceneQuery;
+import org.openmrs.api.db.hibernate.search.LuceneQuery;
 import org.openmrs.module.bahmniemrapi.visitlocation.BahmniVisitLocationServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 
-import static java.util.stream.Collectors.reducing;
+import java.util.*;
+
 import static java.util.stream.Collectors.toList;
 
 @Repository
@@ -88,16 +87,69 @@ public class PatientDaoImpl implements PatientDao {
         List<PatientResponse> patientResponses = patientIdentifiers.stream()
                 .map(patientIdentifier -> {
                     Patient patient = patientIdentifier.getPatient();
-                    if(!uniquePatientIds.contains(patient.getPatientId())) {
-                        PatientResponse patientResponse = patientResponseMapper.map(patient, loginLocationUuid, patientSearchResultFields, addressSearchResultFields,
-                                programAttributes.get(patient.getPatientId()));
-                        uniquePatientIds.add(patient.getPatientId());
-                        return patientResponse;
-                    }else
-                        return null;
+                    return toPatientResponse(patientResponseMapper, patient, loginLocationUuid, addressSearchResultFields, patientSearchResultFields, programAttributes, uniquePatientIds);
                 }).filter(Objects::nonNull)
                 .collect(toList());
         return patientResponses;
+    }
+
+    // TODO BAH-460 create a class for the search fields
+    @Override
+    public List<PatientResponse> getSimilarPatientsUsingLuceneSearch(String name, String gender, String loginLocationUuid, Integer length) {
+        PatientResponseMapper patientResponseMapper = new PatientResponseMapper(Context.getVisitService(),new BahmniVisitLocationServiceImpl(Context.getLocationService()));
+        List<Patient> patients = getPatientsByNameAndGender(name, gender, length);
+        Set<Integer> uniquePatientIds = new HashSet<>();
+        // TODO BAH-460 Maybe we can remove the new HashMap<>() from the call. It used to be response from validateSearchParams(...)
+        List<PatientResponse> patientResponses = patients.stream()
+                .map(patient -> toPatientResponse(patientResponseMapper, patient, loginLocationUuid, new HashMap<>(), uniquePatientIds)).filter(Objects::nonNull)
+                .collect(toList());
+        return patientResponses;
+    }
+
+    private PatientResponse toPatientResponse(PatientResponseMapper patientResponseMapper, Patient patient, String loginLocationUuid, Map<Object, Object> programAttributes, Set<Integer> uniquePatientIds) {
+        return toPatientResponse(patientResponseMapper, patient, loginLocationUuid, null, null, programAttributes, uniquePatientIds);
+    }
+
+    private PatientResponse toPatientResponse(PatientResponseMapper patientResponseMapper, Patient patient, String loginLocationUuid, String[] addressSearchResultFields, String[] patientSearchResultFields, Map<Object, Object> programAttributes, Set<Integer> uniquePatientIds) {
+        if(!uniquePatientIds.contains(patient.getPatientId())) {
+            PatientResponse patientResponse = patientResponseMapper.map(patient, loginLocationUuid, patientSearchResultFields, addressSearchResultFields,
+                    programAttributes.get(patient.getPatientId()));
+            uniquePatientIds.add(patient.getPatientId());
+            return patientResponse;
+        } else {
+            return null;
+        }
+    }
+
+    private List<Patient> getPatientsByNameAndGender(String name, String gender, Integer length) {
+        HibernatePatientDAO patientDAO = new HibernatePatientDAO();
+        patientDAO.setSessionFactory(sessionFactory);
+        List<Patient> patients = new ArrayList<Patient>();
+        String query = LuceneQuery.escapeQuery(name);
+        PersonLuceneQuery personLuceneQuery = new PersonLuceneQuery(sessionFactory);
+        LuceneQuery<PersonName> nameQuery = personLuceneQuery.getPatientNameQueryWithOrParser(query, false);
+        /* person.gender does not work somehow in LuceneQuery, so the dirty way is to filter result with person's gender */
+        // if(gender != null && !gender.isEmpty()){
+        //     nameQuery.include("person.gender", gender);
+        // }
+        List<PersonName> persons = nameQuery.list().stream()
+                                    .filter(
+                                        personName ->
+                                            personName.getPreferred()
+                                            && checkGender(personName.getPerson(), gender)
+                                    ).collect(toList());
+        persons = persons.subList(0, Math.min(length, persons.size()));
+        persons.forEach(person -> patients.add(new Patient(person.getPerson())));
+        return patients;
+    }
+
+
+    private Boolean checkGender(Person person, String gender) {
+        if(gender != null && !gender.isEmpty()){
+            return gender.equals(person.getGender());
+        } else {
+            return true;
+        }
     }
 
     private List<PatientIdentifier> getPatientIdentifiers(String identifier, Boolean filterOnAllIdentifiers, Integer offset, Integer length) {

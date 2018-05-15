@@ -19,6 +19,8 @@ public interface PatientDao {
                                                        String programAttributeFieldName, String[] addressSearchResultFields,
                                                        String[] patientSearchResultFields, String loginLocationUuid, Boolean filterPatientsByLocation, Boolean filterOnAllIdentifiers);
 
+    List<PatientResponse> getSimilarPatientsUsingLuceneSearch(String name, String gender, String loginLocationUuid, Integer length);
+
     public Patient getPatient(String identifier);
 
     public List<Patient> getPatients(String partialIdentifier, boolean shouldMatchExactPatientId);

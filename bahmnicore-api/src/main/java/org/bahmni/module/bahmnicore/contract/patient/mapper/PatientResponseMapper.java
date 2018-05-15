@@ -51,7 +51,9 @@ public class PatientResponseMapper {
         patientResponse.setFamilyName(patient.getFamilyName());
         patientResponse.setGender(patient.getGender());
         PatientIdentifier primaryIdentifier = patient.getPatientIdentifier();
-        patientResponse.setIdentifier(primaryIdentifier.getIdentifier());
+        if(primaryIdentifier != null) {
+            patientResponse.setIdentifier(primaryIdentifier.getIdentifier());
+        }
         patientResponse.setPatientProgramAttributeValue(programAttributeValue);
 
         mapExtraIdentifiers(patient, primaryIdentifier);

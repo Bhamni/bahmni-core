@@ -9,6 +9,7 @@ public class PatientSearchParameters {
     private Boolean filterPatientsByLocation;
     private String identifier;
     private String name;
+    private String gender;
     private String addressFieldName;
     private String addressFieldValue;
     private Integer start;
@@ -43,6 +44,7 @@ public class PatientSearchParameters {
         } else {
             this.setAddressFieldName("city_village");
         }
+        this.setGender(context.getParameter("gender"));
         this.setAddressFieldValue(context.getParameter("addressFieldValue"));
         Map parameterMap = context.getRequest().getParameterMap();
         this.setAddressSearchResultFields((String[]) parameterMap.get("addressSearchResultsConfig"));
@@ -69,6 +71,14 @@ public class PatientSearchParameters {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 
     public String getAddressFieldName() {

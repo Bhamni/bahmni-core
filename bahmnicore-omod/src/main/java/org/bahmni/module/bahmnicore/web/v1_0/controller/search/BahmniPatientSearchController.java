@@ -1,8 +1,14 @@
 package org.bahmni.module.bahmnicore.web.v1_0.controller.search;
 
 import org.bahmni.module.bahmnicore.contract.patient.PatientSearchParameters;
+import org.bahmni.module.bahmnicore.contract.patient.mapper.PatientResponseMapper;
 import org.bahmni.module.bahmnicore.contract.patient.response.PatientResponse;
 import org.bahmni.module.bahmnicore.service.BahmniPatientService;
+import org.openmrs.Patient;
+import org.openmrs.PatientIdentifier;
+import org.openmrs.Person;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.bahmniemrapi.visitlocation.BahmniVisitLocationServiceImpl;
 import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.RestConstants;
 import org.openmrs.module.webservices.rest.web.RestUtil;
@@ -15,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
@@ -62,6 +69,21 @@ public class BahmniPatientSearchController extends BaseRestController {
             List<PatientResponse> patients = bahmniPatientService.luceneSearch(searchParameters);
             AlreadyPaged alreadyPaged = new AlreadyPaged(requestContext, patients, false);
             return new ResponseEntity(alreadyPaged,HttpStatus.OK);
+        }catch (IllegalArgumentException e){
+            return new ResponseEntity(RestUtil.wrapErrorResponse(e, e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @RequestMapping(value="similar", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<AlreadyPaged<PatientResponse>> searchSimilarPerson(HttpServletRequest request,
+                                                    HttpServletResponse response) throws ResponseException{
+        RequestContext requestContext = RestUtil.getRequestContext(request, response);
+        PatientSearchParameters searchParameters = new PatientSearchParameters(requestContext);
+        try {
+            List<PatientResponse> patients = bahmniPatientService.searchSimilarPatients(searchParameters);
+            AlreadyPaged alreadyPaged = new AlreadyPaged(requestContext, patients, false);
+            return new ResponseEntity(alreadyPaged, HttpStatus.OK);
         }catch (IllegalArgumentException e){
             return new ResponseEntity(RestUtil.wrapErrorResponse(e, e.getMessage()), HttpStatus.BAD_REQUEST);
         }
