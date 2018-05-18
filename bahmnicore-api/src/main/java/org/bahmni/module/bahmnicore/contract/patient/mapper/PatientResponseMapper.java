@@ -87,9 +87,9 @@ public class PatientResponseMapper {
                     if(attribute != null) {
                         if("org.openmrs.Concept".equals(attribute.getAttributeType().getFormat())) {
                             Concept concept = Context.getConceptService().getConcept(attribute.getValue());
-                            ConceptName shortNameInLocale = concept.getShortNameInLocale(Context.getLocale());
-                            ConceptName conceptShortName = (shortNameInLocale == null) ? concept.getShortNameInLocale(LocaleUtility.getDefaultLocale()) : shortNameInLocale;
-                            return formKeyPair(attributeName, conceptShortName != null ? conceptShortName.getName() : null);
+                            ConceptName fullySpecifiedName = concept.getFullySpecifiedName(Context.getLocale());
+                            ConceptName conceptFullySpecifiedName = (fullySpecifiedName == null) ? concept.getFullySpecifiedName(LocaleUtility.getDefaultLocale()) : fullySpecifiedName;
+                            return formKeyPair(attributeName, conceptFullySpecifiedName != null ? conceptFullySpecifiedName.getName() : null);
                         }
                         else {
                             return formKeyPair(attributeName, attribute.getValue());

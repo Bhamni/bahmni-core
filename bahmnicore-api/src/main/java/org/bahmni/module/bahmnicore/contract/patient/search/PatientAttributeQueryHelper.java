@@ -38,8 +38,8 @@ public class PatientAttributeQueryHelper {
 				join +=
 				" LEFT OUTER JOIN person_attribute pattr_results on pattr_results.person_id = p.person_id and pattr_results.person_attribute_type_id in ("+ StringUtils.join(personAttributeResultsIds, ',')+") " +
 				" LEFT OUTER JOIN person_attribute_type attrt_results on attrt_results.person_attribute_type_id = pattr_results.person_attribute_type_id and pattr_results.voided = 0 " +
-                        " LEFT OUTER JOIN concept_name cn on cn.concept_id = pattr_results.value and cn.concept_name_type = 'SHORT' and attrt_results.format = 'org.openmrs.Concept' and cn.locale = '"+ Context.getLocale() + "'" +
-                        " LEFT OUTER JOIN concept_name def_loc_cn on def_loc_cn.concept_id = pattr_results.value and def_loc_cn.concept_name_type = 'SHORT' and attrt_results.format = 'org.openmrs.Concept' and def_loc_cn.locale = 'en' ";
+                        " LEFT OUTER JOIN concept_name cn on cn.concept_id = pattr_results.value and cn.concept_name_type = 'FULLY_SPECIFIED' and attrt_results.format = 'org.openmrs.Concept' and cn.locale = '"+ Context.getLocale() + "'" +
+                        " LEFT OUTER JOIN concept_name def_loc_cn on def_loc_cn.concept_id = pattr_results.value and def_loc_cn.concept_name_type = 'FULLY_SPECIFIED' and attrt_results.format = 'org.openmrs.Concept' and def_loc_cn.locale = 'en' ";
 
 		    return join;
 	}

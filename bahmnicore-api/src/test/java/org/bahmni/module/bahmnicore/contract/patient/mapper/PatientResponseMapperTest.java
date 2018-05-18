@@ -100,11 +100,11 @@ public class PatientResponseMapperTest {
         String[] patientResultFields = {"occupation"};
         Concept concept = new Concept();
         ConceptName conceptName = new ConceptName();
-        conceptName.setName("shortname");
+        conceptName.setName("FSN");
         Locale defaultLocale = new Locale("en", "GB");
         conceptName.setLocale(defaultLocale);
-        concept.setShortName(conceptName);
-        conceptName.setConceptNameType(ConceptNameType.SHORT);
+        concept.setFullySpecifiedName(conceptName);
+        conceptName.setConceptNameType(ConceptNameType.FULLY_SPECIFIED);
         PowerMockito.mockStatic(Context.class);
         PowerMockito.when(Context.getLocale()).thenReturn(defaultLocale);
 
@@ -113,7 +113,7 @@ public class PatientResponseMapperTest {
 
         PatientResponse patientResponse = patientResponseMapper.map(patient, null, patientResultFields, null, null);
 
-        Assert.assertEquals(patientResponse.getCustomAttribute(),"{\"occupation\" : \"shortname\"}");
+        Assert.assertEquals(patientResponse.getCustomAttribute(),"{\"occupation\" : \"FSN\"}");
     }
 
     @Test
