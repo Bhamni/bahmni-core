@@ -1,5 +1,5 @@
-Bahmni Core
-Copyright 2014 ThoughtWorks, Inc
+Bahmni Core - APIs and services for Encounter transactions, searches, Coarse grained APIs over Visit, Order, Discharge, Diagnosis, reference data etc
+Copyright (C) 2014 OpenMRS, Inc
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as

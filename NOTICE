@@ -1,6 +1,7 @@
-Bahmni OpenMRS Service
-  Copyright 2013 ThoughtWorks, Inc
+Copyright (C) 2013 OpenMRS, Inc
 
-  This product includes software developed at ThoughtWorks, Inc (http://www.thoughtworks.com/).
+This product includes software developed under the stewardship of the Bahmni Coalition, under fiscal sponsorship of OpenMRS, Inc. (http://www.openmrs.org/)
 
-  This software contains code derived from the RAXA-Core (https://github.com/Raxa/raxacore).
+This product includes software developed at ThoughtWorks, Inc (http://www.thoughtworks.com/)
+
+This software contains code derived from the RAXA-Core (https://github.com/Raxa/raxacore)
