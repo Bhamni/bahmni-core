@@ -70,5 +70,4 @@ public class AccessionNotesMapper {
         return encounterTransaction.getEncounterTypeUuid() != null && encounterTransaction.getEncounterTypeUuid().equals(validationNotesEncounterType.getUuid()) && !encounterTransaction.getObservations().isEmpty();
     }
 
-
 }
