@@ -15,3 +15,5 @@ Clone the repository and build the omod
 ## Deploy
 
 Copy ```bahmni-core/bahmnicore-omod/target/bahmnicore-omod-VERSION-SNAPSHOT.omod``` into OpenMRS modules directory and restart OpenMRS
+
+>Added this line to get to sign the Contributor License Agreement.
