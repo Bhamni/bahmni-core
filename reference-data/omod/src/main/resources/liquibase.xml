@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <!--
+        See http://www.liquibase.org/manual/home#available_database_refactorings
+        for a list of supported elements and attributes
+    -->
+
+    <changeSet id="ref-data-201902211530" author="angshu" context="0.93">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM concept_attribute_type where name = 'sellable';
+            </sqlCheck>
+        </preConditions>
+        <comment>adding concept attribute type sellable</comment>
+        <insert tableName="concept_attribute_type">
+            <column name="name" value="sellable"/>
+            <column name="description" value="Reference concepts which are deemed sellable, serviceable"/>
+            <column name="datatype" value="org.openmrs.customdatatype.datatype.BooleanDatatype"/>
+            <column name="min_occurs" value="0"/>
+            <column name="creator" value="1"/>
+            <column name="date_created" valueComputed="curdate()"/>
+            <column name="retired" value="0"/>
+            <column name="uuid" valueComputed="uuid()"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

@@ -3,10 +3,7 @@
 package org.bahmni.module.referencedata.web.controller;
 
 import org.bahmni.module.referencedata.BaseIntegrationTest;
-import org.bahmni.module.referencedata.labconcepts.contract.Department;
-import org.bahmni.module.referencedata.labconcepts.contract.LabTest;
-import org.bahmni.module.referencedata.labconcepts.contract.RadiologyTest;
-import org.bahmni.module.referencedata.labconcepts.contract.Sample;
+import org.bahmni.module.referencedata.labconcepts.contract.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Concept;
@@ -80,5 +77,15 @@ public class ConceptOperationControllersIT extends BaseIntegrationTest {
         assertEquals(radiologyTestConcept.getUuid(), testResponse.getId());
         assertEquals(radiologyTestConcept.getName(Context.getLocale()).getName(), testResponse.getName());
         assertNotEquals(radiologyTestConcept.getRetired(), testResponse.getIsActive());
+    }
+
+    @Test
+    public void shouldReturnGenericConceptResource() throws Exception {
+        MockHttpServletRequest request = newGetRequest("/rest/v1/reference-data/resources/fe334cb7-t3tb-0037-70f7-kjditree2222");
+        MockHttpServletResponse response = handle(request);
+        Resource resource = deserialize(response, Resource.class);
+        assertEquals("fe334cb7-t3tb-0037-70f7-kjditree2222", resource.getId());
+        assertEquals("Dressing Procedure", resource.getName());
+        assertEquals("true", resource.getProperties().get("sellable"));
     }
 }

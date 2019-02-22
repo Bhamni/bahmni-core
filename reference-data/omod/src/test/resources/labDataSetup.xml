@@ -176,4 +176,14 @@
     <concept_name concept_id="1313" name="Answer2" locale="en" creator="1" date_created="2005-01-01 00:00:00.0"
                   concept_name_id="1313" voided="false" uuid="hgfd4cb7-hg8b-4007-free-0ebb94022222"
                   concept_name_type="FULLY_SPECIFIED" locale_preferred="0"/>
+
+    <concept_class concept_class_id="127" name="Procedure" description="Procedure Concept Class" creator="1"
+                   date_created="2005-01-01 00:00:00.0" retired="false" uuid="9c3807b2-c2cc-11de-8d13-0010c6dffd1f"/>
+    <concept concept_id="1410" retired="0" datatype_id="2" class_id="11" is_set="0" creator="1"
+             date_created="2013-12-04 11:36:42" uuid="fe334cb7-t3tb-0037-70f7-kjditree2222"/>
+    <concept_name concept_id="1410" name="Dressing Procedure" locale="en" creator="1" date_created="2005-01-01 00:00:00.0"
+                  concept_name_id="1413" voided="false" uuid="ghee4cb7-hg8b-4007-free-0ebb94022222"
+                  concept_name_type="FULLY_SPECIFIED" locale_preferred="0"/>
+    <concept_attribute_type concept_attribute_type_id="11" name="sellable" datatype="org.openmrs.customdatatype.datatype.BooleanDatatype" uuid="8425cc50-6f9f-11e0-8414-001e378eb66f" creator="1" date_created="2005-01-01 00:00:00.0" min_occurs="0" retired="false" />
+    <concept_attribute concept_attribute_id="101" concept_id="1410" attribute_type_id="11" value_reference="true" uuid="2b1bdb18-6faa-11e0-8414-001e378eb67e" creator="1" date_created="2005-01-01 00:00:00.0" voided="false" />
 </dataset>
