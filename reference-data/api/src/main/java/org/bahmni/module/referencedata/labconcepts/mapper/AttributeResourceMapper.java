@@ -14,7 +14,7 @@ public class AttributeResourceMapper extends ResourceMapper {
     }
 
     @Override
-    public <T extends Resource> T map(Concept concept) {
+    public Resource map(Concept concept) {
         Resource resource = new Resource();
         mapResource(resource, concept);
         HashMap<String, Object> properties = new HashMap<>();
@@ -22,6 +22,6 @@ public class AttributeResourceMapper extends ResourceMapper {
         if (!properties.isEmpty()) {
             resource.setProperties(properties);
         }
-        return (T) resource;
+        return resource;
     }
 }
