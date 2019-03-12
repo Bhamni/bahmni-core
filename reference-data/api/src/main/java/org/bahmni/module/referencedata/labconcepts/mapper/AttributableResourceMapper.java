@@ -5,11 +5,11 @@ import org.bahmni.module.referencedata.labconcepts.contract.Resource;
 
 import java.util.HashMap;
 
-public class AttributeResourceMapper extends ResourceMapper {
+public class AttributableResourceMapper extends ResourceMapper {
 
-    public AttributeResourceMapper() {super(null);}
+    public AttributableResourceMapper() {super(null);}
 
-    protected AttributeResourceMapper(String parentConceptName) {
+    protected AttributableResourceMapper(String parentConceptName) {
         super(parentConceptName);
     }
 

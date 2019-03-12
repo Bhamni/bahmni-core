@@ -1,8 +1,8 @@
 package org.bahmni.module.referencedata.web.controller;
 
+import org.bahmni.module.referencedata.labconcepts.mapper.AttributableResourceMapper;
 import org.openmrs.Concept;
 import org.bahmni.module.referencedata.labconcepts.contract.Resource;
-import org.bahmni.module.referencedata.labconcepts.mapper.AttributeResourceMapper;
 import org.openmrs.api.ConceptService;
 import org.openmrs.module.emrapi.encounter.exception.ConceptNotFoundException;
 import org.openmrs.module.webservices.rest.web.v1_0.controller.BaseRestController;
@@ -17,12 +17,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class ResourcesController extends BaseRestController {
     public static final String UNIDENTIFIED_RESOURCE = "No resource was found for specified uuid";
     private ConceptService conceptService;
-    AttributeResourceMapper attributeResourceMapper;
+    AttributableResourceMapper attributeResourceMapper;
 
     @Autowired
     public ResourcesController(ConceptService conceptService) {
         this.conceptService = conceptService;
-        this.attributeResourceMapper = new AttributeResourceMapper();
+        this.attributeResourceMapper = new AttributableResourceMapper();
     }
 
     @RequestMapping(value = "/{uuid}", method = RequestMethod.GET)
