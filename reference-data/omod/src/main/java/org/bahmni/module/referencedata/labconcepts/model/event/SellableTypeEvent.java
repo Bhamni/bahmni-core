@@ -28,7 +28,7 @@ public class SellableTypeEvent implements ConceptServiceOperationEvent {
     @Override
     public Event asAtomFeedEvent(Object[] arguments) throws URISyntaxException {
         Concept concept = (Concept) arguments[0];
-        String url = String.format(this.url, this.category, concept.getUuid());
+        String url = String.format(this.url, "resources", concept.getUuid());
         return new Event(UUID.randomUUID().toString(), RESOURCE_TITLE, DateTime.now(), new URI(url), url, this.category);
     }
 
