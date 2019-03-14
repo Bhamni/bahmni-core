@@ -38,9 +38,13 @@ public class SellableTypeEvent implements ConceptServiceOperationEvent {
         if (supportedOperations.contains(operation)
                 && arguments.length > 0 && arguments[0] instanceof Concept) {
             Concept concept = (Concept) arguments[0];
-            Collection<ConceptAttribute> activeAttributes = concept.getActiveAttributes();
-            return activeAttributes.stream().filter(a -> a.getAttributeType().getName().equalsIgnoreCase(SELLABLE_ATTR_NAME)).findFirst().isPresent();
+            return isConceptWithSellableAttribute(concept);
         }
         return false;
+    }
+
+    public static boolean isConceptWithSellableAttribute(Concept concept) {
+        Collection<ConceptAttribute> activeAttributes = concept.getActiveAttributes();
+        return activeAttributes.stream().filter(a -> a.getAttributeType().getName().equalsIgnoreCase(SELLABLE_ATTR_NAME)).findFirst().isPresent();
     }
 }

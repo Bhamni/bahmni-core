@@ -4,6 +4,7 @@ import org.openmrs.Concept;
 import org.openmrs.ConceptClass;
 
 import static org.bahmni.module.referencedata.labconcepts.mapper.ConceptExtension.isOfConceptClassByUUID;
+import static org.bahmni.module.referencedata.labconcepts.model.event.SellableTypeEvent.isConceptWithSellableAttribute;
 
 public class PanelEvent extends ConceptOperationEvent {
 
@@ -13,7 +14,7 @@ public class PanelEvent extends ConceptOperationEvent {
 
     @Override
     public boolean isResourceConcept(Concept concept) {
-        return isOfConceptClassByUUID(concept, ConceptClass.LABSET_UUID);
+        return isOfConceptClassByUUID(concept, ConceptClass.LABSET_UUID) && !isConceptWithSellableAttribute(concept);
     }
 
 }

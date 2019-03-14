@@ -12,6 +12,8 @@ import java.util.UUID;
 
 import static org.bahmni.module.referencedata.labconcepts.contract.LabTest.LAB_TEST_CONCEPT_CLASS;
 import static org.bahmni.module.referencedata.labconcepts.mapper.ConceptExtension.isOfConceptClass;
+import static org.bahmni.module.referencedata.labconcepts.model.event.SellableTypeEvent.isConceptWithSellableAttribute;
+
 
 public class LabTestEvent extends ConceptOperationEvent {
 
@@ -20,7 +22,7 @@ public class LabTestEvent extends ConceptOperationEvent {
     }
 
     public boolean isResourceConcept(Concept concept) {
-        return isOfConceptClass(concept, LAB_TEST_CONCEPT_CLASS) || (getParentOfTypeLabTest(concept) != null);
+        return (isOfConceptClass(concept, LAB_TEST_CONCEPT_CLASS) || (getParentOfTypeLabTest(concept) != null)) && !isConceptWithSellableAttribute(concept);
     }
 
     private Concept getParentOfTypeLabTest(Concept concept) {

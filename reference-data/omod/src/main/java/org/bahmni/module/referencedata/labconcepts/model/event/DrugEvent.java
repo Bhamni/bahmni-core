@@ -2,6 +2,7 @@ package org.bahmni.module.referencedata.labconcepts.model.event;
 
 import org.ict4h.atomfeed.server.service.Event;
 import org.joda.time.DateTime;
+import org.openmrs.Concept;
 import org.openmrs.Drug;
 
 import java.net.URISyntaxException;
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static java.util.Arrays.asList;
+import static org.bahmni.module.referencedata.labconcepts.model.event.SellableTypeEvent.isConceptWithSellableAttribute;
 
 public class DrugEvent implements ConceptServiceOperationEvent {
     protected String url;
@@ -35,7 +37,7 @@ public class DrugEvent implements ConceptServiceOperationEvent {
 
     @Override
     public Boolean isApplicable(String operation, Object[] arguments) {
-        return this.operations().contains(operation) && isValid(arguments) && arguments[0] instanceof Drug;
+        return this.operations().contains(operation) && isValid(arguments) && arguments[0] instanceof Drug && !isConceptWithSellableAttribute(((Drug) arguments[0]).getConcept());
     }
 
     @Override
