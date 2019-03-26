@@ -5,6 +5,7 @@ import org.openmrs.Concept;
 import org.openmrs.ConceptSet;
 import org.openmrs.api.context.Context;
 
+import java.util.HashMap;
 import java.util.List;
 
 public abstract class ResourceMapper {
@@ -24,6 +25,11 @@ public abstract class ResourceMapper {
         resource.setId(concept.getUuid());
         resource.setDateCreated(concept.getDateCreated());
         resource.setLastUpdated(concept.getDateChanged());
+        HashMap<String, Object> properties = new HashMap<>();
+        concept.getActiveAttributes().stream().forEach(a -> properties.put(a.getAttributeType().getName(), a.getValueReference()));
+        if (!properties.isEmpty()) {
+            resource.setProperties(properties);
+        }
         return (R) resource;
     }
 
