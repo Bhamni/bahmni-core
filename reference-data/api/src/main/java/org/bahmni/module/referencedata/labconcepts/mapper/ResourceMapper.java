@@ -1,5 +1,6 @@
 package org.bahmni.module.referencedata.labconcepts.mapper;
 
+import org.apache.commons.collections.MapUtils;
 import org.bahmni.module.referencedata.labconcepts.contract.Resource;
 import org.openmrs.Concept;
 import org.openmrs.ConceptSet;
@@ -27,7 +28,7 @@ public abstract class ResourceMapper {
         resource.setLastUpdated(concept.getDateChanged());
         HashMap<String, Object> properties = new HashMap<>();
         concept.getActiveAttributes().stream().forEach(a -> properties.put(a.getAttributeType().getName(), a.getValueReference()));
-        if (!properties.isEmpty()) {
+        if (!MapUtils.isEmpty(properties)) {
             resource.setProperties(properties);
         }
         return (R) resource;
