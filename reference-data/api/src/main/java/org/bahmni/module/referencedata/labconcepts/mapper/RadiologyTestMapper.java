@@ -10,7 +10,7 @@ public class RadiologyTestMapper extends ResourceMapper {
 
     @Override
     public RadiologyTest map(Concept testConcept) {
-        return mapResource(new RadiologyTest(), testConcept);
+        return mapResource(new RadiologyTest(), testConcept, true);
     }
 
 

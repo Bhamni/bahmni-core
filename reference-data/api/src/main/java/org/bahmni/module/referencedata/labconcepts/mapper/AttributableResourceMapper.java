@@ -14,7 +14,7 @@ public class AttributableResourceMapper extends ResourceMapper {
     @Override
     public Resource map(Concept concept) {
         Resource resource = new Resource();
-        mapResource(resource, concept);
+        mapResource(resource, concept, true);
         return resource;
     }
 }

@@ -26,12 +26,19 @@ public abstract class ResourceMapper {
         resource.setId(concept.getUuid());
         resource.setDateCreated(concept.getDateCreated());
         resource.setLastUpdated(concept.getDateChanged());
-        HashMap<String, Object> properties = new HashMap<>();
-        concept.getActiveAttributes().stream().forEach(a -> properties.put(a.getAttributeType().getName(), a.getValueReference()));
-        if (!MapUtils.isEmpty(properties)) {
-            resource.setProperties(properties);
-        }
         return (R) resource;
+    }
+
+    public <R extends Resource> R mapResource(R resource, Concept concept, boolean shouldSetProperties) {
+        mapResource(resource, concept);
+        if (shouldSetProperties) {
+            HashMap<String, Object> properties = new HashMap<>();
+            concept.getActiveAttributes().stream().forEach(a -> properties.put(a.getAttributeType().getName(), a.getValueReference()));
+            if (!MapUtils.isEmpty(properties)) {
+                resource.setProperties(properties);
+            }
+        }
+        return resource;
     }
 
     Double getSortWeight(Concept concept) {

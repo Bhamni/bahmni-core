@@ -12,7 +12,7 @@ public class LabTestMapper extends ResourceMapper {
     @Override
     public LabTest map(Concept testConcept) {
         LabTest test = new LabTest();
-        test = mapResource(test, testConcept);
+        test = mapResource(test, testConcept, true);
         test.setDescription(ConceptExtension.getDescriptionOrName(testConcept));
         test.setResultType(testConcept.getDatatype().getName());
         test.setTestUnitOfMeasure(ConceptExtension.getUnits(testConcept));
