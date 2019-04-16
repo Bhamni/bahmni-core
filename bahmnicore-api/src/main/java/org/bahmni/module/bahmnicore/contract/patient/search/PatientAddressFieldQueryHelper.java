@@ -15,8 +15,8 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 public class PatientAddressFieldQueryHelper {
 	private String addressFieldValue;
-	private String addressFieldName;
-	private String[] addressSearchResultFields;
+	protected String addressFieldName;
+	protected String[] addressSearchResultFields;
 
 	public PatientAddressFieldQueryHelper(String addressFieldName,String addressFieldValue, String[] addressResultFields){
 		this.addressFieldName = addressFieldName;
@@ -48,11 +48,11 @@ public class PatientAddressFieldQueryHelper {
 
 	}
 
-	private String combine(String query, String operator, String condition) {
+	protected String combine(String query, String operator, String condition) {
 		return String.format("%s %s %s", query, operator, condition);
 	}
 
-	private String enclose(String value) {
+	protected String enclose(String value) {
 		return String.format("(%s)", value);
 	}
 

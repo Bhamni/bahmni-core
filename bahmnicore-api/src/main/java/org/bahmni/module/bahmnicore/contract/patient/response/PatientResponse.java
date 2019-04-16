@@ -4,14 +4,17 @@ package org.bahmni.module.bahmnicore.contract.patient.response;
 
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.map.JsonSerializer;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializerProvider;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
+import org.openmrs.api.context.Context;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 
 public class PatientResponse {
 
@@ -103,7 +106,7 @@ public class PatientResponse {
     }
 
     public void setAddressFieldValue(String addressFieldValue) {
-        this.addressFieldValue = addressFieldValue;
+        this.addressFieldValue = localizeAddressFieldValue(addressFieldValue);
     }
 
     public String getGivenName() {
@@ -183,7 +186,7 @@ public class PatientResponse {
     }
 
     public void setExtraIdentifiers(String extraIdentifiers) {
-        this.extraIdentifiers = extraIdentifiers;
+        this.extraIdentifiers = localizePatientIdentifierTypes(extraIdentifiers);
     }
 
     public int getPersonId() {
@@ -207,5 +210,34 @@ public class PatientResponse {
             String formattedDate = dateFormat.format(date);
             gen.writeString(formattedDate);
         }
+    }
+
+    public static String localizeAddressFieldValue(String addressFieldValue) {
+        try {
+            HashMap<String, String> map = new ObjectMapper().readValue(addressFieldValue, HashMap.class);
+            for (String addressField : map.keySet()) {
+                String addressValue = Context.getMessageSourceService().getMessage(map.get(addressField));
+                map.put(addressField, addressValue);
+            }
+            addressFieldValue = new ObjectMapper().writeValueAsString(map);
+        } catch (Exception e) {
+
+        }
+        return addressFieldValue;
+    }
+
+    public static String localizePatientIdentifierTypes(String extraIdentifiers) {
+        try {
+            HashMap<String, String> map = new ObjectMapper().readValue(extraIdentifiers, HashMap.class);
+            for (String pit: map.keySet()) {
+                String l10Pit = Context.getMessageSourceService().getMessage(pit);
+                if (!pit.equals(l10Pit)) {
+                    extraIdentifiers = extraIdentifiers.replaceAll(pit, l10Pit);
+                }
+            }
+        } catch (Exception e) {
+
+        }
+        return extraIdentifiers;
     }
 }

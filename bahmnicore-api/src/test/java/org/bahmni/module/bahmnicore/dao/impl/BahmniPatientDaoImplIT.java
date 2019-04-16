@@ -44,7 +44,7 @@ public class BahmniPatientDaoImplIT extends BaseIntegrationTest {
         assertEquals("Sinha", patient.getFamilyName());
         assertEquals("M", patient.getGender());
         assertEquals("1983-01-30", patient.getBirthDate().toString());
-        assertEquals("{ \"city_village\" : \"Ramgarh\"}", patient.getAddressFieldValue());
+        assertJsonEquals("{ \"city_village\" : \"Ramgarh\"}", patient.getAddressFieldValue());
         assertEquals("2008-08-15 15:57:09.0", patient.getDateCreated().toString());
         assertEquals(null, patient.getDeathDate());
         assertEquals("{\"National ID\":\"NAT100010\"}", patient.getExtraIdentifiers());
@@ -62,7 +62,7 @@ public class BahmniPatientDaoImplIT extends BaseIntegrationTest {
         assertEquals("Sinha", patient.getFamilyName());
         assertEquals("M", patient.getGender());
         assertEquals("1983-01-30", patient.getBirthDate().toString());
-        assertEquals("{ \"city_village\" : \"Ramgarh\"}", patient.getAddressFieldValue());
+        assertJsonEquals("{ \"city_village\" : \"Ramgarh\"}", patient.getAddressFieldValue());
         assertEquals("2008-08-15 15:57:09.0", patient.getDateCreated().toString());
         assertEquals(null, patient.getDeathDate());
         assertEquals("{\"National ID\":\"NAT100010\"}", patient.getExtraIdentifiers());
@@ -124,7 +124,7 @@ public class BahmniPatientDaoImplIT extends BaseIntegrationTest {
         assertEquals("Sinha", patient.getFamilyName());
         assertEquals("M", patient.getGender());
         assertEquals("1983-01-30", patient.getBirthDate().toString());
-        assertEquals("{ \"city_village\" : \"Ramgarh\"}", patient.getAddressFieldValue());
+        assertJsonEquals("{ \"city_village\" : \"Ramgarh\"}", patient.getAddressFieldValue());
         assertEquals("2008-08-15 15:57:09.0", patient.getDateCreated().toString());
         assertEquals(null, patient.getDeathDate());
     }
@@ -141,7 +141,7 @@ public class BahmniPatientDaoImplIT extends BaseIntegrationTest {
         assertEquals("Sinha", patient.getFamilyName());
         assertEquals("M", patient.getGender());
 
-        assertEquals("{ \"city_village\" : \"Ramgarh\"}", patient.getAddressFieldValue());
+        assertJsonEquals("{ \"city_village\" : \"Ramgarh\"}", patient.getAddressFieldValue());
         assertEquals("2008-08-15 15:57:09.0", patient.getDateCreated().toString());
         assertEquals(null, patient.getDeathDate());
     }
@@ -248,7 +248,7 @@ public class BahmniPatientDaoImplIT extends BaseIntegrationTest {
         assertEquals("df8ae447-6745-45be-b859-403241d9913d",response.getUuid());
         assertEquals(1026,response.getPersonId());
         assertEquals("GAN200002",response.getIdentifier());
-        assertEquals("{ \"city_village\" : \"Bilaspur\"}",response.getAddressFieldValue());
+        assertJsonEquals("{ \"city_village\" : \"Bilaspur\"}",response.getAddressFieldValue());
         assertEquals("John",response.getGivenName());
         assertEquals("Peeter",response.getMiddleName());
         assertEquals("Sinha",response.getFamilyName());
@@ -287,7 +287,7 @@ public class BahmniPatientDaoImplIT extends BaseIntegrationTest {
         assertEquals("df8ae447-6745-45be-b859-403241d9913d",response.getUuid());
         assertEquals(1026,response.getPersonId());
         assertEquals("GAN200002",response.getIdentifier());
-        assertEquals("{ \"city_village\" : \"Bilaspur\"}",response.getAddressFieldValue());
+        assertJsonEquals("{ \"city_village\" : \"Bilaspur\"}",response.getAddressFieldValue());
         assertEquals("John",response.getGivenName());
         assertEquals("Peeter",response.getMiddleName());
         assertEquals("Sinha",response.getFamilyName());
@@ -323,7 +323,7 @@ public class BahmniPatientDaoImplIT extends BaseIntegrationTest {
         assertEquals(1, patients.size());
         PatientResponse patient200002 = patients.get(0);
         assertTrue("{\"givenNameLocal\":\"ram\",\"middleNameLocal\":\"singh\",\"familyNameLocal\":\"gond\"}".equals(patient200002.getCustomAttribute()));
-        assertTrue("{ \"address3\" : \"Dindori\"}".equals(patient200002.getAddressFieldValue()));
+        assertJsonEquals("{ \"address3\" : \"Dindori\"}", patient200002.getAddressFieldValue());
     }
 
     @Test
@@ -394,7 +394,7 @@ public class BahmniPatientDaoImplIT extends BaseIntegrationTest {
 
         assertEquals("{\"caste\":\"go'nd\"}", patients.get(0).getCustomAttribute());
 
-        assertTrue("{ \"address3\" : \"Dindori\"}".equals(patients.get(0).getAddressFieldValue()));
+        assertJsonEquals("{ \"address3\" : \"Dindori\"}", patients.get(0).getAddressFieldValue());
 
 
         patients = patientDao.getPatients("", "", "'", null, null, 100, 0, patientAttributes,null,null,addressResultFields, patientResultFields, "c36006e5-9fbb-4f20-866b-0ece245615a1", false, false);
@@ -403,7 +403,7 @@ public class BahmniPatientDaoImplIT extends BaseIntegrationTest {
 
         assertEquals(1, patients.size());
         assertEquals("{\"caste\":\"go'nd\"}", patientWithSingleQuoteInSearch.getCustomAttribute());
-        assertTrue("{ \"address3\" : \"Dindori\"}".equals(patientWithSingleQuoteInSearch.getAddressFieldValue()));
+        assertJsonEquals("{ \"address3\" : \"Dindori\"}", patientWithSingleQuoteInSearch.getAddressFieldValue());
 
 
         patients = patientDao.getPatients("", "", "'''", null, null, 100, 0, patientAttributes,null,null,addressResultFields, patientResultFields, "c36006e5-9fbb-4f20-866b-0ece245615a1", false, false);

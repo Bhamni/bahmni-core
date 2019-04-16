@@ -93,6 +93,15 @@ public class PatientSearchBuilder {
 		return this;
 	}
 
+	public PatientSearchBuilder withPatientAddressInList(String addressFieldName, List<String> addressFieldValues, String[] addressAttributeFields) {
+		PatientAddressFieldInListQueryHelper patientAddressQueryHelper = new PatientAddressFieldInListQueryHelper(addressFieldName, addressFieldValues, addressAttributeFields);
+		where = patientAddressQueryHelper.appendToWhereClause(where);
+		select = patientAddressQueryHelper.selectClause(select);
+		groupBy = patientAddressQueryHelper.appendToGroupByClause(groupBy);
+		types.putAll(patientAddressQueryHelper.addScalarQueryResult());
+		return this;
+	}
+
 	public PatientSearchBuilder withPatientIdentifier(String identifier, Boolean filterOnAllIdentifiers){
 		PatientIdentifierQueryHelper patientIdentifierQueryHelper = new PatientIdentifierQueryHelper(identifier, filterOnAllIdentifiers);
 		join = patientIdentifierQueryHelper.appendToJoinClause(join);

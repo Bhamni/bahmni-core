@@ -1,5 +1,15 @@
 package org.bahmni.module.bahmnicore.dao.impl;
 
+import static java.util.stream.Collectors.toList;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
@@ -7,6 +17,7 @@ import org.bahmni.module.bahmnicore.contract.patient.mapper.PatientResponseMappe
 import org.bahmni.module.bahmnicore.contract.patient.response.PatientResponse;
 import org.bahmni.module.bahmnicore.contract.patient.search.PatientSearchBuilder;
 import org.bahmni.module.bahmnicore.dao.PatientDao;
+import org.bahmni.module.bahmnicore.i18n.Internationalizer;
 import org.bahmni.module.bahmnicore.model.bahmniPatientProgram.ProgramAttributeType;
 import org.bahmni.module.bahmnicore.service.BahmniProgramWorkflowService;
 import org.hibernate.Query;
@@ -27,25 +38,18 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.bahmniemrapi.visitlocation.BahmniVisitLocationServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-
-import static java.util.stream.Collectors.reducing;
-import static java.util.stream.Collectors.toList;
 
 @Repository
 public class PatientDaoImpl implements PatientDao {
 
     private SessionFactory sessionFactory;
 
+    private Internationalizer i18n;
+
     @Autowired
-    public PatientDaoImpl(SessionFactory sessionFactory) {
+    public PatientDaoImpl(SessionFactory sessionFactory, Internationalizer i18n) {
         this.sessionFactory = sessionFactory;
+        this.i18n = i18n;
     }
 
     @Override
@@ -59,14 +63,23 @@ public class PatientDaoImpl implements PatientDao {
 
         ProgramAttributeType programAttributeType = getProgramAttributeType(programAttributeFieldName);
 
-        SQLQuery sqlQuery = new PatientSearchBuilder(sessionFactory)
+        PatientSearchBuilder builder = new PatientSearchBuilder(sessionFactory)
                 .withPatientName(name)
-                .withPatientAddress(addressFieldName, addressFieldValue, addressSearchResultFields)
                 .withPatientIdentifier(identifier, filterOnAllIdentifiers)
                 .withPatientAttributes(customAttribute, getPersonAttributeIds(customAttributeFields), getPersonAttributeIds(patientSearchResultFields))
                 .withProgramAttributes(programAttributeFieldValue, programAttributeType)
-                .withLocation(loginLocationUuid, filterPatientsByLocation)
-                .buildSqlQuery(length, offset);
+                .withLocation(loginLocationUuid, filterPatientsByLocation);
+
+        if (!i18n.isEnabled() || StringUtils.isEmpty(addressFieldValue)) {
+            builder.withPatientAddress(addressFieldName, addressFieldValue, addressSearchResultFields);
+        }
+        else {
+            // when i18n is enabled the address is in a list of matched address i18n codes, if any
+            List<String> codedAddressFieldValues = i18n.getAddressMessageKeysByLikeName(addressFieldValue);
+            builder.withPatientAddressInList(addressFieldName, codedAddressFieldValues, addressSearchResultFields);
+        }
+
+        SQLQuery sqlQuery = builder.buildSqlQuery(length, offset);
         return sqlQuery.list();
     }
 
@@ -108,7 +121,7 @@ public class PatientDaoImpl implements PatientDao {
                 .wildcard().onField("identifierAnywhere").matching("*" + identifier.toLowerCase() + "*").createQuery();
         org.apache.lucene.search.Query nonVoidedIdentifiers = queryBuilder.keyword().onField("voided").matching(false).createQuery();
         org.apache.lucene.search.Query nonVoidedPatients = queryBuilder.keyword().onField("patient.voided").matching(false).createQuery();
-    
+
         List<String> identifierTypeNames = getIdentifierTypeNames(filterOnAllIdentifiers);
 
         BooleanJunction identifierTypeShouldJunction = queryBuilder.bool();
@@ -132,7 +145,7 @@ public class PatientDaoImpl implements PatientDao {
         fullTextQuery.setMaxResults(length);
         return (List<PatientIdentifier>) fullTextQuery.list();
     }
-    
+
     private List<String> getIdentifierTypeNames(Boolean filterOnAllIdentifiers) {
         List<String> identifierTypeNames = new ArrayList<>();
         addIdentifierTypeName(identifierTypeNames,"bahmni.primaryIdentifierType");
@@ -142,15 +155,14 @@ public class PatientDaoImpl implements PatientDao {
         return identifierTypeNames;
     }
 
-    private void addIdentifierTypeName(List<String> identifierTypeNames,String identifierProperty) {
+    private void addIdentifierTypeName(List<String> identifierTypeNames, String identifierProperty) {
         String identifierTypes = Context.getAdministrationService().getGlobalProperty(identifierProperty);
         if(StringUtils.isNotEmpty(identifierTypes)) {
             String[] identifierUuids = identifierTypes.split(",");
-            for (String identifierUuid :
-                    identifierUuids) {
+            for (String identifierUuid : identifierUuids) {
                 PatientIdentifierType patientIdentifierType = Context.getPatientService().getPatientIdentifierTypeByUuid(identifierUuid);
                 if (patientIdentifierType != null) {
-                    identifierTypeNames.add(patientIdentifierType.getName());
+                    identifierTypeNames.add(i18n.getMessageKey(patientIdentifierType.getName()));
                 }
             }
         }

@@ -40,7 +40,7 @@ public class BahmniPatientDaoImplLuceneIT extends BaseIntegrationTest {
         assertEquals("Sinha", patient.getFamilyName());
         assertEquals("M", patient.getGender());
         assertEquals("1983-01-30 00:00:00.0", patient.getBirthDate().toString());
-        assertEquals("{\"city_village\" : \"Ramgarh\"}", patient.getAddressFieldValue());
+        assertJsonEquals("{\"city_village\" : \"Ramgarh\"}", patient.getAddressFieldValue());
         assertEquals("2006-01-18 00:00:00.0", patient.getDateCreated().toString());
         assertEquals(null, patient.getDeathDate());
         assertEquals("{\"National ID\" : \"NAT100010\"}", patient.getExtraIdentifiers());
@@ -58,7 +58,7 @@ public class BahmniPatientDaoImplLuceneIT extends BaseIntegrationTest {
         assertEquals("Sinha", patient.getFamilyName());
         assertEquals("M", patient.getGender());
         assertEquals("1983-01-30 00:00:00.0", patient.getBirthDate().toString());
-        assertEquals("{\"city_village\" : \"Ramgarh\"}", patient.getAddressFieldValue());
+        assertJsonEquals("{\"city_village\" : \"Ramgarh\"}", patient.getAddressFieldValue());
         assertEquals("2006-01-18 00:00:00.0", patient.getDateCreated().toString());
         assertEquals(null, patient.getDeathDate());
         assertEquals("{\"National ID\" : \"NAT100010\"}", patient.getExtraIdentifiers());
@@ -131,8 +131,8 @@ public class BahmniPatientDaoImplLuceneIT extends BaseIntegrationTest {
         List<PatientResponse> patients = patientDao.getPatientsUsingLuceneSearch("GAN200002", null, null, null, null, 100, 0, new String[]{"caste","givenNameLocal"},null,null,addressResultFields,patientResultFields, "c36006e5-9fbb-4f20-866b-0ece245615a1", false, false);
         assertEquals(1, patients.size());
         PatientResponse patient200002 = patients.get(0);
-        assertTrue("{\"middleNameLocal\" : \"singh\",\"familyNameLocal\" : \"gond\",\"givenNameLocal\" : \"ram\"}".equals(patient200002.getCustomAttribute()));
-        assertTrue("{\"address3\" : \"Dindori\"}".equals(patient200002.getAddressFieldValue()));
+        assertJsonEquals("{\"middleNameLocal\" : \"singh\",\"familyNameLocal\" : \"gond\",\"givenNameLocal\" : \"ram\"}", patient200002.getCustomAttribute());
+        assertJsonEquals("{\"address3\" : \"Dindori\"}",patient200002.getAddressFieldValue());
     }
     
     @Test

@@ -185,6 +185,12 @@
             <artifactId>jcodec-javase</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>exti18n-api</artifactId>
+            <version>${exti18nVersion}</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
