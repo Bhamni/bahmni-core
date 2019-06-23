@@ -3583,7 +3583,7 @@
             INSERT IGNORE INTO `user_role` VALUES (@id,'Provider'),(@id,'System Developer');
 
             select user_id from users where system_id='superman' into @id;
-            INSERT INTO `user_role` VALUES (@id,'Provider'),(@id,'System Developer'), (@id, 'SuperAdmin');
+            INSERT IGNORE INTO `user_role` VALUES (@id,'Provider'),(@id,'System Developer'), (@id, 'SuperAdmin');
         </sql>
     </changeSet>
     <changeSet id="bahmni-core-201906170327" author="Samuel34">
@@ -4516,7 +4516,7 @@
             <column name="uuid" valueComputed=" uuid() "/>
         </insert>
     </changeSet>
-    <changeSet id="201906201136" author="Samuel34">
+    <changeSet id="openmrs-core-201906201136" author="Samuel34">
     	<preConditions onFail="MARK_RAN">
     		<sqlCheck expectedResult="0">
     			select count(*) from role_privilege where role = 'Anonymous' and privilege = 'Get Locations';
