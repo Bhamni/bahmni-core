@@ -2,7 +2,7 @@
 <!DOCTYPE module PUBLIC "-//OpenMRS//DTD OpenMRS Config 1.0//EN" "http://resources.openmrs.org/doctype/config-1.2.dtd">
 
 <module configVersion="1.2">
-	
+
     <!-- Base Module Properties -->
     <id>@MODULE_ID@</id>
     <name>@MODULE_NAME@</name>
@@ -10,13 +10,13 @@
     <package>@MODULE_PACKAGE@</package>
     <author>Bahmni</author>
     <description>
-        Provides core BahmniEMR services
+        Provides core Bahmni EMR services
     </description>
     <activator>@MODULE_PACKAGE@.Activator</activator>
 
     <updateURL>https://example.com/modules/download/bahmnicore/update.rdf</updateURL>
     <!-- /Base Module Properties -->
-	
+
     <require_version>${openMRSRuntimeVersion}</require_version>
     <require_modules>
         <require_module>org.openmrs.module.webservices.rest</require_module>
@@ -34,10 +34,10 @@
         <require_module>org.openmrs.module.auditlog</require_module>
     </require_modules>
     <!-- Extensions -->
-	
+
     <!-- AOP -->
     <!-- Required Privileges -->
-    
+
     <privilege>
         <name>Add Patient Lists</name>
         <description>Ability to create patient lists</description>
@@ -54,7 +54,7 @@
         <name>View Patient Lists</name>
         <description>Ability to view patient lists</description>
     </privilege>
-    
+
     <privilege>
         <name>Add Drug Groups</name>
         <description>Ability to create Drug Groups</description>
@@ -70,8 +70,8 @@
     <privilege>
         <name>View Drug Groups</name>
         <description>Ability to view Drug Groups</description>
-    </privilege>   
-    
+    </privilege>
+
     <privilege>
         <name>Add Drug Info</name>
         <description>Ability to create Drug Info</description>

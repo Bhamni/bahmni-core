@@ -4,11 +4,11 @@
     <parent>
         <groupId>org.bahmni.module</groupId>
         <artifactId>bahmni</artifactId>
-        <version>0.92-SNAPSHOT</version>
+        <version>0.93-SNAPSHOT</version>
     </parent>
     <artifactId>bahmnicore-api</artifactId>
     <packaging>jar</packaging>
-    <name>BahmniEMR Core API</name>
+    <name>Bahmni EMR Core API</name>
 
     <dependencies>
         <dependency>
@@ -130,7 +130,7 @@
         <dependency>
             <groupId>org.bahmni.module</groupId>
             <artifactId>web-clients</artifactId>
-            <version>0.92-SNAPSHOT</version>
+            <version>${bahmniJavaUtilsVersion}</version>
         </dependency>
         <dependency>
             <groupId>org.openmrs.module</groupId>

@@ -4,11 +4,11 @@
     <parent>
         <groupId>org.bahmni.module</groupId>
         <artifactId>bahmni</artifactId>
-        <version>0.92-SNAPSHOT</version>
+        <version>0.93-SNAPSHOT</version>
     </parent>
     <artifactId>bahmnicore-omod</artifactId>
     <packaging>jar</packaging>
-    <name>BahmniEMR Core OMOD</name>
+    <name>Bahmni EMR Core OMOD</name>
 
     <properties>
         <MODULE_ID>bahmnicore</MODULE_ID>
@@ -67,7 +67,7 @@
         <dependency>
             <groupId>org.bahmni.module</groupId>
             <artifactId>mail-appender</artifactId>
-            <version>0.92-SNAPSHOT</version>
+            <version>${bahmniJavaUtilsVersion}</version>
         </dependency>
         <dependency>
             <groupId>org.openmrs.module</groupId>
@@ -104,12 +104,12 @@
         <dependency>
             <groupId>org.bahmni.module</groupId>
             <artifactId>common</artifactId>
-            <version>0.92-SNAPSHOT</version>
+            <version>${bahmniJavaUtilsVersion}</version>
         </dependency>
         <dependency>
             <groupId>org.bahmni.module</groupId>
             <artifactId>file-uploader</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${bahmniJavaUtilsVersion}</version>
         </dependency>
         <dependency>
             <groupId>org.bahmni.module</groupId>
@@ -236,7 +236,7 @@
         <dependency>
             <groupId>org.bahmni.test</groupId>
             <artifactId>bahmni-test-commons</artifactId>
-            <version>0.92-SNAPSHOT</version>
+            <version>${project.parent.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
@@ -286,13 +286,13 @@
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>rulesengine-api</artifactId>
-            <version>0.92-SNAPSHOT</version>
+            <version>${rulesEngineVersion}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>rulesengine-api</artifactId>
-            <version>0.92-SNAPSHOT</version>
+            <version>${rulesEngineVersion}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

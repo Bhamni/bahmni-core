@@ -5,7 +5,7 @@
     <parent>
         <artifactId>bahmni</artifactId>
         <groupId>org.bahmni.module</groupId>
-        <version>0.92-SNAPSHOT</version>
+        <version>0.93-SNAPSHOT</version>
     </parent>
 
     <artifactId>admin</artifactId>
@@ -16,7 +16,7 @@
         <dependency>
             <groupId>org.bahmni.module</groupId>
             <artifactId>bahmni-migrator</artifactId>
-            <version>0.92-SNAPSHOT</version>
+            <version>${bahmniJavaUtilsVersion}</version>
         </dependency>
         <dependency>
             <groupId>org.openmrs.module</groupId>
@@ -56,7 +56,7 @@
         <dependency>
             <groupId>org.bahmni.module</groupId>
             <artifactId>bahmni-emr-api</artifactId>
-            <version>0.92-SNAPSHOT</version>
+            <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openmrs.module</groupId>
