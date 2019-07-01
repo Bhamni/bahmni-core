@@ -4516,7 +4516,7 @@
             <column name="uuid" valueComputed=" uuid() "/>
         </insert>
     </changeSet>
-    <changeSet id="openmrs-core-201906201136" author="Samuel34">
+    <changeSet id="bahmni-core-201906201136" author="Samuel34">
     	<preConditions onFail="MARK_RAN">
     		<sqlCheck expectedResult="0">
     			select count(*) from role_privilege where role = 'Anonymous' and privilege = 'Get Locations';
