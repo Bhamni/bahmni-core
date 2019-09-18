@@ -1,6 +1,5 @@
 language: java
-jdk:
-  - oraclejdk8
+jdk: openjdk8
 install:
   - travis_wait mvn install -Dmaven.javadoc.skip=true -V -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
 script:
