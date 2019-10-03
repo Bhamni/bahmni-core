@@ -3,12 +3,18 @@ package org.bahmni.module.bahmnicore.contract.patient;
 import org.apache.commons.lang.StringUtils;
 import org.openmrs.module.webservices.rest.web.RequestContext;
 
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.Map;
 
 public class PatientSearchParameters {
+    private final String MIDNIGHT = "00:00:00";
+
     private Boolean filterPatientsByLocation;
     private String identifier;
     private String name;
+    private String gender;
+    private Date birthdate;
     private String addressFieldName;
     private String addressFieldValue;
     private Integer start;
@@ -43,6 +49,8 @@ public class PatientSearchParameters {
         } else {
             this.setAddressFieldName("city_village");
         }
+        this.setGender(context.getParameter("gender"));
+        this.setBirthdate(context.getParameter("birthdate"));
         this.setAddressFieldValue(context.getParameter("addressFieldValue"));
         Map parameterMap = context.getRequest().getParameterMap();
         this.setAddressSearchResultFields((String[]) parameterMap.get("addressSearchResultsConfig"));
@@ -69,6 +77,26 @@ public class PatientSearchParameters {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public void setBirthdate(String birthdate) {
+        if(StringUtils.isEmpty(birthdate)) {
+            return;
+        }
+
+        this.birthdate = Timestamp.valueOf(setToMidnight(birthdate));
+    }
+
+    public Date getBirthdate() {
+        return birthdate;
     }
 
     public String getAddressFieldName() {
@@ -173,5 +201,13 @@ public class PatientSearchParameters {
 
     public Boolean getFilterOnAllIdentifiers() {
         return filterOnAllIdentifiers;
+    }
+
+    private String setToMidnight(String birthdate) {
+        if(StringUtils.isNotEmpty(birthdate) && birthdate.matches("\\d{4}-\\d{2}-\\d{2}")) {
+            return birthdate + " " + MIDNIGHT;
+        } else {
+            return birthdate;
+        }
     }
 }

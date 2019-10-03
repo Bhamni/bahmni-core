@@ -20,6 +20,7 @@ import java.util.List;
 @Service
 @Lazy //to toString rid of cyclic dependencies
 public class BahmniPatientServiceImpl implements BahmniPatientService {
+    private static final int SIMILAR_PATIENT_RESULT_LENGTH = 5;
     private PersonService personService;
     private ConceptService conceptService;
     private PatientDao patientDao;
@@ -81,6 +82,15 @@ public class BahmniPatientServiceImpl implements BahmniPatientService {
                 searchParameters.getPatientSearchResultFields(),
                 searchParameters.getLoginLocationUuid(),
                 searchParameters.getFilterPatientsByLocation(), searchParameters.getFilterOnAllIdentifiers());
+    }
+
+    @Override
+    public List<PatientResponse> searchSimilarPatients(PatientSearchParameters searchParameters) {
+        return patientDao.getSimilarPatientsUsingLuceneSearch(searchParameters.getName(),
+                searchParameters.getGender(),
+                searchParameters.getBirthdate(),
+                searchParameters.getLoginLocationUuid(),
+                SIMILAR_PATIENT_RESULT_LENGTH);
     }
 
     @Override
