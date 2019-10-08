@@ -1,5 +1,6 @@
 package org.bahmni.module.bahmnicore.service.impl;
 
+import org.apache.commons.lang3.StringUtils;
 import org.bahmni.module.bahmnicore.contract.patient.PatientSearchParameters;
 import org.bahmni.module.bahmnicore.contract.patient.response.PatientConfigResponse;
 import org.bahmni.module.bahmnicore.contract.patient.response.PatientResponse;
@@ -10,11 +11,14 @@ import org.openmrs.Patient;
 import org.openmrs.PersonAttributeType;
 import org.openmrs.RelationshipType;
 import org.openmrs.api.ConceptService;
+import org.openmrs.api.PatientService;
 import org.openmrs.api.PersonService;
+import org.openmrs.api.context.Context;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -23,13 +27,15 @@ public class BahmniPatientServiceImpl implements BahmniPatientService {
     private PersonService personService;
     private ConceptService conceptService;
     private PatientDao patientDao;
+    private PatientService patientService;
 
     @Autowired
     public BahmniPatientServiceImpl(PersonService personService, ConceptService conceptService,
-                                    PatientDao patientDao) {
+                                    PatientDao patientDao, PatientService patientService) {
         this.personService = personService;
         this.conceptService = conceptService;
         this.patientDao = patientDao;
+        this.patientService = patientService;
     }
 
     @Override
@@ -91,6 +97,32 @@ public class BahmniPatientServiceImpl implements BahmniPatientService {
     @Override
     public List<RelationshipType> getByAIsToB(String aIsToB) {
         return patientDao.getByAIsToB(aIsToB);
+    }
+
+    @Override
+    public List<PatientResponse> luceneHibernateSearch(PatientSearchParameters searchParameters) {
+        List<PatientResponse> luceneHibernateResponse = new ArrayList<>();
+        if(StringUtils.isNotEmpty(searchParameters.getIdentifier()) || StringUtils.isNotEmpty(searchParameters.getName()) || StringUtils.isNotEmpty(searchParameters.getCustomAttribute())){
+            List<PatientResponse> luceneResponse = luceneSearch(searchParameters);
+
+            for(PatientResponse patientResponse: luceneResponse){
+                Patient patient = patientService.getPatient(patientResponse.getPersonId());
+                searchParameters.setIdentifier(patient.getPatientIdentifier().getIdentifier());
+                if(StringUtils.isNotEmpty(searchParameters.getName())){
+                    searchParameters.setName("");
+                }
+                if( StringUtils.isNotEmpty(searchParameters.getCustomAttribute())){
+                    searchParameters.setCustomAttribute("");
+                }
+                luceneHibernateResponse.addAll(search(searchParameters));
+            }
+        }else{
+            luceneHibernateResponse = search(searchParameters);
+        }
+
+
+
+        return luceneHibernateResponse;
     }
 
 }

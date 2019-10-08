@@ -4254,6 +4254,40 @@
             INSERT INTO role_role(child_role, parent_role) VALUES ('Appointments:FullAccess', 'Appointments:ManageAppointments');
         </sql>
     </changeSet>
+    <changeSet id="201802211437" author="ningosi">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="1">
+                SELECT COUNT(*) FROM global_property where property = 'patientIdentifierSearch.matchMode' AND property_value != 'ANYWHERE';
+            </sqlCheck>
+        </preConditions>
+        <comment>Specify how patient identifiers are matched while searching for a patient</comment>
+        <sql>
+            UPDATE  global_property SET property_value = 'ANYWHERE' WHERE property = 'patientIdentifierSearch.matchMode';
+        </sql>
+    </changeSet>
+
+    <changeSet id="201802281408" author="ningosi">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="1">
+                SELECT COUNT(*) FROM global_property where property = 'patientSearch.matchMode' AND property_value != 'ANYWHERE';
+            </sqlCheck>
+        </preConditions>
+        <comment>Specify how patient names are matched while searching for a patient</comment>
+        <sql>
+            UPDATE  global_property SET property_value = 'ANYWHERE' WHERE property = 'patientSearch.matchMode';
+        </sql>
+    </changeSet>
+    <changeSet id="201802281417" author="ningosi">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="1">
+                SELECT COUNT(*) FROM global_property where property = 'person.attributeSearchMatchMode' AND property_value != 'ANYWHERE';
+            </sqlCheck>
+        </preConditions>
+        <comment>Specify how person attributes are matched while searching for a patients</comment>
+        <sql>
+            UPDATE  global_property SET property_value = 'ANYWHERE' WHERE property = 'person.attributeSearchMatchMode';
+        </sql>
+    </changeSet>
     <changeSet id="Amman-201707101139" author="Shireesha, Pramida" context="rel3.2">
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0">

@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.openmrs.Concept;
 import org.openmrs.PersonAttributeType;
 import org.openmrs.api.ConceptService;
+import org.openmrs.api.PatientService;
 import org.openmrs.api.PersonService;
 
 import java.util.ArrayList;
@@ -26,13 +27,15 @@ public class BahmniPatientServiceImplTest {
     private ConceptService conceptService;
     @Mock
     private PatientDao patientDao;
+    @Mock
+    private PatientService patientService;
 
     private BahmniPatientServiceImpl bahmniPatientService;
 
     @Before
     public void setup() {
         initMocks(this);
-        bahmniPatientService = new BahmniPatientServiceImpl(personService, conceptService, patientDao);
+        bahmniPatientService = new BahmniPatientServiceImpl(personService, conceptService, patientDao, patientService);
     }
 
     @Test
@@ -67,4 +70,5 @@ public class BahmniPatientServiceImplTest {
         bahmniPatientService.get("partial_identifier", shouldMatchExactPatientId);
         verify(patientDao).getPatients("partial_identifier", shouldMatchExactPatientId);
     }
+    
 }

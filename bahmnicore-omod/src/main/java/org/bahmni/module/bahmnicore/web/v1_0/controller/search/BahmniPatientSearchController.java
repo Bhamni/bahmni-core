@@ -44,7 +44,7 @@ public class BahmniPatientSearchController extends BaseRestController {
         RequestContext requestContext = RestUtil.getRequestContext(request, response);
         PatientSearchParameters searchParameters = new PatientSearchParameters(requestContext);
         try {
-            List<PatientResponse> patients = bahmniPatientService.search(searchParameters);
+            List<PatientResponse> patients = bahmniPatientService.luceneHibernateSearch(searchParameters);
             AlreadyPaged alreadyPaged = new AlreadyPaged(requestContext, patients, false);
             return new ResponseEntity(alreadyPaged,HttpStatus.OK);
         }catch (IllegalArgumentException e){

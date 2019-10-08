@@ -18,4 +18,13 @@ public interface BahmniPatientService {
     public List<Patient> get(String partialIdentifier, boolean shouldMatchExactPatientId);
 
     public List<RelationshipType> getByAIsToB(String aIsToB);
+
+    /**
+     * Intersection of lucene and hibernate search in one query
+     * First take advantage of lucene and fall back to hibernate
+     * @param searchParameters
+     * @return List of PatientResponse
+     */
+    List<PatientResponse> luceneHibernateSearch(PatientSearchParameters searchParameters);
+
 }
