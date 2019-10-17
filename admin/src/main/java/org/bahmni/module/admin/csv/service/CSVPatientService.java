@@ -86,8 +86,10 @@ public class CSVPatientService {
            } else if (personAttributeType.getFormat().startsWith("org.openmrs.util.AttributableDate")) {
                 //Validating the Date format
                 String dateString = attribute.getValue();
-                getDateFromString(dateString);
-                patient.addAttribute(new PersonAttribute(findAttributeType(attribute.getKey()),dateString));
+                if(!dateString.equals("")){
+                	getDateFromString(dateString);
+                	patient.addAttribute(new PersonAttribute(findAttributeType(attribute.getKey()),dateString));
+                }
             }
         }
     }
