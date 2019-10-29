@@ -78,18 +78,18 @@ public class CSVPatientService {
     		PersonAttributeType personAttributeType = findAttributeType(attribute.getKey());
     		if (personAttributeType.getFormat().equalsIgnoreCase("org.openmrs.Concept")) {
     		    Concept concept = getConceptByName(attribute.getValue());
-    			if (concept != null) {
-    				patient.addAttribute(new PersonAttribute(personAttributeType, concept.getId().toString()));
-    			} else {
-    				throw new RuntimeException("Invalid value for Attribute." + attribute.getKey());
-    			}
+    		    if (concept != null) {
+    		    	patient.addAttribute(new PersonAttribute(personAttributeType, concept.getId().toString()));
+    		    } else {
+    		    	throw new RuntimeException("Invalid value for Attribute." + attribute.getKey());
+    		    }
     		} else if (personAttributeType.getFormat().startsWith("java.lang.")) {
-    			patient.addAttribute(new PersonAttribute(findAttributeType(attribute.getKey()), attribute.getValue()));
+    		    patient.addAttribute(new PersonAttribute(findAttributeType(attribute.getKey()), attribute.getValue()));
     		} else if (personAttributeType.getFormat().startsWith("org.openmrs.util.AttributableDate")) {
-    			 //Validating the Date format
-    			String dateString = attribute.getValue();
-    			getDateFromString(dateString);
-    			patient.addAttribute(new PersonAttribute(findAttributeType(attribute.getKey()),dateString));
+    		    //Validating the Date format
+    		    String dateString = attribute.getValue();
+    		    getDateFromString(dateString);
+    		    patient.addAttribute(new PersonAttribute(findAttributeType(attribute.getKey()),dateString));
     		}
     	}
     }
