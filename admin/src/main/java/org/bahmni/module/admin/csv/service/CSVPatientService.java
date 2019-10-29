@@ -74,15 +74,15 @@ public class CSVPatientService {
     private void addPersonAttributes(Patient patient, PatientRow patientRow) throws ParseException {
     	for (KeyValue attribute : patientRow.attributes) {
     		if(StringUtils.isBlank(attribute.getValue()))
-            	continue;
+    			continue;
     		PersonAttributeType personAttributeType = findAttributeType(attribute.getKey());
     		if (personAttributeType.getFormat().equalsIgnoreCase("org.openmrs.Concept")) {
     			Concept concept = getConceptByName(attribute.getValue());
-    			 if (concept != null) {
+    			if (concept != null) {
     				 patient.addAttribute(new PersonAttribute(personAttributeType, concept.getId().toString()));
-    			 } else {
+    			} else {
     				 throw new RuntimeException("Invalid value for Attribute." + attribute.getKey());
-    			 }
+    			}
     		} else if (personAttributeType.getFormat().startsWith("java.lang.")) {
     			patient.addAttribute(new PersonAttribute(findAttributeType(attribute.getKey()), attribute.getValue()));
     		} else if (personAttributeType.getFormat().startsWith("org.openmrs.util.AttributableDate")) {
