@@ -79,6 +79,32 @@ public class CSVObservationHelperTest {
     }
 
     @Test
+    public void shouldSetAbnormalInterpretationIfObsValueIsOutOfRange() throws ParseException {
+        KeyValue heightObsRow = new KeyValue("Height", "100");
+        conceptNames.add("Height");
+
+        ConceptNumeric heightNumericConcept = mock(ConceptNumeric.class);
+
+        when(heightNumericConcept.getDatatype()).thenReturn(conceptDatatype);
+        when(heightNumericConcept.getName()).thenReturn(heightConceptName);
+        when(conceptDatatype.isNumeric()).thenReturn(true);
+        when(conceptService.getConceptByName("Height")).thenReturn(heightNumericConcept);
+        when(heightNumericConcept.getHiNormal()).thenReturn(new Double(110));
+        when(heightNumericConcept.getLowNormal()).thenReturn(new Double(105));
+
+        CSVObservationHelper csvObservationHelper = new CSVObservationHelper(conceptService, administrationService);
+        Date encounterDate = new Date();
+        csvObservationHelper.createObservations(observations, encounterDate, heightObsRow, conceptNames);
+
+        assertEquals(1, observations.size());
+        EncounterTransaction.Observation heightObservation = observations.get(0);
+        assertEquals("Height", heightObservation.getConcept().getName());
+        assertEquals("100", heightObservation.getValue());
+        assertEquals(encounterDate, heightObservation.getObservationDateTime());
+        assertEquals("ABNORMAL", heightObservation.getInterpretation());
+    }
+
+    @Test
     public void shouldCreateHeightObservationAsGroupMemberOfBMIDataObservation() throws ParseException {
         KeyValue heightObsRow = new KeyValue("BMI Data.Height", "100");
         conceptNames.add("BMI Data");

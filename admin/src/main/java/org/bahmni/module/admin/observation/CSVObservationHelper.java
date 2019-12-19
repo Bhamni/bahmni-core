@@ -5,6 +5,7 @@ import org.bahmni.csv.KeyValue;
 import org.openmrs.Concept;
 import org.openmrs.ConceptName;
 import org.openmrs.ConceptNumeric;
+import org.openmrs.Obs;
 import org.openmrs.api.APIException;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.context.Context;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Component;
 import java.security.InvalidParameterException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +26,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 import static java.util.Arrays.asList;
+import static java.util.Objects.nonNull;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
@@ -103,11 +106,24 @@ public class CSVObservationHelper {
         observation.setObservationDateTime(encounterDate);
         if (conceptNames.size() == 1) {
             observation.setValue(getValue(obsRow, obsConcept));
+            if (obsConcept.getDatatype().isNumeric()) {
+                validateAndUpdateObservationInterpretation(obsRow, obsConcept, observation);
+            }
         } else {
             conceptNames.remove(0);
             observation.addGroupMember(createObservation(conceptNames, encounterDate, obsRow));
         }
         return observation;
+    }
+
+    private void validateAndUpdateObservationInterpretation(KeyValue obsRow, Concept obsConcept, Observation observation) {
+        verifyNumericConceptValue(obsRow, Collections.singletonList(obsConcept.getName().getName()));
+        Double recordedObsValue = Double.parseDouble(obsRow.getValue());
+        Double hiNormal = ((ConceptNumeric) obsConcept).getHiNormal();
+        Double lowNormal = ((ConceptNumeric) obsConcept).getLowNormal();
+        if (nonNull(recordedObsValue) && ((nonNull(hiNormal) && recordedObsValue.compareTo(hiNormal) > 0) || (nonNull(lowNormal) && recordedObsValue.compareTo(lowNormal) < 0))) {
+            observation.setInterpretation(String.valueOf(Obs.Interpretation.ABNORMAL));
+        }
     }
 
     private Object getValue(KeyValue obsRow, Concept obsConcept) {
