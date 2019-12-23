@@ -14,6 +14,8 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
 import static org.powermock.api.mockito.PowerMockito.when;
 
+import org.apache.commons.lang.StringUtils;
+
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(OpenmrsUtil.class)
 public class BahmniEncounterTransactionUpdateAdviceTest {
@@ -30,6 +32,21 @@ public class BahmniEncounterTransactionUpdateAdviceTest {
         assertThat(bahmniEncounterTransaction.getEncounterUuid(), is(equalTo(DEFAULT_ENCOUNTER_UUID)));
     }
 
+    @Test
+    public void shouldLoadpplicationDataDirectoryPath() throws Throwable {
+        PowerMockito.mockStatic(OpenmrsUtil.class);
+        String path = getClass().getClassLoader().getResource("").getPath();
+        // remove the trailing "/"
+        path = StringUtils.chop(path);
+        System.out.println(path);
+        when(OpenmrsUtil.getApplicationDataDirectory()).thenReturn(path);
+        
+        BahmniEncounterTransaction bahmniEncounterTransaction = new BahmniEncounterTransaction();
+        new BahmniEncounterTransactionUpdateAdvice().before(null, new BahmniEncounterTransaction[]{bahmniEncounterTransaction}, null);
+
+        assertThat(bahmniEncounterTransaction.getEncounterUuid(), is(equalTo(DEFAULT_ENCOUNTER_UUID)));
+    }
+    
     @Test
     public void shouldNotFailIfobscalculatorDirectoryDoesNotExist() throws Throwable {
         PowerMockito.mockStatic(OpenmrsUtil.class);

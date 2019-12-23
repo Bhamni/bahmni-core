@@ -10,6 +10,7 @@ import org.springframework.aop.MethodBeforeAdvice;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.lang.reflect.Method;
+import java.nio.file.Paths;
 
 public class BahmniEncounterTransactionUpdateAdvice implements MethodBeforeAdvice {
 
@@ -19,7 +20,11 @@ public class BahmniEncounterTransactionUpdateAdvice implements MethodBeforeAdvic
     public void before(Method method, Object[] args, Object target) throws Throwable {
         logger.info("BahmniEncounterTransactionUpdateAdvice : Start");
         GroovyClassLoader gcl = new GroovyClassLoader();
-        String fileName = OpenmrsUtil.getApplicationDataDirectory() + "obscalculator/BahmniObsValueCalculator.groovy";
+        String fileName = Paths.get(
+        		OpenmrsUtil.getApplicationDataDirectory(),
+        		"obscalculator",
+        		"BahmniObsValueCalculator.groovy"
+        		).toString();
         Class clazz;
         try {
             clazz = gcl.parseClass(new File(fileName));
