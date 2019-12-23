@@ -16,26 +16,28 @@ public class BahmniEncounterTransactionUpdateAdvice implements MethodBeforeAdvic
 
     private static Logger logger = Logger.getLogger(BahmniEncounterTransactionUpdateAdvice.class);
     
+    private static String BAHMNI_OBS_VALUE_CALCULATOR_FILENAME = "BahmniObsValueCalculator.groovy";
+    
     @Override
     public void before(Method method, Object[] args, Object target) throws Throwable {
-        logger.info("BahmniEncounterTransactionUpdateAdvice : Start");
+        logger.info(this.getClass().getName() + ": Start");
         GroovyClassLoader gcl = new GroovyClassLoader();
         String fileName = Paths.get(
         		OpenmrsUtil.getApplicationDataDirectory(),
         		"obscalculator",
-        		"BahmniObsValueCalculator.groovy"
+        		BAHMNI_OBS_VALUE_CALCULATOR_FILENAME
         		).toString();
         Class clazz;
         try {
             clazz = gcl.parseClass(new File(fileName));
         } catch (FileNotFoundException fileNotFound) {
-            logger.warn("Could not find ObsValueCalculator: " + fileName +". Possible system misconfiguration. ", fileNotFound);
+            logger.error("Could not find " + ObsValueCalculator.class.getName() + ": " + fileName +". Possible system misconfiguration. ", fileNotFound);
             return;
         }
-        logger.info("BahmniEncounterTransactionUpdateAdvice : Using rules in " + clazz.getName());
+        logger.info(this.getClass().getName() + ": Using rules in " + clazz.getName());
         ObsValueCalculator obsValueCalculator = (ObsValueCalculator) clazz.newInstance();
         obsValueCalculator.run((BahmniEncounterTransaction) args[0]);
-        logger.info("BahmniEncounterTransactionUpdateAdvice : Done");
+        logger.info(this.getClass().getName() + ": Done");
     }
     
 }
