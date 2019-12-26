@@ -1,0 +1,1 @@
+compass compile $1

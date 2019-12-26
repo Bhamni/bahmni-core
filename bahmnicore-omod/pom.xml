@@ -24,45 +24,10 @@
 
     <dependencies>
         <dependency>
-            <groupId>rubygems</groupId>
-            <artifactId>compass</artifactId>
-            <version>1.0.3</version>
-            <type>gem</type>
-            <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>rubygems</groupId>
-                    <artifactId>rb-inotify</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>rubygems</groupId>
-                    <artifactId>rake</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>episodes-api</artifactId>
             <version>${episodes.version}</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>rubygems</groupId>
-            <artifactId>rb-inotify</artifactId>
-            <version>0.9.5</version>
-            <type>gem</type>
-            <exclusions>
-                <exclusion>
-                    <groupId>rubygems</groupId>
-                    <artifactId>rake</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>rubygems</groupId>
-            <artifactId>rake</artifactId>
-            <version>11.0.1</version>
-            <type>gem</type>
         </dependency>
         <dependency>
             <groupId>org.bahmni.module</groupId>
@@ -527,21 +492,21 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>de.saumya.mojo</groupId>
-                <artifactId>gem-maven-plugin</artifactId>
-                <extensions>true</extensions>
+                <artifactId>exec-maven-plugin</artifactId>
+                <groupId>org.codehaus.mojo</groupId>
                 <executions>
-                    <execution>
+                    <execution><!-- Run our version calculation script -->
+                        <id>Running compass for bahmnicore css</id>
+                        <phase>generate-resources</phase>
                         <goals>
                             <goal>exec</goal>
                         </goals>
-                        <phase>generate-resources</phase>
+                        <configuration>
+                            <executable>bash</executable>
+                            <commandlineArgs>${basedir}/scripts/run-compass.sh ${basedir}/src/main/compass</commandlineArgs>
+                        </configuration>
                     </execution>
                 </executions>
-                <configuration>
-                    <jrubyVersion>1.7.10</jrubyVersion>
-                    <execArgs>${gem.home}/bin/compass compile ${basedir}/src/main/compass</execArgs>
-                </configuration>
             </plugin>
         </plugins>
     </build>
