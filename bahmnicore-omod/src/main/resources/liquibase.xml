@@ -457,11 +457,10 @@
     </changeSet>
 
     <changeSet id="bahmni-core-201906201150" author="Mihir,Vinay">
-        <validCheckSum>3:da4167ac93f082b79d4c3af1807fc7f7</validCheckSum>
         <preConditions onFail="MARK_RAN">
     		<sqlCheck expectedResult="0">
-    			select count(*) from concept_name cn inner join concept c on cn.concept_id = c.concept_id where cn.name = 'REFERRED_OUT' 
-    			and cn.concept_name_type = 'FULLY_SPECIFIED' and c.datatype_id = (SELECT concept_datatype_id FROM concept_datatype WHERE name = 'N/A') 
+    			select count(*) from concept_name cn inner join concept c on cn.concept_id = c.concept_id where cn.name = 'REFERRED_OUT'
+    			and cn.concept_name_type = 'FULLY_SPECIFIED' and c.datatype_id = (SELECT concept_datatype_id FROM concept_datatype WHERE name = 'N/A')
     			and c.class_id = (SELECT concept_class_id FROM concept_class WHERE name = 'Misc');
     		</sqlCheck>
     	</preConditions>
@@ -1386,11 +1385,10 @@
         </insert>
     </changeSet>
     <changeSet id="bahmni-core-201906211112" author="Rohan, Samuel34">
-    	<validCheckSum>3:ed9c04ea91806b2e8c789fad21d92302</validCheckSum>
     	<preConditions onFail="MARK_RAN">
     		<sqlCheck expectedResult="0">
-    			select count(*) from concept_name cn inner join concept c on cn.concept_id = c.concept_id where cn.name = 'LAB_REPORT' 
-    			and cn.concept_name_type = 'FULLY_SPECIFIED' and c.datatype_id = (SELECT concept_datatype_id FROM concept_datatype WHERE name = 'TEXT') 
+    			select count(*) from concept_name cn inner join concept c on cn.concept_id = c.concept_id where cn.name = 'LAB_REPORT'
+    			and cn.concept_name_type = 'FULLY_SPECIFIED' and c.datatype_id = (SELECT concept_datatype_id FROM concept_datatype WHERE name = 'TEXT')
     			and c.class_id = (SELECT concept_class_id FROM concept_class WHERE name = 'URL');
     		</sqlCheck>
     	</preConditions>
@@ -3589,16 +3587,13 @@
     <changeSet id="bahmni-core-201906170327" author="Samuel34">
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="1">
-                select count(*) from users where username = 'reports-user';
-            </sqlCheck>
-            <sqlCheck expectedResult="0">
-            	select count(*) from user_role where role = 'Reports-App';
+                select count(*) from role where role = 'Reports-App';
             </sqlCheck>
         </preConditions>
-        <comment>Map Reports user to new roles</comment>
+        <comment>Map 'reports-user' user to new roles</comment>
         <sql>
             select user_id from users where username = 'reports-user' into @id;
-            INSERT INTO `user_role` VALUES (@id, 'Reports-App');
+            INSERT IGNORE INTO `user_role` VALUES (@id, 'Reports-App');
         </sql>
     </changeSet>
     <changeSet id="assign-role-to-automation-user" author="Jaswanth">
