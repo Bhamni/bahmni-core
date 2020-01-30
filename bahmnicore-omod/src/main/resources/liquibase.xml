@@ -3872,6 +3872,11 @@
 
         </sql>
     </changeSet>
+
+    <changeSet id="bahmni-core-201611141540" author="Pankaj, Sidtharthan">
+        <comment>Update the search query to consider patient identifiers created by patient merge</comment>
+        <sqlFile path="V1_95_PatientSearchSql.sql"/>
+    </changeSet>
     
     <changeSet id="20170308-1000" author="Sidtharthan, Gaurav">
         <preConditions onFail="MARK_RAN">
