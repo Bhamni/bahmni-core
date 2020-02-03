@@ -3568,10 +3568,10 @@
             INSERT INTO provider (person_id, identifier, creator, date_created, uuid, name) VALUES (@person_id, 'superman', 1, now(), uuid(), 'superman');
         </sql>
     </changeSet>
-    <changeSet id="bahmni-core-201906170420" author="Jaswanth, Ravindra, Samuel34">
+    <changeSet id="bahmni-core-202002031441" author="Jaswanth, Ravindra, Samuel34, rbuisson">
         <preConditions onFail="MARK_RAN">
-            <sqlCheck expectedResult="0">
-                select count(*) from role where role = 'Bahmni-User'
+            <sqlCheck expectedResult="2">
+                select count(*) from users where system_id = 'admin' or system_id = 'superman'
             </sqlCheck>
         </preConditions>
         <comment>Map users to new roles</comment>
