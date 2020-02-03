@@ -3922,8 +3922,9 @@
 
         </sql>
     </changeSet>
-    
+
     <changeSet id="20170308-1000" author="Sidtharthan, Gaurav">
+      <validCheckSum>3:2b48153e296e929a8c7fe8bd519654ec</validCheckSum>
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0">
                 SELECT COUNT(*) FROM concept where concept_id in (select concept_id from concept_name where
@@ -4009,8 +4010,9 @@
             INSERT IGNORE INTO role_privilege (role, privilege) SELECT * FROM (SELECT 'Clinical-App-Read-Only', 'Get Forms') AS tmp WHERE EXISTS ( SELECT role FROM role WHERE role = 'Clinical-App-Read-Only' );
         </sql>
     </changeSet>
-    
+
     <changeSet author="sidtharthanan, Darius" id="20170302-1225">
+      <validCheckSum>3:a735e6b93635ffb2bc7e6a01a24407c3</validCheckSum>
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0">
                 SELECT COUNT(*) FROM concept where concept_id in (select concept_id from concept_name where
