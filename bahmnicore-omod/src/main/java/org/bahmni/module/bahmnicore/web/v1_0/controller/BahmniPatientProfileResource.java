@@ -246,14 +246,36 @@ public class BahmniPatientProfileResource extends DelegatingCrudResource<Patient
         Object value = jsonMap.get(key);
         return ObjectUtils.toString(value);
     }
-
+    
     private Relationship createRelationship(Person currentPerson, Map<String, Object> relationshipJson) {
-        Relationship relationship = new Relationship(currentPerson,
-                getPerson((Map<String, Object>) relationshipJson.get("personB")),
-                getRelationshipType((Map<String, Object>) relationshipJson.get("relationshipType")));
+        
+        Relationship relationship;
+        RelationshipType relationshipType = getRelationshipType(
+                (Map<String, Object>) relationshipJson.get("relationshipType"));
+        
+        Person person = getPerson((Map<String, Object>) relationshipJson.get("person"));
+        
+        RelationshipDirection direction = RelationshipDirection.valueOf((String) relationshipJson.get("direction"));
+        if (relationshipJson.get("personB") == null) {
+            direction = RelationshipDirection.A_TO_B;
+        }
+        
+        if (direction.equals(RelationshipDirection.A_TO_B)) {
+            relationship = new Relationship(currentPerson, person,
+                    relationshipType);
+        } else {
+            relationship = new Relationship(person, currentPerson,
+                    relationshipType);
+        }
+        
         relationship.setEndDate(new DateMapper().convertUTCToDate(getValueFromMap(relationshipJson, "endDate")));
-
+        
         return relationship;
+    }
+    
+    enum RelationshipDirection {
+        A_TO_B,
+        B_TO_A
     }
 
     private Person getPerson(Map<String, Object> personJson) {
