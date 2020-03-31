@@ -66,7 +66,12 @@ public class BahmniPatientProfileResource extends DelegatingCrudResource<Patient
 
     private EmrPatientProfileService emrPatientProfileService;
     private IdentifierSourceServiceWrapper identifierSourceServiceWrapper;
-
+    
+    private enum RelationshipDirection {
+        A_TO_B,
+        B_TO_A
+    }
+    
     @Autowired
     public BahmniPatientProfileResource(EmrPatientProfileService emrPatientProfileService, IdentifierSourceServiceWrapper identifierSourceServiceWrapper) {
         this.emrPatientProfileService = emrPatientProfileService;
@@ -252,30 +257,28 @@ public class BahmniPatientProfileResource extends DelegatingCrudResource<Patient
         Relationship relationship;
         RelationshipType relationshipType = getRelationshipType(
                 (Map<String, Object>) relationshipJson.get("relationshipType"));
-        
         Person person = getPerson((Map<String, Object>) relationshipJson.get("person"));
+        RelationshipDirection direction;
         
-        RelationshipDirection direction = RelationshipDirection.valueOf((String) relationshipJson.get("direction"));
-        if (relationshipJson.get("personB") == null) {
+        try {
+            direction = RelationshipDirection.valueOf((String) relationshipJson.get("direction"));
+        }
+        catch (Exception e) {
             direction = RelationshipDirection.A_TO_B;
         }
         
-        if (direction.equals(RelationshipDirection.A_TO_B)) {
-            relationship = new Relationship(currentPerson, person,
+        if (RelationshipDirection.B_TO_A.equals(direction)) {
+            relationship = new Relationship(person, currentPerson,
                     relationshipType);
         } else {
-            relationship = new Relationship(person, currentPerson,
+            
+            relationship = new Relationship(currentPerson, person,
                     relationshipType);
         }
         
         relationship.setEndDate(new DateMapper().convertUTCToDate(getValueFromMap(relationshipJson, "endDate")));
         
         return relationship;
-    }
-    
-    enum RelationshipDirection {
-        A_TO_B,
-        B_TO_A
     }
 
     private Person getPerson(Map<String, Object> personJson) {
