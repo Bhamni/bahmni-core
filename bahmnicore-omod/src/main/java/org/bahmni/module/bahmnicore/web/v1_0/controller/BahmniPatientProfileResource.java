@@ -257,14 +257,16 @@ public class BahmniPatientProfileResource extends DelegatingCrudResource<Patient
         Relationship relationship;
         RelationshipType relationshipType = getRelationshipType(
                 (Map<String, Object>) relationshipJson.get("relationshipType"));
-        Person person = getPerson((Map<String, Object>) relationshipJson.get("person"));
+        Person person;
         RelationshipDirection direction;
         
         try {
             direction = RelationshipDirection.valueOf((String) relationshipJson.get("direction"));
+            person = getPerson((Map<String, Object>) relationshipJson.get("person"));
         }
         catch (Exception e) {
             direction = RelationshipDirection.A_TO_B;
+            person = getPerson((Map<String, Object>) relationshipJson.get("personB"));
         }
         
         if (RelationshipDirection.B_TO_A.equals(direction)) {

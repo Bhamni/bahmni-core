@@ -8,6 +8,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openmrs.Patient;
+import org.openmrs.Relationship;
+import org.openmrs.RelationshipType;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.emrapi.patient.EmrPatientProfileService;
 import org.openmrs.module.emrapi.patient.PatientProfile;
@@ -25,6 +27,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
@@ -96,6 +99,13 @@ public class BahmniPatientProfileResourceIT extends BaseIntegrationTest {
     @Test
     public void shouldCreatePatient() throws Exception {
         ResponseEntity<Object> response = bahmniPatientProfileResource.create(false, propertiesToCreate);
+        assertEquals(200, response.getStatusCode().value());
+    }
+    
+    @Test
+    public void shouldCreatePatientRelationshipsFromBothTypesOfJsons() throws Exception {
+        ResponseEntity<Object> response = bahmniPatientProfileResource.create(false, propertiesToCreate);
+        assertEquals((((PatientProfile)response.getBody()).getRelationships()).size(),2);
         assertEquals(200, response.getStatusCode().value());
     }
 
