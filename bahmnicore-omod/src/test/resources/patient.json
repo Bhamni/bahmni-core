@@ -58,10 +58,11 @@
       "relationshipType": {
         "uuid": "2a5f4ff4-a179-4b8a-aa4c-40f71956eabc"
       },
-      "personB": {
+      "person": {
         "display": "Mr. Horatio Test Hornblower",
         "uuid": "5946f880-b197-400b-9caa-a3c661d23041"
       },
+      "direction": "B_TO_A",
       "endDate": "2020-04-13T21:00:00.000Z"
     }
   ]
