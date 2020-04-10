@@ -11,6 +11,7 @@ import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.Person;
 import org.openmrs.Relationship;
+import org.openmrs.RelationshipType;
 import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.PatientService;
@@ -25,6 +26,7 @@ import org.openmrs.module.webservices.rest.web.api.RestService;
 import org.openmrs.module.webservices.rest.web.resource.impl.DelegatingResourceDescription;
 import org.openmrs.module.webservices.rest.web.v1_0.resource.openmrs1_8.PatientResource1_8;
 import org.openmrs.module.webservices.rest.web.v1_0.resource.openmrs1_8.PersonResource1_8;
+import org.openmrs.module.webservices.rest.web.v1_0.resource.openmrs1_8.RelationShipTypeResource1_8;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -63,8 +65,13 @@ public class BahmniPatientProfileResourceTest {
 
     @Mock
     PatientResource1_8 patientResource1_8;
-
-
+    
+    @Mock
+    PersonResource1_8 personResource1_8;
+    
+    @Mock
+    RelationShipTypeResource1_8 relationShipTypeResource1_8;
+    
     @Mock
     private AdministrationService administrationService;
 
@@ -73,6 +80,7 @@ public class BahmniPatientProfileResourceTest {
 
     @Mock
     private PersonService personService;
+    
     @Mock
     private MessageSourceService messageSourceService;
 
@@ -98,6 +106,10 @@ public class BahmniPatientProfileResourceTest {
         PowerMockito.when(restService.getResourceBySupportedClass(Patient.class)).thenReturn(patientResource1_8);
         PowerMockito.when(patientResource1_8.getPatient(any(SimpleObject.class))).thenReturn(patient);
         PowerMockito.when(patientResource1_8.getPatientForUpdate(anyString(), any(SimpleObject.class))).thenReturn(patient);
+        PowerMockito.when(Context.getService(RestService.class).getResourceBySupportedClass(Person.class)).thenReturn(personResource1_8);
+        PowerMockito.when(personResource1_8.getByUniqueId(anyString())).thenReturn(patient);
+        PowerMockito.when(Context.getService(RestService.class).getResourceBySupportedClass(RelationshipType.class)).thenReturn(relationShipTypeResource1_8);
+        PowerMockito.when(relationShipTypeResource1_8.getByUniqueId(anyString())).thenReturn(new RelationshipType());
     }
 
     @Test
