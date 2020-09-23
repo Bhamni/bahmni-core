@@ -460,8 +460,7 @@
         <preConditions onFail="MARK_RAN">
     		<sqlCheck expectedResult="0">
     			select count(*) from concept_name cn inner join concept c on cn.concept_id = c.concept_id where cn.name = 'REFERRED_OUT'
-    			and cn.concept_name_type = 'FULLY_SPECIFIED' and c.datatype_id = (SELECT concept_datatype_id FROM concept_datatype WHERE name = 'N/A')
-    			and c.class_id = (SELECT concept_class_id FROM concept_class WHERE name = 'Misc');
+    			and cn.concept_name_type = 'FULLY_SPECIFIED' and c.class_id = (SELECT concept_class_id FROM concept_class WHERE name = 'Misc');
     		</sqlCheck>
     	</preConditions>
         <comment>Add new concept to mark referred out tests</comment>
@@ -1288,19 +1287,19 @@
     	<comment>Introducing import status table</comment>
     	<sql>
     		CREATE TABLE import_status (
-    			id INT AUTO_INCREMENT NOT NULL, 
-    			original_file_name VARCHAR(500) NOT NULL, 
-    			saved_file_name VARCHAR(500) NOT NULL, 
-    			error_file_name VARCHAR(500) NULL, 
-    			type VARCHAR(25) NOT NULL, 
-    			status VARCHAR(25) NOT NULL, 
-    			successful_records NUMERIC(6) NULL, 
-    			failed_records NUMERIC(6) NULL, 
-    			stage_name VARCHAR(10) NULL, 
-    			stack_trace TEXT NULL, 
-    			uploaded_by VARCHAR(20) NOT NULL, 
-    			start_time TIMESTAMP NULL DEFAULT NULL, 
-    			end_time TIMESTAMP NULL DEFAULT NULL, 
+    			id INT AUTO_INCREMENT NOT NULL,
+    			original_file_name VARCHAR(500) NOT NULL,
+    			saved_file_name VARCHAR(500) NOT NULL,
+    			error_file_name VARCHAR(500) NULL,
+    			type VARCHAR(25) NOT NULL,
+    			status VARCHAR(25) NOT NULL,
+    			successful_records NUMERIC(6) NULL,
+    			failed_records NUMERIC(6) NULL,
+    			stage_name VARCHAR(10) NULL,
+    			stack_trace TEXT NULL,
+    			uploaded_by VARCHAR(20) NOT NULL,
+    			start_time TIMESTAMP NULL DEFAULT NULL,
+    			end_time TIMESTAMP NULL DEFAULT NULL,
     			CONSTRAINT import_status_pk PRIMARY KEY (id));
     	</sql>
     </changeSet>
@@ -3938,10 +3937,10 @@
             set @answer_concept_id = 0;
             set @concept_name_short_id = 0;
             set @concept_name_full_id = 0;
-            
+
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Non-Coded Condition',
             'Non-Coded Condition', 'Text', 'Question', false);
-    
+
             update global_property set property_value = (select uuid from concept where concept_id = @concept_id)
             where property = 'conditionList.nonCodedUuid';
         </sql>
@@ -4026,7 +4025,7 @@
             set @answer_concept_id = 0;
             set @concept_name_short_id = 0;
             set @concept_name_full_id = 0;
-            
+
             call add_concept(@concept_id, @concept_name_short_id, @concept_name_full_id, 'Follow-up Condition',
             'Follow-up Condition', 'Text', 'Misc', false);
         </sql>
@@ -4382,7 +4381,7 @@
             INSERT INTO role_privilege(role, privilege) VALUES ("OT: ReadOnly", "app:ot");
         </sql>
     </changeSet>
-    
+
     <changeSet author="Samuel34" id="bahmni-core-201906131441" runOnChange="true">
     	<preConditions onFail="MARK_RAN">
     		<not>
@@ -4406,7 +4405,7 @@
             LEFT OUTER JOIN concept_description ON concept_description.concept_id = concept.concept_id;
         </createView>
     </changeSet>
-    	
+
     <changeSet id="201805112235" author="Suman">
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="1">
