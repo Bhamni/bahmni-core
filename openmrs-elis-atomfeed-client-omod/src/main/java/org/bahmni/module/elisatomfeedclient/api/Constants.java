@@ -6,5 +6,6 @@ public class Constants {
     public static final String DEFAULT_LAB_ORDER_TYPE = "Order";
     public static final String DEFAULT_LAB_SYSTEM_IDENTIFIER = "LABSYSTEM";
     public static final String DEFAULT_LAB_RESULT_ENCOUNTER_TYPE = "LAB_RESULT";
+    public static final String GP_ALLOW_DISCONTINUE_ORDERS = "elisatomfeedclient.discontinueCancelledOrders";
 }
 

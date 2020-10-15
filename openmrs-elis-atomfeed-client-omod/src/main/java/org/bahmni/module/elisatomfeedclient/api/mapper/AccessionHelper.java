@@ -19,6 +19,7 @@ import org.openmrs.Provider;
 import org.openmrs.User;
 import org.openmrs.Visit;
 import org.openmrs.VisitType;
+import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.OrderService;
@@ -47,6 +48,7 @@ public class AccessionHelper {
     private final PatientService patientService;
     private final VisitService visitService;
     private final ConceptService conceptService;
+    private final AdministrationService administrationService;
     private User labUser;
     private OrderService orderService;
     protected ElisAtomFeedProperties properties;
@@ -59,12 +61,13 @@ public class AccessionHelper {
         this(Context.getService(EncounterService.class), Context.getService(PatientService.class),
                 Context.getService(VisitService.class), Context.getService(ConceptService.class),
                 Context.getService(UserService.class), Context.getService(ProviderService.class),
-                Context.getService(OrderService.class), properties, Context.getService(BahmniVisitLocationService.class));
+                Context.getService(OrderService.class), properties, Context.getService(BahmniVisitLocationService.class),
+                Context.getService(AdministrationService.class));
     }
 
     AccessionHelper(EncounterService encounterService, PatientService patientService, VisitService visitService, ConceptService conceptService,
                     UserService userService, ProviderService providerService, OrderService orderService,
-                    ElisAtomFeedProperties properties, BahmniVisitLocationService bahmniVisitLocationService) {
+                    ElisAtomFeedProperties properties, BahmniVisitLocationService bahmniVisitLocationService, AdministrationService administrationService) {
         this.encounterService = encounterService;
         this.patientService = patientService;
         this.visitService = visitService;
@@ -74,6 +77,7 @@ public class AccessionHelper {
         this.userService = userService;
         this.providerService = providerService;
         this.bahmniVisitLocationService = bahmniVisitLocationService;
+        this.administrationService = administrationService;
     }
 
     public Encounter mapToNewEncounter(OpenElisAccession openElisAccession, String visitType) {
@@ -120,7 +124,9 @@ public class AccessionHelper {
             addOrdersToEncounter(previousEncounter, newOrders);
         }
 
-        if (diff.getRemovedTestDetails().size() > 0) {
+        Boolean shouldAllowDiscontinueOrdersIfCancelled = administrationService.getGlobalPropertyValue(Constants.GP_ALLOW_DISCONTINUE_ORDERS, Boolean.TRUE);
+
+        if (shouldAllowDiscontinueOrdersIfCancelled && diff.getRemovedTestDetails().size() > 0) {
             Set<String> removedOrders = groupOrders(diff.getRemovedTestDetails());
             discontinueOrders(previousEncounter, removedOrders);
         }
