@@ -67,6 +67,21 @@ public class AccessionHelper {
 
     AccessionHelper(EncounterService encounterService, PatientService patientService, VisitService visitService, ConceptService conceptService,
                     UserService userService, ProviderService providerService, OrderService orderService,
+                    ElisAtomFeedProperties properties, BahmniVisitLocationService bahmniVisitLocationService) {
+        this.encounterService = encounterService;
+        this.patientService = patientService;
+        this.visitService = visitService;
+        this.conceptService = conceptService;
+        this.orderService = orderService;
+        this.properties = properties;
+        this.userService = userService;
+        this.providerService = providerService;
+        this.bahmniVisitLocationService = bahmniVisitLocationService;
+        this.administrationService = Context.getService(AdministrationService.class);
+    }
+
+    AccessionHelper(EncounterService encounterService, PatientService patientService, VisitService visitService, ConceptService conceptService,
+                    UserService userService, ProviderService providerService, OrderService orderService,
                     ElisAtomFeedProperties properties, BahmniVisitLocationService bahmniVisitLocationService, AdministrationService administrationService) {
         this.encounterService = encounterService;
         this.patientService = patientService;
