@@ -24,11 +24,11 @@
         {
           "type": "obsControl",
           "label": {
-            "translationKey": "HEIGHT_2",
+            "translationKey": "TEMPERATURE_2",
             "id": "2",
             "units": "",
             "type": "label",
-            "value": "HEIGHT"
+            "value": "Temperature"
           },
           "properties": {
             "mandatory": false,
@@ -44,7 +44,7 @@
           },
           "id": "2",
           "concept": {
-            "name": "HEIGHT",
+            "name": "Temperature",
             "uuid": "5090AAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             "datatype": "Numeric",
             "conceptClass": "Misc",
@@ -65,7 +65,7 @@
     {
       "type": "section",
       "label": {
-        "translationKey": "SECTION_3",
+        "translationKey": "SECTION_1",
         "type": "label",
         "value": "Section1",
         "id": "3"
@@ -82,11 +82,11 @@
         {
           "type": "obsControl",
           "label": {
-            "translationKey": "WEIGHT_4",
+            "translationKey": "PULSE_4",
             "id": "4",
             "units": "",
             "type": "label",
-            "value": "WEIGHT"
+            "value": "Pulse"
           },
           "properties": {
             "mandatory": false,
@@ -102,9 +102,9 @@
           },
           "id": "4",
           "concept": {
-            "name": "WEIGHT",
+            "name": "Pulse",
             "uuid": "5089AAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-            "datatype": "Numeric",
+            "datatype": "Text",
             "conceptClass": "Misc",
             "conceptHandler": null,
             "answers": [],

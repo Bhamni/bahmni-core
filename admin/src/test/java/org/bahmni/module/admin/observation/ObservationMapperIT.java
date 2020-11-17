@@ -22,7 +22,7 @@ public class ObservationMapperIT extends BaseIntegrationTest {
 
     @Before
     public void setUp() throws Exception {
-        executeDataSet("dataSetup.xml");
+        executeDataSet("conceptSetup.xml");
         executeDataSet("form2DataSetup.xml");
     }
 
@@ -31,22 +31,21 @@ public class ObservationMapperIT extends BaseIntegrationTest {
         EncounterRow anEncounter = new EncounterRow();
         anEncounter.obsRows = new ArrayList<>();
 
-        anEncounter.obsRows.add(new KeyValue("WEIGHT", "150"));
-        anEncounter.obsRows.add(new KeyValue("form2.Vitals.Section.HEIGHT", "100"));
+        anEncounter.obsRows.add(new KeyValue("Pulse", "150"));
+        anEncounter.obsRows.add(new KeyValue("form2.Vitals.Section.Temperature", "100"));
         anEncounter.encounterDateTime = "2019-09-19";
-
 
         final List<EncounterTransaction.Observation> observations = observationMapper.getObservations(anEncounter);
 
         assertEquals(2, observations.size());
 
-        final EncounterTransaction.Observation heightObsInForm2 = observations.get(0);
-        assertEquals("HEIGHT", heightObsInForm2.getConcept().getName());
-        assertEquals(100, Integer.parseInt((String) heightObsInForm2.getValue()));
-        assertEquals("Vitals.1/2-0", heightObsInForm2.getFormFieldPath());
+        final EncounterTransaction.Observation temperatureObsInForm2 = observations.get(0);
+        assertEquals("Temperature", temperatureObsInForm2.getConcept().getName());
+        assertEquals(100, Integer.parseInt((String) temperatureObsInForm2.getValue()));
+        assertEquals("Vitals.1/2-0", temperatureObsInForm2.getFormFieldPath());
 
-        final EncounterTransaction.Observation weightObs = observations.get(1);
-        assertEquals("WEIGHT", weightObs.getConcept().getName());
-        assertEquals(150, Integer.parseInt((String) weightObs.getValue()));
+        final EncounterTransaction.Observation pulseObs = observations.get(1);
+        assertEquals("Pulse", pulseObs.getConcept().getName());
+        assertEquals("150", pulseObs.getValue());
     }
 }

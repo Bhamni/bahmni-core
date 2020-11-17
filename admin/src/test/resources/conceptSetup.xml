@@ -80,4 +80,19 @@
     <concept_reference_source concept_source_id="1" name="org.openmrs.module.emrapi" creator="1" date_created="2004-08-12 00:00:00.0" uuid="b5e44116-778f-11e2-ad73-903c7bb72694"/>
     <concept_reference_term concept_reference_term_id="1000" concept_source_id="1" code="New Code" name="New Name" description="New Description" uuid="d00cf129-8f47-4593-8c4d-6eb28a1f1c30" retired="0" creator="1" date_created="2004-08-12 00:00:00.0"></concept_reference_term>
 
+    <!--Numeric Concept with high Normal and low Normal values-->
+    <concept concept_id="149" retired="0" datatype_id="1" class_id="1" is_set="0" creator="1"
+             date_created="2020-11-17 11:36:42" uuid="5d2d4cb7-955b-4837-zzzz-0ccc78701111"/>
+    <concept_name concept_id="149" name="Temperature" locale="en" creator="1" date_created="2020-11-17 11:36:42"
+                  concept_name_id="302" voided="false" uuid="5d2d4cb7-955b-zzzz-mmm7-0ecc9415555"
+                  concept_name_type="FULLY_SPECIFIED" locale_preferred="0"/>
+    <concept_numeric concept_id="149" hi_normal="104" low_normal="96" precise="0"/>
+
+    <!--New Text Concept-->
+    <concept concept_id="151" retired="0" datatype_id="3" class_id="1" is_set="0" creator="1"
+             date_created="2020-11-17 11:36:42" uuid="5d2d4cb7-955b-4837-yyyz-0ccc78701111"/>
+    <concept_name concept_id="151" name="Pulse" locale="en" creator="1" date_created="2020-11-17 11:36:42"
+                  concept_name_id="304" voided="false" uuid="5d2d4cb7-955b-yyyz-mmm7-0ecc9415555"
+                  concept_name_type="FULLY_SPECIFIED" locale_preferred="0"/>
+
 </dataset>
