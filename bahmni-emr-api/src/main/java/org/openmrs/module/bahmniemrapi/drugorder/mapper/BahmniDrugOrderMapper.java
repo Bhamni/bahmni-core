@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-
+import java.util.Locale;
 public class BahmniDrugOrderMapper {
 
     private BahmniProviderMapper providerMapper;
@@ -28,7 +28,8 @@ public class BahmniDrugOrderMapper {
 
     public List<BahmniDrugOrder> mapToResponse(List<DrugOrder> activeDrugOrders,
                                                Collection<BahmniObservation> orderAttributeObs,
-                                               Map<String, DrugOrder> discontinuedOrderMap) throws IOException {
+                                               Map<String, DrugOrder> discontinuedOrderMap,
+                                               String locale) throws IOException {
 
         OrderMapper drugOrderMapper = new OrderMapper1_12();
 
@@ -37,6 +38,9 @@ public class BahmniDrugOrderMapper {
         for (DrugOrder openMRSDrugOrder : activeDrugOrders) {
             BahmniDrugOrder bahmniDrugOrder = new BahmniDrugOrder();
             bahmniDrugOrder.setDrugOrder(drugOrderMapper.mapDrugOrder(openMRSDrugOrder));
+            if(locale != null) {
+                bahmniDrugOrder.getDrugOrder().getDosingInstructions().setFrequency(openMRSDrugOrder.getFrequency().getConcept().getPreferredName(new Locale((locale))).getName());
+            }
             bahmniDrugOrder.setVisit(openMRSDrugOrder.getEncounter().getVisit());
             bahmniDrugOrder.setProvider(providerMapper.map(openMRSDrugOrder.getOrderer()));
             if(openMRSDrugOrder.getDrug() != null){

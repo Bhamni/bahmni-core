@@ -1,11 +1,9 @@
 package org.openmrs.module.bahmniemrapi.disposition.contract;
 
+import org.openmrs.ConceptName;
 import org.openmrs.module.emrapi.encounter.domain.EncounterTransaction;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class BahmniDisposition {
     private String code;
@@ -17,6 +15,16 @@ public class BahmniDisposition {
     private List<EncounterTransaction.Observation> additionalObs;
     private Date dispositionDateTime;
     private Set<EncounterTransaction.Provider> providers = new HashSet<>();
+
+    public String getPreferredName() {
+        return preferredName;
+    }
+
+    public void setPreferredName(String preferredName) {
+        this.preferredName = preferredName;
+    }
+
+    private String preferredName;
 
     public String getCode() {
         return code;

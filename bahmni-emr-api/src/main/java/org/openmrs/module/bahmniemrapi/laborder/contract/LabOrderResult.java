@@ -27,6 +27,8 @@ public class LabOrderResult {
     private Boolean referredOut;
     private Date resultDateTime;
     private String uploadedFileName;
+    private String preferredNameForTestLocale;
+    private String preferredNameForPanelLocale;
 
     public LabOrderResult() {
     }
@@ -46,7 +48,22 @@ public class LabOrderResult {
         this.uploadedFileName = uploadedFileName;
         this.accessionNotes = accessionNotes;
     }
-
+    public LabOrderResult(String orderUuid, String action, String accessionUuid, Date accessionDateTime, String testName, String testUnitOfMeasurement, Double minNormal, Double maxNormal, String result, Boolean abnormal, Boolean referredOut, String uploadedFileName, List<AccessionNote> accessionNotes ,String preferredNameByLocale) {
+        this.orderUuid = orderUuid;
+        this.action = action;
+        this.accessionUuid = accessionUuid;
+        this.testName = testName;
+        this.testUnitOfMeasurement = testUnitOfMeasurement;
+        this.minNormal = minNormal;
+        this.maxNormal = maxNormal;
+        this.accessionDateTime = accessionDateTime;
+        this.result = result;
+        this.abnormal = abnormal;
+        this.referredOut = referredOut;
+        this.uploadedFileName = uploadedFileName;
+        this.accessionNotes = accessionNotes;
+        this.preferredNameForTestLocale = preferredNameByLocale;
+    }
     public String getOrderUuid() {
         return orderUuid;
     }
@@ -214,4 +231,17 @@ public class LabOrderResult {
     public void setUploadedFileName(String uploadedFileName) {
         this.uploadedFileName = uploadedFileName;
     }
+
+    public String getPreferredNameForTestLocale() { return preferredNameForTestLocale; }
+
+    public void setPreferredNameForTestLocale(String preferredNameForTestLocale) { this.preferredNameForTestLocale = preferredNameForTestLocale; }
+
+    public String getPreferredNameForPanelLocale() {
+        return preferredNameForPanelLocale;
+    }
+
+    public void setPreferredNameForPanelLocale(String preferredNameForPanelLocale) {
+        this.preferredNameForPanelLocale = preferredNameForPanelLocale;
+    }
+
 }
