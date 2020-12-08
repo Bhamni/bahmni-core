@@ -4544,7 +4544,7 @@
             PRIMARY KEY (form_privilege_id),
             UNIQUE KEY form_privilege_uuid_index (uuid),
             KEY defines_parent_form_id (formId),
-            CONSTRAINT defines_parent_form_id` FOREIGN KEY (formId) REFERENCES form (form_id));
+            CONSTRAINT defines_parent_form_id FOREIGN KEY (formId) REFERENCES form (form_id));
         </sql>
     </changeSet>
 </databaseChangeLog>
