@@ -6,15 +6,19 @@ import org.openmrs.Obs;
 import org.openmrs.Order;
 import org.openmrs.Patient;
 import org.openmrs.Provider;
+import org.openmrs.TestOrder;
 import org.openmrs.Visit;
 import org.openmrs.api.EncounterService;
+import org.openmrs.api.db.hibernate.HibernateUtil;
 import org.openmrs.module.bahmniemrapi.accessionnote.contract.AccessionNote;
 import org.openmrs.module.bahmniemrapi.laborder.contract.LabOrderResult;
 import org.openmrs.module.bahmniemrapi.laborder.contract.LabOrderResults;
 import org.openmrs.module.emrapi.encounter.EncounterTransactionMapper;
+import org.openmrs.module.emrapi.encounter.OrderMapper;
 import org.openmrs.module.emrapi.encounter.domain.EncounterTransaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,8 +45,12 @@ public class LabOrderResultsServiceImpl implements LabOrderResultsService {
 
     @Autowired
     private EncounterService encounterService;
+    
+    @Autowired
+    private OrderMapper orderMapper;
 
     @Override
+    @Transactional(readOnly = true)
     public LabOrderResults getAll(Patient patient, List<Visit> visits, int numberOfAccessions) {
         List<EncounterTransaction.Order> testOrders = new ArrayList<>();
         List<EncounterTransaction.Observation> observations = new ArrayList<>();
@@ -170,6 +178,18 @@ public class LabOrderResultsServiceImpl implements LabOrderResultsService {
                 orders.add(order);
             }
         }
+        // Hack to hundle OpenMRS Test Orders from the TestOrder domain as Orders since the emrapi's OrderMapper does not hundle them
+        if (orders.isEmpty()) {
+            for (Order order : encounter.getOrders()) {
+                order = HibernateUtil.getRealObjectFromProxy(order);
+                boolean conceptFilter = (concepts == null) || concepts.contains(order.getConcept().getName().getName());
+                if (TestOrder.class.equals(order.getClass()) && ((conceptFilter && LAB_ORDER_TYPE.equals(order.getOrderType().getName())) && !((startDate != null && order.getDateCreated().before(startDate))
+                        || (endDate != null && order.getDateCreated().after(endDate))))) {
+                	encounterTestOrderUuidMap.put(order.getUuid(), encounter);
+                	orders.add(orderMapper.mapOrder(order));
+                }
+            }
+        }
         return orders;
     }
 
@@ -212,6 +232,7 @@ public class LabOrderResultsServiceImpl implements LabOrderResultsService {
                 labOrderResults.add(labOrderResult);
             }
         }
+        System.out.println("hhhhhhhhhhhhhhhh   number of labOrderResults :" + labOrderResults.size());
         return labOrderResults;
     }
 
