@@ -137,6 +137,24 @@ public class LabOrderResultsServiceIT extends BaseIntegrationTest {
 
         assertOrderPresent(labOrderResults, "PS for Malaria", null, 17, "System OpenMRS", "Result for PS Malaria", null, null, null, null, false, null);
     }
+    
+    @Test
+    public void shouldMapTestOrdersRecordedInTestOrderTableWithTheirResultsForGivenVisit() throws Exception {
+        executeDataSet("diagnosisMetadata.xml");
+        executeDataSet("dispositionMetadata.xml");
+        executeDataSet("labOrderTestData.xml");
+        executeDataSet("labOrderAssociatedWithTestOrderData.xml");
+        Patient patient = Context.getPatientService().getPatient(1000000);
+        Visit visit = Context.getVisitService().getVisit(4);
+
+        LabOrderResults results = labOrderResultsService.getAll(patient, Arrays.asList(visit), Integer.MAX_VALUE);
+        List<LabOrderResult> labOrderResults = results.getResults();
+
+        assertNotNull(labOrderResults);
+        assertEquals(1, labOrderResults.size());
+
+        assertOrderPresent(labOrderResults, "PS for Malaria", null, 17, "System OpenMRS", "Result for PS Malaria", null, null, null, null, false, null);
+    }
 
     @Test
     public void shouldGetLabOrdersWithResultsEvenIfItIsDiscontinued() throws Exception {
