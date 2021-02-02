@@ -178,18 +178,18 @@ public class LabOrderResultsServiceImpl implements LabOrderResultsService {
                 orders.add(order);
             }
         }
-        // Hack to hundle OpenMRS Test Orders from the TestOrder domain as Orders since the emrapi's OrderMapper does not hundle them
-//        if (orders.isEmpty()) {
-//            for (Order order : encounter.getOrders()) {
-//                order = HibernateUtil.getRealObjectFromProxy(order);
-//                boolean conceptFilter = (concepts == null) || concepts.contains(order.getConcept().getName().getName());
-//                if (TestOrder.class.equals(order.getClass()) && ((conceptFilter && LAB_ORDER_TYPE.equals(order.getOrderType().getName())) && !((startDate != null && order.getDateCreated().before(startDate))
-//                        || (endDate != null && order.getDateCreated().after(endDate))))) {
-//                	encounterTestOrderUuidMap.put(order.getUuid(), encounter);
-//                	orders.add(orderMapper.mapOrder(order));
-//                }
-//            }
-//        }
+        // Hack to hundle OpenMRS Test Orders from the TestOrder domain as Orders since the emrapi's OrderMapper does not handle them
+        if (orders.isEmpty()) {
+            for (Order order : encounter.getOrders()) {
+                order = HibernateUtil.getRealObjectFromProxy(order);
+                boolean conceptFilter = (concepts == null) || concepts.contains(order.getConcept().getName().getName());
+                if (TestOrder.class.equals(order.getClass()) && ((conceptFilter && LAB_ORDER_TYPE.equals(order.getOrderType().getName())) && !((startDate != null && order.getDateCreated().before(startDate))
+                        || (endDate != null && order.getDateCreated().after(endDate))))) {
+                	encounterTestOrderUuidMap.put(order.getUuid(), encounter);
+                	orders.add(orderMapper.mapOrder(order));
+                }
+            }
+        }
         return orders;
     }
 
