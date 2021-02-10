@@ -49,9 +49,14 @@ public class Form2CSVObsHandler implements CSVObsHandler {
                 final List<String> form2CSVHeaderParts = getCSVHeaderPartsByIgnoringForm2KeyWord(form2CSVObservation);
                 verifyCSVHeaderHasConcepts(form2CSVObservation, form2CSVHeaderParts);
                 csvObservationHelper.verifyNumericConceptValue(form2CSVObservation, form2CSVHeaderParts);
-                csvObservationHelper.createObservations(form2Observations, encounterRow.getEncounterDate(),
-                        form2CSVObservation, getConceptNames(form2CSVHeaderParts));
-                setFormNamespaceAndFieldPath(form2Observations, form2CSVHeaderParts);
+                boolean isMultiSelectObs = formFieldPathService.isMultiSelectObs(form2CSVHeaderParts);
+                if(isMultiSelectObs) {
+                    processMultiSelectObs(encounterRow, form2Observations, form2CSVObservation, form2CSVHeaderParts);
+                } else {
+                    csvObservationHelper.createObservations(form2Observations, encounterRow.getEncounterDate(),
+                            form2CSVObservation, getConceptNames(form2CSVHeaderParts));
+                    setFormNamespaceAndFieldPath(form2Observations, form2CSVHeaderParts);
+                }
             }
         }
         return form2Observations;
@@ -69,6 +74,32 @@ public class Form2CSVObsHandler implements CSVObsHandler {
             final String formFieldPath = formFieldPathService.getFormFieldPath(form2CSVHeaderParts);
             observation.setFormFieldPath(formFieldPath);
             observation.setFormNamespace(FORM_NAMESPACE);
+        }
+    }
+
+    private void processMultiSelectObs(EncounterRow encounterRow, List<EncounterTransaction.Observation> form2Observations, KeyValue form2CSVObservation, List<String> form2CSVHeaderParts) throws ParseException {
+        List<String> multiSelectValues = csvObservationHelper.getMultiSelectObs(form2CSVObservation);
+        List<KeyValue> addmoreForm2CSVObservations = new ArrayList<>();
+        for(String multiSelectValue : multiSelectValues) {
+            KeyValue addmoreForm2CSVObservation = new KeyValue();
+            addmoreForm2CSVObservation.setKey(form2CSVObservation.getKey());
+            addmoreForm2CSVObservation.setValue(multiSelectValue.trim());
+            addmoreForm2CSVObservations.add(addmoreForm2CSVObservation);
+        }
+        csvObservationHelper.createObservations(form2Observations, encounterRow.getEncounterDate(),
+                addmoreForm2CSVObservations, getConceptNames(form2CSVHeaderParts));
+        setFormNamespaceAndFieldPathForMultiSelectObs(form2Observations, form2CSVHeaderParts, addmoreForm2CSVObservations);
+    }
+
+    private void setFormNamespaceAndFieldPathForMultiSelectObs(List<EncounterTransaction.Observation> form2Observations, List<String> form2CSVHeaderParts, List<KeyValue> addmoreForm2CSVObservations) {
+        if (!isEmpty(form2Observations)) {
+            int prevObsCount = form2Observations.size() - addmoreForm2CSVObservations.size();
+            for(int i = 0; i < addmoreForm2CSVObservations.size(); i++) {
+                final EncounterTransaction.Observation observation = form2Observations.get(prevObsCount + i);
+                final String formFieldPath = formFieldPathService.getFormFieldPath(form2CSVHeaderParts);
+                observation.setFormFieldPath(formFieldPath);
+                observation.setFormNamespace(FORM_NAMESPACE);
+            }
         }
     }
 

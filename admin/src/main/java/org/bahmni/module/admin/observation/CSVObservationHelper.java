@@ -36,6 +36,8 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 public class CSVObservationHelper {
     private static final String FORM2_TYPE = "form2";
     private static final String OBS_PATH_SPLITTER_PROPERTY = "bahmni.admin.csv.upload.obsPath.splitter";
+    private static final String MULTI_SELECT_OBS_SPLITTER_PROPERTY = "bahmni.admin.csv.upload.obs.multiSelect.splitter";
+    private static final String DEFAULT_MULTI_SELECT_OBS_SPLITTER = "|";
     private static final String DEFAULT_OBSPATH_SPLITTER = ".";
     private final ConceptCache conceptCache;
     private final ConceptService conceptService;
@@ -58,6 +60,18 @@ public class CSVObservationHelper {
 
     protected Concept getConcept(String conceptName) {
         return conceptCache.getConcept(conceptName);
+    }
+
+    public void createObservations(List<Observation> observations, Date encounterDate,
+                                   List<KeyValue> obsRows, List<String> conceptNames) throws ParseException {
+        Observation existingObservation = getRootObservationIfExists(observations, conceptNames, null);
+        if (existingObservation == null) {
+            for(KeyValue obsRow : obsRows)
+                observations.add(createObservation(conceptNames, encounterDate, obsRow));
+        } else {
+            for(KeyValue obsRow : obsRows)
+                updateObservation(conceptNames, existingObservation, encounterDate, obsRow);
+        }
     }
 
     public void createObservations(List<Observation> observations, Date encounterDate,
@@ -173,6 +187,17 @@ public class CSVObservationHelper {
     private String getObsPathSplitter() {
         final String obsPathSplitter = administrationService.getGlobalProperty(OBS_PATH_SPLITTER_PROPERTY);
         return isNotBlank(obsPathSplitter) ? obsPathSplitter : DEFAULT_OBSPATH_SPLITTER;
+    }
+
+    public List<String> getMultiSelectObs(KeyValue csvObservation) {
+        String multiSelectValue = csvObservation.getValue();
+        return isNotBlank(multiSelectValue) ? new ArrayList<>(asList(multiSelectValue.split(String.format("\\%s", getMultiSelectObsSplitter()))))
+                : new ArrayList<>();
+    }
+
+    private String getMultiSelectObsSplitter() {
+        final String multiSelectObsSplitter = administrationService.getGlobalProperty(MULTI_SELECT_OBS_SPLITTER_PROPERTY);
+        return isNotBlank(multiSelectObsSplitter) ? multiSelectObsSplitter : DEFAULT_MULTI_SELECT_OBS_SPLITTER;
     }
 
     public boolean isForm2Type(KeyValue obsRow) {

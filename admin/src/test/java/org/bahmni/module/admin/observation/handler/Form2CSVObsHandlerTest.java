@@ -109,6 +109,9 @@ public class Form2CSVObsHandlerTest {
         when(csvObservationHelper.isForm2Type(form1CSVObservation)).thenReturn(false);
         when(csvObservationHelper.isForm2Type(form2CSVObservation)).thenReturn(true);
 
+        final List<String> headerParts = new ArrayList<>(Arrays.asList("form2", "Vitals"));
+        when(csvObservationHelper.getCSVHeaderParts(form2CSVObservation)).thenReturn(headerParts);
+
         form2CSVObsHandler = new Form2CSVObsHandler(csvObservationHelper, formFieldPathService);
 
         form2CSVObsHandler.handle(encounterRow);
@@ -136,5 +139,34 @@ public class Form2CSVObsHandlerTest {
         expectedException.expectMessage(format("No concepts found in %s", form2CSVObservation.getKey()));
 
         form2CSVObsHandler.handle(encounterRow);
+    }
+
+    @Test
+    public void shouldCreateObsForMultiSelectConcept() throws ParseException {
+        final KeyValue form2CSVObservation = new KeyValue("form2.HIV_History.PresentConditions", "Asymptomatic|Herpes Zoster");
+
+        final EncounterRow encounterRow = new EncounterRow();
+        encounterRow.obsRows = asList(form2CSVObservation);
+        encounterRow.encounterDateTime = "2019-11-11";
+
+        when(csvObservationHelper.isForm2Type(form2CSVObservation)).thenReturn(true);
+
+        final List<String> headerParts = new ArrayList<>(Arrays.asList("form2", "HIV_History", "PresentConditions"));
+        final List<String> obsValues = new ArrayList<>(Arrays.asList("Asymptomatic", "Herpes Zoster"));
+        when(csvObservationHelper.getCSVHeaderParts(form2CSVObservation)).thenReturn(headerParts);
+        when(csvObservationHelper.getMultiSelectObs(form2CSVObservation)).thenReturn(obsValues);
+        doNothing().when(csvObservationHelper).verifyNumericConceptValue(form2CSVObservation, headerParts);
+        doNothing().when(csvObservationHelper).createObservations(anyListOf(EncounterTransaction.Observation.class),
+                any(Date.class), anyListOf(KeyValue.class), anyListOf(String.class));
+        when(formFieldPathService.isMultiSelectObs(asList("HIV_History", "PresentConditions"))).thenReturn(true);
+
+        form2CSVObsHandler = new Form2CSVObsHandler(csvObservationHelper, formFieldPathService);
+
+        form2CSVObsHandler.handle(encounterRow);
+        verify(csvObservationHelper).isForm2Type(form2CSVObservation);
+        verify(csvObservationHelper).getCSVHeaderParts(form2CSVObservation);
+        verify(csvObservationHelper).verifyNumericConceptValue(form2CSVObservation, headerParts);
+        verify(csvObservationHelper).createObservations(anyListOf(EncounterTransaction.Observation.class),
+                any(Date.class), anyListOf(KeyValue.class), anyListOf(String.class));
     }
 }
