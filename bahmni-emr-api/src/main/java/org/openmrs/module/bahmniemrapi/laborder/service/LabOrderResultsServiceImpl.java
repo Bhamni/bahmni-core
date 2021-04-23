@@ -178,7 +178,7 @@ public class LabOrderResultsServiceImpl implements LabOrderResultsService {
                 orders.add(order);
             }
         }
-        // Hack to hundle OpenMRS Test Orders from the TestOrder domain as Orders since the emrapi's OrderMapper does not handle them
+        // Hack to handle OpenMRS Test Orders from the TestOrder domain as Orders since the EMRAPI's OrderMapper does not handle them
         if (orders.isEmpty()) {
             for (Order order : encounter.getOrders()) {
                 order = HibernateUtil.getRealObjectFromProxy(order);
