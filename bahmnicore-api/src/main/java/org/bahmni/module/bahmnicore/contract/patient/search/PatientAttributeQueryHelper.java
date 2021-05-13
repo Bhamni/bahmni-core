@@ -1,7 +1,7 @@
 package org.bahmni.module.bahmnicore.contract.patient.search;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.bahmni.module.bahmnicore.util.SqlQueryHelper;
 import org.hibernate.type.StandardBasicTypes;
 import org.hibernate.type.Type;
 import org.openmrs.api.context.Context;
@@ -48,7 +48,7 @@ public class PatientAttributeQueryHelper {
 		if(StringUtils.isEmpty(customAttribute) || personAttributeTypeIds.size() == 0){
 			return where;
 		}
-		return combine(where, "and", enclose(" pattrln.value like "+ "'%" + StringEscapeUtils.escapeSql(customAttribute) + "%'"));
+		return combine(where, "and", enclose(" pattrln.value like "+ "'%" + SqlQueryHelper.escapeSQL(customAttribute, true) + "%'"));
 	}
 
 	public Map<String,Type> addScalarQueryResult(){

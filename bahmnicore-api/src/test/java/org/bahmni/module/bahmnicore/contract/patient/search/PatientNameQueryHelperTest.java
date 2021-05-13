@@ -39,7 +39,7 @@ public class PatientNameQueryHelperTest {
 	public void shouldReturnWhereClauseWithNameSearchConditionWhenWildCardParameterWithSingleQuote() throws Exception {
 		PatientNameQueryHelper patientNameQueryHelper = new PatientNameQueryHelper("James Bo'nd");
 		String whereClause = patientNameQueryHelper.appendToWhereClause("where clause");
-		assertEquals("where clause and ( concat_ws(' ',coalesce(given_name), coalesce(middle_name), coalesce(family_name)) like  '%James%' and  concat_ws(' ',coalesce(given_name), coalesce(middle_name), coalesce(family_name)) like  '%Bo''nd%')", whereClause);
+		assertEquals("where clause and ( concat_ws(' ',coalesce(given_name), coalesce(middle_name), coalesce(family_name)) like  '%James%' and  concat_ws(' ',coalesce(given_name), coalesce(middle_name), coalesce(family_name)) like  '%Bo\\'nd%')", whereClause);
 
 	}
 

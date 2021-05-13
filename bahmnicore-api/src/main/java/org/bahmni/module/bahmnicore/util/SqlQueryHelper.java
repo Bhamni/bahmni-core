@@ -1,5 +1,6 @@
 package org.bahmni.module.bahmnicore.util;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.bahmni.module.bahmnicore.model.searchParams.AdditionalSearchParam;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -72,5 +73,55 @@ public class SqlQueryHelper {
         return queryWithAdditionalParams;
     }
 
+    public static String escapeSQL(String str, boolean escapeDoubleQuotes) {
+        if (StringUtils.isBlank(str)) {
+            return str;
+        }
+        String strToCheck = str.replace("0x", "0X").replace("/*", "\\/*");
+        StringBuilder sBuilder = new StringBuilder((strToCheck.length() * 2) + 3);
+        int stringLength = strToCheck.length();
+        for (int i = 0; i < stringLength; ++i) {
+            char c = strToCheck.charAt(i);
+            switch (c) {
+                case 0: 
+                    sBuilder.append('\\');
+                    sBuilder.append('0');
+                    break;
+                case ';':
+                    sBuilder.append('\\');
+                    sBuilder.append(';');
+                    break;
+                case '\n': /* Must be escaped for logs */
+                    sBuilder.append('\\');
+                    sBuilder.append('n');
+                    break;
+                case '\r':
+                    sBuilder.append('\\');
+                    sBuilder.append('r');
+                    break;
+                case '\\':
+                    sBuilder.append('\\');
+                    sBuilder.append('\\');
+                    break;
+                case '\'':
+                    sBuilder.append('\\');
+                    sBuilder.append('\'');
+                    break;
+                case '"':
+                    if (escapeDoubleQuotes) {
+                        sBuilder.append('\\');
+                    }
+                    sBuilder.append('"');
+                    break;
+                case '\032':
+                    sBuilder.append('\\');
+                    sBuilder.append('Z');
+                    break;
+                default:
+                    sBuilder.append(c);
+            }
+        }
+        return sBuilder.toString();
+    }
 
 }

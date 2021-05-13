@@ -1,5 +1,6 @@
 package org.bahmni.module.bahmnicore.contract.patient.search;
 
+import org.apache.log4j.Logger;
 import org.bahmni.module.bahmnicore.contract.patient.response.PatientResponse;
 import org.bahmni.module.bahmnicore.customdatatype.datatype.CodedConceptDatatype;
 import org.bahmni.module.bahmnicore.model.bahmniPatientProgram.ProgramAttributeType;
@@ -15,6 +16,8 @@ import java.util.List;
 import java.util.Map;
 
 public class PatientSearchBuilder {
+
+	private static final Logger log = Logger.getLogger(PatientSearchBuilder.class);
 
 	private String visitJoin = " left outer join visit v on v.patient_id = p.person_id and v.date_stopped is null ";
 	private static String VISIT_JOIN = "_VISIT_JOIN_";
@@ -52,7 +55,9 @@ public class PatientSearchBuilder {
 			"   and va.attribute_type_id = (select visit_attribute_type_id from visit_attribute_type where name='Admission Status') " +
 			"   and va.voided = 0";
 	private static final String GROUP_BY_KEYWORD = " group by ";
-	public static final String ORDER_BY = " order by primary_identifier.identifier asc LIMIT :limit OFFSET :offset";
+	//public static final String ORDER_BY = " order by primary_identifier.identifier asc LIMIT :limit OFFSET :offset";
+	public static final String ORDER_BY = " order by primary_identifier.identifier asc";
+	public static final String LIMIT_OFFSET = " LIMIT %d OFFSET %d ";
 	private static final String LIMIT_PARAM = "limit";
 	private static final String OFFSET_PARAM = "offset";
 
@@ -139,7 +144,8 @@ public class PatientSearchBuilder {
 
 	public SQLQuery buildSqlQuery(Integer limit, Integer offset){
 		String joinWithVisit = join.replace(VISIT_JOIN, visitJoin);
-		String query = select + from + joinWithVisit + where + GROUP_BY_KEYWORD + groupBy  + orderBy;
+		String query = select + from + joinWithVisit + where + GROUP_BY_KEYWORD + groupBy  + orderBy
+				+  String.format(LIMIT_OFFSET, limit, offset);
 
 		SQLQuery sqlQuery = sessionFactory.getCurrentSession()
 				.createSQLQuery(query)
@@ -158,14 +164,12 @@ public class PatientSearchBuilder {
 				.addScalar("extraIdentifiers", StandardBasicTypes.STRING);
 
 		Iterator<Map.Entry<String,Type>> iterator = types.entrySet().iterator();
+		log.info("Executing Patient Search Query:" + sqlQuery.getQueryString());
 
 		while(iterator.hasNext()){
 			Map.Entry<String,Type> entry = iterator.next();
 			sqlQuery.addScalar(entry.getKey(),entry.getValue());
 		}
-
-		sqlQuery.setParameter(LIMIT_PARAM, limit);
-		sqlQuery.setParameter(OFFSET_PARAM, offset);
 		sqlQuery.setResultTransformer(Transformers.aliasToBean(PatientResponse.class));
 		return sqlQuery;
 	}

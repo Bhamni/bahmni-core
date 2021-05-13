@@ -1,6 +1,7 @@
 package org.bahmni.module.bahmnicore.dao.impl;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.bahmni.module.bahmnicore.contract.patient.mapper.PatientResponseMapper;
@@ -43,6 +44,7 @@ public class PatientDaoImpl implements PatientDao {
 
     public static final int MAX_NGRAM_SIZE = 20;
     private SessionFactory sessionFactory;
+    private static final Logger log = Logger.getLogger(PatientDaoImpl.class);
 
     @Autowired
     public PatientDaoImpl(SessionFactory sessionFactory) {
@@ -68,7 +70,12 @@ public class PatientDaoImpl implements PatientDao {
                 .withProgramAttributes(programAttributeFieldValue, programAttributeType)
                 .withLocation(loginLocationUuid, filterPatientsByLocation)
                 .buildSqlQuery(length, offset);
-        return sqlQuery.list();
+        try {
+            return sqlQuery.list();
+        } catch (Exception e) {
+            log.error("Error occurred while trying to execute patient search query.", e);
+            throw new RuntimeException("Error occurred while to perform patient search");
+        }
     }
 
     @Override

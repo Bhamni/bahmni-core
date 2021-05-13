@@ -1,8 +1,7 @@
 package org.bahmni.module.bahmnicore.contract.patient.search;
 
-
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
+import org.bahmni.module.bahmnicore.util.SqlQueryHelper;
 import org.hibernate.type.StandardBasicTypes;
 import org.hibernate.type.Type;
 
@@ -27,16 +26,18 @@ public class PatientAddressFieldQueryHelper {
 	public String selectClause(String select){
 		String selectClause = ", ''  as addressFieldValue";
 		List<String> columnValuePairs = new ArrayList<>();
-
 		if (addressSearchResultFields != null) {
-			for (String field : addressSearchResultFields)
-				if (!"{}".equals(field)) columnValuePairs.add(String.format("\"%s\" : ' , '\"' , IFNULL(pa.%s ,''), '\"'", field, field));
-
-			if(columnValuePairs.size() > 0)
-				selectClause = String.format(",CONCAT ('{ %s , '}') as addressFieldValue",
+			for (String field : addressSearchResultFields) {
+				String fieldName = SqlQueryHelper.escapeSQL(field, true);
+				if (!"{}".equals(field)) {
+					columnValuePairs.add(String.format("\"%s\" : ' , '\"' , IFNULL(pa.%s ,''), '\"'", fieldName, fieldName));
+				}
+			}
+		}
+		if (columnValuePairs.size() > 0) {
+			selectClause = String.format(",CONCAT ('{ %s , '}') as addressFieldValue",
 					StringUtils.join(columnValuePairs.toArray(new String[columnValuePairs.size()]), ", ',"));
 		}
-
 		return select + selectClause;
 	}
 
@@ -44,7 +45,7 @@ public class PatientAddressFieldQueryHelper {
 		if (isEmpty(addressFieldValue)) {
 			return where;
 		}
-		return combine(where, "and", enclose(" " +addressFieldName+ " like '%" + StringEscapeUtils.escapeSql(addressFieldValue) + "%'"));
+		return combine(where, "and", enclose(" " + SqlQueryHelper.escapeSQL(addressFieldName, true) + " like '%" + SqlQueryHelper.escapeSQL(addressFieldValue, true) + "%'"));
 
 	}
 
@@ -64,6 +65,6 @@ public class PatientAddressFieldQueryHelper {
 
 	public String appendToGroupByClause(String fieldName) {
 		if(isEmpty(fieldName)) return  addressFieldName;
-		return addressFieldName + ", " + fieldName;
+		return SqlQueryHelper.escapeSQL(addressFieldName, true) + ", " + fieldName;
 	}
 }

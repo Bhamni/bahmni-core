@@ -1,7 +1,7 @@
 package org.bahmni.module.bahmnicore.contract.patient.search;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.bahmni.module.bahmnicore.util.SqlQueryHelper;
 import org.hibernate.type.StandardBasicTypes;
 import org.hibernate.type.Type;
 
@@ -33,7 +33,7 @@ public class PatientProgramAttributeQueryHelper {
 			return where;
 		}
 
-		return combine(where, "and", enclose(" ppa.value_reference like "+ "'%" + StringEscapeUtils.escapeSql(patientProgramAttributeValue) + "%' and ppa.attribute_type_id =" + programAttributeTypeId.intValue()));
+		return combine(where, "and", enclose(" ppa.value_reference like "+ "'%" + SqlQueryHelper.escapeSQL(patientProgramAttributeValue, true) + "%' and ppa.attribute_type_id =" + programAttributeTypeId.intValue()));
 	}
 
 	public Map<String,Type> addScalarQueryResult(){

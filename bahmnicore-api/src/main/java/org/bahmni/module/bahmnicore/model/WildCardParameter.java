@@ -1,6 +1,6 @@
 package org.bahmni.module.bahmnicore.model;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.bahmni.module.bahmnicore.util.SqlQueryHelper;
 
 public class WildCardParameter {
     private final String[] parts;
@@ -15,7 +15,7 @@ public class WildCardParameter {
         }
         String[] splitName = value.split(" ");
         for(int i=0;i<splitName.length ; i++){
-            splitName[i] = "%" + StringEscapeUtils.escapeSql(splitName[i]) + "%";
+            splitName[i] = "%" + SqlQueryHelper.escapeSQL(splitName[i], true)  + "%";
         }
         return new WildCardParameter(splitName);
     }
