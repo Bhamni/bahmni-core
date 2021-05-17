@@ -6,7 +6,7 @@ import static org.apache.commons.lang.StringUtils.isEmpty;
 
 public class PatientNameQueryHelper {
 	private String name;
-	public static final String BY_NAME_PARTS = " concat_ws(' ',coalesce(given_name), coalesce(middle_name), coalesce(family_name)) like ";
+	public static final String BY_NAME_PARTS = " concat_ws(' ',coalesce(pn.given_name), coalesce(pn.middle_name), coalesce(pn.family_name)) like ";
 
 	public PatientNameQueryHelper(String name){
 		this.name = name;

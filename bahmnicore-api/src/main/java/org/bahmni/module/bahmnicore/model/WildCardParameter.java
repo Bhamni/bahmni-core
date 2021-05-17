@@ -15,7 +15,7 @@ public class WildCardParameter {
         }
         String[] splitName = value.split(" ");
         for(int i=0;i<splitName.length ; i++){
-            splitName[i] = "%" + SqlQueryHelper.escapeSQL(splitName[i], true)  + "%";
+            splitName[i] = "%" + SqlQueryHelper.escapeSQL(splitName[i], true, null)  + "%";
         }
         return new WildCardParameter(splitName);
     }

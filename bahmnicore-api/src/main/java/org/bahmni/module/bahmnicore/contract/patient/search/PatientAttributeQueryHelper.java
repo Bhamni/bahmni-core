@@ -9,6 +9,7 @@ import org.openmrs.api.context.Context;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class PatientAttributeQueryHelper {
 	private String customAttribute;
@@ -48,7 +49,17 @@ public class PatientAttributeQueryHelper {
 		if(StringUtils.isEmpty(customAttribute) || personAttributeTypeIds.size() == 0){
 			return where;
 		}
-		return combine(where, "and", enclose(" pattrln.value like "+ "'%" + SqlQueryHelper.escapeSQL(customAttribute, true) + "%'"));
+		return combine(where, "and", enclose(" pattrln.value like "+ "'%" + SqlQueryHelper.escapeSQL(customAttribute, true, null) + "%'"));
+	}
+
+	public String appendToWhereClauseWithParam(String where, Consumer<QueryParam>  paramList){
+		if(StringUtils.isEmpty(customAttribute) || personAttributeTypeIds.size() == 0){
+			return where;
+		}
+		String paramValue = "%".concat(customAttribute).concat("%");
+		QueryParam param = new QueryParam("paramCustomPatientAttribute", paramValue);
+		paramList.accept(param);
+		return combine(where, "and", enclose(" pattrln.value like :paramCustomPatientAttribute"));
 	}
 
 	public Map<String,Type> addScalarQueryResult(){

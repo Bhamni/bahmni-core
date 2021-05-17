@@ -106,7 +106,7 @@ public class BahmniPatientDaoImplLuceneIT extends BaseIntegrationTest {
         String[] patientAttributes = {"caste"};
         String addressField = "nonExistingAddressFiled";
         expectedEx.expect(IllegalArgumentException.class);
-        expectedEx.expectMessage("Invalid Address Filed nonExistingAddressFiled");
+        expectedEx.expectMessage("Invalid address parameter");
         List<PatientResponse> patients = patientDao.getPatientsUsingLuceneSearch("", "", "testCaste1", addressField, null, 100, 0, patientAttributes, "", null, null, null, "c36006e5-9fbb-4f20-866b-0ece245615a1", false, false);
         
     }
@@ -115,7 +115,7 @@ public class BahmniPatientDaoImplLuceneIT extends BaseIntegrationTest {
     public void shouldThrowErrorWhenProgramAttributesIsNotPresent() {
         String nonExistingAttribute = "nonExistingAttribute";
         expectedEx.expect(IllegalArgumentException.class);
-        expectedEx.expectMessage("Invalid Program Attribute nonExistingAttribute");
+        expectedEx.expectMessage("Invalid Program Attribute");
         patientDao.getPatientsUsingLuceneSearch("", "", "", "city_village", null, 100, 0, null, "Stage1",nonExistingAttribute, null, null, "c36006e5-9fbb-4f20-866b-0ece245615a1", false, false);
         
     }

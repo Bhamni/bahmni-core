@@ -10,8 +10,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
+@Deprecated
 public class PatientAddressFieldQueryHelper {
 	private String addressFieldValue;
 	private String addressFieldName;
@@ -28,7 +30,7 @@ public class PatientAddressFieldQueryHelper {
 		List<String> columnValuePairs = new ArrayList<>();
 		if (addressSearchResultFields != null) {
 			for (String field : addressSearchResultFields) {
-				String fieldName = SqlQueryHelper.escapeSQL(field, true);
+				String fieldName = SqlQueryHelper.escapeSQL(field, true, null);
 				if (!"{}".equals(field)) {
 					columnValuePairs.add(String.format("\"%s\" : ' , '\"' , IFNULL(pa.%s ,''), '\"'", fieldName, fieldName));
 				}
@@ -45,7 +47,7 @@ public class PatientAddressFieldQueryHelper {
 		if (isEmpty(addressFieldValue)) {
 			return where;
 		}
-		return combine(where, "and", enclose(" " + SqlQueryHelper.escapeSQL(addressFieldName, true) + " like '%" + SqlQueryHelper.escapeSQL(addressFieldValue, true) + "%'"));
+		return combine(where, "and", enclose(" pa." + SqlQueryHelper.escapeSQL(addressFieldName, true, null) + " like '%" + SqlQueryHelper.escapeSQL(addressFieldValue, true, null) + "%'"));
 
 	}
 
@@ -63,8 +65,14 @@ public class PatientAddressFieldQueryHelper {
 		return scalarQueryResult;
 	}
 
-	public String appendToGroupByClause(String fieldName) {
-		if(isEmpty(fieldName)) return  addressFieldName;
-		return SqlQueryHelper.escapeSQL(addressFieldName, true) + ", " + fieldName;
+	public String appendToGroupByClause(String groupFields) {
+		if (addressFieldName == null || "".equals(addressFieldName)) {
+			return groupFields;
+		}
+		if (!isBlank(groupFields)) {
+			return SqlQueryHelper.escapeSQL(addressFieldName, true, null) + ", " + groupFields;
+
+		}
+		return " pa.".concat(SqlQueryHelper.escapeSQL(addressFieldName, true, null));
 	}
 }

@@ -24,7 +24,7 @@ public class PatientNameQueryHelperTest {
 	public void shouldReturnWhereClauseWithNameSearchConditionWhenWildCardParameterWithAnyString() throws Exception {
 		PatientNameQueryHelper patientNameQueryHelper = new PatientNameQueryHelper("James");
 		String whereClause = patientNameQueryHelper.appendToWhereClause("where clause");
-		assertEquals("where clause and ( concat_ws(' ',coalesce(given_name), coalesce(middle_name), coalesce(family_name)) like  '%James%')", whereClause);
+		assertEquals("where clause and ( concat_ws(' ',coalesce(pn.given_name), coalesce(pn.middle_name), coalesce(pn.family_name)) like  '%James%')", whereClause);
 	}
 
 
@@ -32,14 +32,14 @@ public class PatientNameQueryHelperTest {
 	public void shouldReturnWhereClauseWithNameSearchConditionWhenWildCardParameterWithMultipleStrings() throws Exception {
 		PatientNameQueryHelper patientNameQueryHelper = new PatientNameQueryHelper("James Bond");
 		String whereClause = patientNameQueryHelper.appendToWhereClause("where clause");
-		assertEquals("where clause and ( concat_ws(' ',coalesce(given_name), coalesce(middle_name), coalesce(family_name)) like  '%James%' and  concat_ws(' ',coalesce(given_name), coalesce(middle_name), coalesce(family_name)) like  '%Bond%')", whereClause);
+		assertEquals("where clause and ( concat_ws(' ',coalesce(pn.given_name), coalesce(pn.middle_name), coalesce(pn.family_name)) like  '%James%' and  concat_ws(' ',coalesce(pn.given_name), coalesce(pn.middle_name), coalesce(pn.family_name)) like  '%Bond%')", whereClause);
 	}
 
 	@Test
 	public void shouldReturnWhereClauseWithNameSearchConditionWhenWildCardParameterWithSingleQuote() throws Exception {
 		PatientNameQueryHelper patientNameQueryHelper = new PatientNameQueryHelper("James Bo'nd");
 		String whereClause = patientNameQueryHelper.appendToWhereClause("where clause");
-		assertEquals("where clause and ( concat_ws(' ',coalesce(given_name), coalesce(middle_name), coalesce(family_name)) like  '%James%' and  concat_ws(' ',coalesce(given_name), coalesce(middle_name), coalesce(family_name)) like  '%Bo\\'nd%')", whereClause);
+		assertEquals("where clause and ( concat_ws(' ',coalesce(pn.given_name), coalesce(pn.middle_name), coalesce(pn.family_name)) like  '%James%' and  concat_ws(' ',coalesce(pn.given_name), coalesce(pn.middle_name), coalesce(pn.family_name)) like  '%Bo\\'nd%')", whereClause);
 
 	}
 
@@ -47,7 +47,7 @@ public class PatientNameQueryHelperTest {
 	public void shouldReturnWhereClauseWithNameSearchConditionWhenNameContainsMultipleParts() throws Exception {
 		PatientNameQueryHelper patientNameQueryHelper = new PatientNameQueryHelper("James Bond");
 		String whereClause = patientNameQueryHelper.appendToWhereClause("where clause");
-		assertEquals("where clause and ( concat_ws(' ',coalesce(given_name), coalesce(middle_name), coalesce(family_name)) like  '%James%' and  concat_ws(' ',coalesce(given_name), coalesce(middle_name), coalesce(family_name)) like  '%Bond%')", whereClause);
+		assertEquals("where clause and ( concat_ws(' ',coalesce(pn.given_name), coalesce(pn.middle_name), coalesce(pn.family_name)) like  '%James%' and  concat_ws(' ',coalesce(pn.given_name), coalesce(pn.middle_name), coalesce(pn.family_name)) like  '%Bond%')", whereClause);
 
 	}
 }

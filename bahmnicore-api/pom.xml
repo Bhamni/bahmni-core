@@ -165,11 +165,15 @@
             <groupId>org.openmrs.module</groupId>
             <artifactId>addresshierarchy-api</artifactId>
             <version>${addressHierarchyVersion}</version>
+            <scope>provided</scope>
+            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>addresshierarchy-omod</artifactId>
             <version>${addressHierarchyVersion}</version>
+            <scope>provided</scope>
+            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.openmrs.module</groupId>

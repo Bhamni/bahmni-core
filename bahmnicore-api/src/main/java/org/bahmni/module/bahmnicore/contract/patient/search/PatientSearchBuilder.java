@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+@Deprecated
 public class PatientSearchBuilder {
 
 	private static final Logger log = Logger.getLogger(PatientSearchBuilder.class);
@@ -35,10 +36,10 @@ public class PatientSearchBuilder {
 			"primary_identifier.identifier as identifier, " +
 			"extra_identifiers.identifiers as extraIdentifiers, " +
 			"(CASE va.value_reference WHEN 'Admitted' THEN TRUE ELSE FALSE END) as hasBeenAdmitted ";
-	public static final String WHERE_CLAUSE = " where p.voided = 'false' and pn.voided = 'false' and pn.preferred=true ";
+	public static final String WHERE_CLAUSE = " where p.voided = false and pn.voided = false and pn.preferred=true ";
 	public static final String FROM_TABLE = " from person p ";
 	public static final String JOIN_CLAUSE = " left join person_name pn on pn.person_id = p.person_id" +
-			" left join person_address pa on p.person_id=pa.person_id and pa.voided = 'false'" +
+			" left join person_address pa on p.person_id=pa.person_id and pa.voided = false" +
 			" JOIN (SELECT identifier, patient_id" +
 			"      FROM patient_identifier pi" +
 			" JOIN patient_identifier_type pit ON pi.identifier_type = pit.patient_identifier_type_id AND pi.voided IS FALSE AND pit.retired IS FALSE" +
@@ -118,15 +119,12 @@ public class PatientSearchBuilder {
 	}
 
 	public PatientSearchBuilder withProgramAttributes(String programAttribute, ProgramAttributeType programAttributeType){
-		if(programAttributeType == null){
+		if (programAttributeType == null)  {
 			return this;
 		}
 
 		Integer programAttributeTypeId = programAttributeType.getProgramAttributeTypeId();
-
 		boolean isAttributeValueCodedConcept = programAttributeType.getDatatypeClassname().equals(CodedConceptDatatype.class.getCanonicalName());
-
-
 		PatientProgramAttributeQueryHelper programAttributeQueryHelper;
 		if (isAttributeValueCodedConcept) {
 			programAttributeQueryHelper = new ProgramAttributeCodedValueQueryHelper(programAttribute,
@@ -146,6 +144,8 @@ public class PatientSearchBuilder {
 		String joinWithVisit = join.replace(VISIT_JOIN, visitJoin);
 		String query = select + from + joinWithVisit + where + GROUP_BY_KEYWORD + groupBy  + orderBy
 				+  String.format(LIMIT_OFFSET, limit, offset);
+
+		log.debug("Running patient search query : " + query);
 
 		SQLQuery sqlQuery = sessionFactory.getCurrentSession()
 				.createSQLQuery(query)

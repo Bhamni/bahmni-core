@@ -6,22 +6,33 @@ import org.openmrs.module.webservices.rest.web.RequestContext;
 import java.util.Map;
 
 public class PatientSearchParameters {
-    private Boolean filterPatientsByLocation;
     private String identifier;
     private String name;
+
     private String addressFieldName;
     private String addressFieldValue;
-    private Integer start;
-    private Integer length;
+    private String[] addressSearchResultFields;
+
     private String customAttribute;
     private String[] patientAttributes;
+    private String[] patientSearchResultFields;
+
     private String programAttributeFieldValue;
     private String programAttributeFieldName;
+
     private String loginLocationUuid;
-    private String[] addressSearchResultFields;
-    private String[] patientSearchResultFields;
+
+    private Boolean filterPatientsByLocation;
     private Boolean filterOnAllIdentifiers;
 
+    private Integer start;
+    private Integer length;
+    private String version = "v2";
+
+    public PatientSearchParameters() {
+        this.length = 10;
+        this.start = 0;
+    }
     public PatientSearchParameters(RequestContext context) {
         String query = context.getParameter("q");
         String identifier = context.getParameter("identifier");
@@ -53,6 +64,10 @@ public class PatientSearchParameters {
         this.setFilterPatientsByLocation(Boolean.valueOf(context.getParameter("filterPatientsByLocation")));
         this.setFilterOnAllIdentifiers(Boolean.valueOf(context.getParameter("filterOnAllIdentifiers")));
         this.setLoginLocationUuid(context.getParameter("loginLocationUuid"));
+        String version = context.getParameter("version");
+        if (version != null && !"".equals(version)) {
+            this.setVersion(version);
+        }
     }
 
     public String getIdentifier() {
@@ -173,5 +188,13 @@ public class PatientSearchParameters {
 
     public Boolean getFilterOnAllIdentifiers() {
         return filterOnAllIdentifiers;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
     }
 }

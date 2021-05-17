@@ -39,7 +39,9 @@ public class BahmniVisitLocationServiceImpl implements BahmniVisitLocationServic
 
     private Location getLocationByUuid(String loginLocationUuid) {
         Location location = locationService.getLocationByUuid(loginLocationUuid);
-        if (location == null) throw new IllegalArgumentException("Location Uuid "+loginLocationUuid+" not found");
+        if (location == null) {
+            throw new IllegalArgumentException("Location Uuid "+loginLocationUuid+" not found");
+        }
 
         return location;
     }

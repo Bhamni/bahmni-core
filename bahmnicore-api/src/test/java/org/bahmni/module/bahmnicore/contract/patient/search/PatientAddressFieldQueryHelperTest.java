@@ -15,7 +15,7 @@ public class PatientAddressFieldQueryHelperTest {
 	public void shouldReturnWhereClauseWhenAddressFieldValueIsAvailable(){
 		PatientAddressFieldQueryHelper patientAddressFieldQueryHelper = new PatientAddressFieldQueryHelper("city_village", "Bilaspur",null);
 		String whereClause = patientAddressFieldQueryHelper.appendToWhereClause("where test='1234'");
-		assertEquals("where test='1234' and ( city_village like '%Bilaspur%')", whereClause);
+		assertEquals("where test='1234' and ( pa.city_village like '%Bilaspur%')", whereClause);
 	}
 
 	@Test
@@ -44,7 +44,7 @@ public class PatientAddressFieldQueryHelperTest {
 	public void ensureThatGroupByClauseIsConfiguredAndIsEmpty(){
 		PatientAddressFieldQueryHelper patientAddressFieldQueryHelper = new PatientAddressFieldQueryHelper("city_village", "Bilaspur",null);
 		String groupBy = patientAddressFieldQueryHelper.appendToGroupByClause("");
-		assertEquals("city_village",groupBy);
+		assertEquals(" pa.city_village",groupBy);
 	}
 
 	@Test

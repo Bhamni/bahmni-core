@@ -73,38 +73,42 @@ public class SqlQueryHelper {
         return queryWithAdditionalParams;
     }
 
-    public static String escapeSQL(String str, boolean escapeDoubleQuotes) {
+    public static String escapeSQL(String str, boolean escapeDoubleQuotes, Character escapeChar) {
         if (StringUtils.isBlank(str)) {
             return str;
         }
-        String strToCheck = str.replace("0x", "0X").replace("/*", "\\/*");
-        StringBuilder sBuilder = new StringBuilder((strToCheck.length() * 2) + 3);
+        char escChar = '\\';
+        if (escapeChar != null) {
+            escChar = escapeChar.charValue();
+        }
+        String strToCheck = str.trim().replace("0x", "0X").replace("/*", "\\/*");
+        StringBuilder sBuilder = new StringBuilder();
         int stringLength = strToCheck.length();
         for (int i = 0; i < stringLength; ++i) {
             char c = strToCheck.charAt(i);
             switch (c) {
-                case 0: 
-                    sBuilder.append('\\');
+                case 0:
+                    sBuilder.append(escChar);
                     sBuilder.append('0');
                     break;
                 case ';':
-                    sBuilder.append('\\');
+                    sBuilder.append(escChar);
                     sBuilder.append(';');
                     break;
                 case '\n': /* Must be escaped for logs */
-                    sBuilder.append('\\');
+                    sBuilder.append(escChar);
                     sBuilder.append('n');
                     break;
                 case '\r':
-                    sBuilder.append('\\');
+                    sBuilder.append(escChar);
                     sBuilder.append('r');
                     break;
                 case '\\':
-                    sBuilder.append('\\');
+                    sBuilder.append(escChar);
                     sBuilder.append('\\');
                     break;
                 case '\'':
-                    sBuilder.append('\\');
+                    sBuilder.append(escChar);
                     sBuilder.append('\'');
                     break;
                 case '"':
@@ -114,13 +118,17 @@ public class SqlQueryHelper {
                     sBuilder.append('"');
                     break;
                 case '\032':
-                    sBuilder.append('\\');
+                    sBuilder.append(escChar);
                     sBuilder.append('Z');
                     break;
                 default:
                     sBuilder.append(c);
             }
         }
+        log.error("*********************");
+        log.error("Original:"+ str);
+        log.error("Transformed:"+ sBuilder.toString());
+        log.error("*********************");
         return sBuilder.toString();
     }
 

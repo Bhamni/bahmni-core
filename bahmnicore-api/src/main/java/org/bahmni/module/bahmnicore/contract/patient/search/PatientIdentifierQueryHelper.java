@@ -25,7 +25,7 @@ public class PatientIdentifierQueryHelper {
 				" JOIN patient_identifier_type pit ON pi.identifier_type = pit.patient_identifier_type_id AND pi.voided IS FALSE " +
 				" JOIN global_property gp ON gp.property IN ('bahmni.primaryIdentifierType' "+extraIdentifierQuery+")" +
 				" AND gp.property_value LIKE concat('%', pit.uuid, '%')" +
-				" AND pi.identifier LIKE '%" + SqlQueryHelper.escapeSQL(identifier, true)+ "%' GROUP BY pi.patient_id) " +
+				" AND pi.identifier LIKE '%" + SqlQueryHelper.escapeSQL(identifier, true, null) + "%' GROUP BY pi.patient_id) " +
 				" AS matched_patient ON matched_patient.patient_id = p.person_id";
 		return join + query;
 	}

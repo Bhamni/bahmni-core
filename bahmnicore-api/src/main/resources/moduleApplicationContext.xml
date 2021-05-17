@@ -155,4 +155,37 @@
             </list>
         </property>
     </bean>
+
+
+    <bean id="patientDao" class="org.bahmni.module.bahmnicore.dao.impl.PatientDaoImpl">
+        <constructor-arg ref="sessionFactory"/>
+    </bean>
+
+    <bean id="bahmniPatientService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager">
+            <ref bean="transactionManager"/>
+        </property>
+        <property name="target">
+            <bean class="org.bahmni.module.bahmnicore.service.impl.BahmniPatientServiceImpl">
+                <constructor-arg ref="personService"/>
+                <constructor-arg ref="conceptService"/>
+                <constructor-arg ref="patientDao"/>
+            </bean>
+        </property>
+        <property name="preInterceptors">
+            <ref bean="serviceInterceptors"/>
+        </property>
+        <property name="transactionAttributeSource">
+            <ref bean="transactionAttributeSource"/>
+        </property>
+    </bean>
+
+    <bean parent="serviceContext">
+        <property name="moduleService">
+            <list merge="true">
+                <value>org.bahmni.module.bahmnicore.service.BahmniPatientService</value>
+                <ref bean="bahmniPatientService"/>
+            </list>
+        </property>
+    </bean>
 </beans>

@@ -5,10 +5,12 @@ import org.bahmni.module.bahmnicore.dao.PatientDao;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.openmrs.Address;
 import org.openmrs.Concept;
 import org.openmrs.PersonAttributeType;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.PersonService;
+import org.openmrs.module.addresshierarchy.service.AddressHierarchyService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +28,8 @@ public class BahmniPatientServiceImplTest {
     private ConceptService conceptService;
     @Mock
     private PatientDao patientDao;
+    @Mock
+    private AddressHierarchyService addressHierarchyService;
 
     private BahmniPatientServiceImpl bahmniPatientService;
 
