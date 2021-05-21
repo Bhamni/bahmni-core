@@ -17,12 +17,14 @@ import org.openmrs.api.PersonService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.bahmniemrapi.visitlocation.BahmniVisitLocationServiceImpl;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.function.Supplier;
 
 //@Service
 @Lazy //to toString rid of cyclic dependencies
+@Transactional
 public class BahmniPatientServiceImpl implements BahmniPatientService {
     private PersonService personService;
     private ConceptService conceptService;
@@ -57,6 +59,7 @@ public class BahmniPatientServiceImpl implements BahmniPatientService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<PatientResponse> search(PatientSearchParameters searchParameters) {
         if (useVersion2(searchParameters.getVersion()))  {
             Supplier<Location> visitLocation  = () -> getVisitLocation(searchParameters.getLoginLocationUuid());
@@ -81,6 +84,7 @@ public class BahmniPatientServiceImpl implements BahmniPatientService {
     }
 
     @Override
+    @Transactional
     public List<PatientResponse> luceneSearch(PatientSearchParameters searchParameters) {
         return patientDao.getPatientsUsingLuceneSearch(searchParameters.getIdentifier(),
                 searchParameters.getName(),
@@ -99,6 +103,7 @@ public class BahmniPatientServiceImpl implements BahmniPatientService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Patient> get(String partialIdentifier, boolean shouldMatchExactPatientId) {
         return patientDao.getPatients(partialIdentifier, shouldMatchExactPatientId);
     }
