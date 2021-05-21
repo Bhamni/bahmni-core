@@ -125,10 +125,6 @@ public class SqlQueryHelper {
                     sBuilder.append(c);
             }
         }
-        log.error("*********************");
-        log.error("Original:"+ str);
-        log.error("Transformed:"+ sBuilder.toString());
-        log.error("*********************");
         return sBuilder.toString();
     }
 
