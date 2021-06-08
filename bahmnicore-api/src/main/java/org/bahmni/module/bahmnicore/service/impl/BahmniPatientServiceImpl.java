@@ -22,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.function.Supplier;
 
-//@Service
 @Lazy //to toString rid of cyclic dependencies
 @Transactional
 public class BahmniPatientServiceImpl implements BahmniPatientService {
@@ -54,33 +53,12 @@ public class BahmniPatientServiceImpl implements BahmniPatientService {
         return patientConfigResponse;
     }
 
-    private boolean useVersion2(String version) {
-        return StringUtils.isBlank(version) ? false : version.equalsIgnoreCase("v2");
-    }
-
     @Override
     @Transactional(readOnly = true)
     public List<PatientResponse> search(PatientSearchParameters searchParameters) {
-        if (useVersion2(searchParameters.getVersion()))  {
-            Supplier<Location> visitLocation  = () -> getVisitLocation(searchParameters.getLoginLocationUuid());
-            Supplier<List<String>> configuredAddressFields  = () -> patientDao.getConfiguredPatientAddressFields();
-            return patientDao.getPatients(searchParameters, visitLocation, configuredAddressFields);
-        }
-
-        return patientDao.getPatients(searchParameters.getIdentifier(),
-                searchParameters.getName(),
-                searchParameters.getCustomAttribute(),
-                searchParameters.getAddressFieldName(),
-                searchParameters.getAddressFieldValue(),
-                searchParameters.getLength(),
-                searchParameters.getStart(),
-                searchParameters.getPatientAttributes(),
-                searchParameters.getProgramAttributeFieldValue(),
-                searchParameters.getProgramAttributeFieldName(),
-                searchParameters.getAddressSearchResultFields(),
-                searchParameters.getPatientSearchResultFields(),
-                searchParameters.getLoginLocationUuid(),
-                searchParameters.getFilterPatientsByLocation(), searchParameters.getFilterOnAllIdentifiers());
+        Supplier<Location> visitLocation  = () -> getVisitLocation(searchParameters.getLoginLocationUuid());
+        Supplier<List<String>> configuredAddressFields  = () -> patientDao.getConfiguredPatientAddressFields();
+        return patientDao.getPatients(searchParameters, visitLocation, configuredAddressFields);
     }
 
     @Override

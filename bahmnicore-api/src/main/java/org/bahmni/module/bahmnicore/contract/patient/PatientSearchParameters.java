@@ -27,7 +27,6 @@ public class PatientSearchParameters {
 
     private Integer start;
     private Integer length;
-    private String version = "v2";
 
     public PatientSearchParameters() {
         this.length = 10;
@@ -64,10 +63,6 @@ public class PatientSearchParameters {
         this.setFilterPatientsByLocation(Boolean.valueOf(context.getParameter("filterPatientsByLocation")));
         this.setFilterOnAllIdentifiers(Boolean.valueOf(context.getParameter("filterOnAllIdentifiers")));
         this.setLoginLocationUuid(context.getParameter("loginLocationUuid"));
-        String version = context.getParameter("version");
-        if (version != null && !"".equals(version)) {
-            this.setVersion(version);
-        }
     }
 
     public String getIdentifier() {
@@ -188,13 +183,5 @@ public class PatientSearchParameters {
 
     public Boolean getFilterOnAllIdentifiers() {
         return filterOnAllIdentifiers;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
     }
 }
