@@ -1,6 +1,14 @@
 package org.bahmni.module.bahmnicore.web.v1_0.controller;
 
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 import org.apache.commons.beanutils.ConversionException;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -46,14 +54,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * Controller for REST web service access to
@@ -154,18 +154,18 @@ public class BahmniPatientProfileResource extends DelegatingCrudResource<Patient
     @RequestMapping(method = RequestMethod.POST, value = "/{uuid}")
     @ResponseBody
     public ResponseEntity<Object> update(@PathVariable("uuid") String uuid, @RequestBody SimpleObject propertiesToUpdate) throws Exception {
-        PatientProfile delegate = null;
+        PatientProfile patientProfile = null;
         try {
-            delegate = mapForUpdatePatient(uuid, propertiesToUpdate);
+            patientProfile = mapForUpdatePatient(uuid, propertiesToUpdate);
         } catch (APIAuthenticationException e) {
             return new ResponseEntity<Object>(RestUtil.wrapErrorResponse(e, "User is logged in but doesn't have the relevant privilege "), HttpStatus.FORBIDDEN);
         }
-        setConvertedProperties(delegate, propertiesToUpdate, getUpdatableProperties(), true);
-        delegate.setRelationships(getRelationships(propertiesToUpdate, delegate.getPatient()));
+        setConvertedProperties(patientProfile, propertiesToUpdate, getUpdatableProperties(), true);
+        patientProfile.setRelationships(getRelationships(propertiesToUpdate, patientProfile.getPatient()));
         try {
-            delegate = emrPatientProfileService.save(delegate);
-            setRelationships(delegate);
-            return new ResponseEntity<>(ConversionUtil.convertToRepresentation(delegate, Representation.FULL), HttpStatus.OK);
+            patientProfile = emrPatientProfileService.save(patientProfile);
+            setRelationships(patientProfile);
+            return new ResponseEntity<>(ConversionUtil.convertToRepresentation(patientProfile, Representation.FULL), HttpStatus.OK);
         } catch (ContextAuthenticationException e) {
             return new ResponseEntity<Object>(RestUtil.wrapErrorResponse(e, e.getMessage()), HttpStatus.FORBIDDEN);
         } catch (ValidationException e) {
@@ -203,11 +203,11 @@ public class BahmniPatientProfileResource extends DelegatingCrudResource<Patient
     }
 
     private PatientProfile mapForUpdatePatient(String uuid, SimpleObject propertiesToUpdate) {
-        if (propertiesToUpdate.get("patient") == null || !(propertiesToUpdate.get("patient") instanceof Map)) {
+    	if (propertiesToUpdate.get("patient") == null || !(propertiesToUpdate.get("patient") instanceof Map)) {
             throw new ConversionException("The patient property is missing");
         }
 
-        PatientProfile delegate = new PatientProfile();
+        PatientProfile patientProfile = new PatientProfile();
 
         PatientResource1_8 patientResource1_9 = (PatientResource1_8) Context.getService(RestService.class).getResourceBySupportedClass(Patient.class);
         Patient patient = patientResource1_9.getPatientForUpdate(uuid, (Map<String, Object>) propertiesToUpdate.get("patient"));
@@ -219,10 +219,10 @@ public class BahmniPatientProfileResource extends DelegatingCrudResource<Patient
             PatientIdentifier patientIdentifier = (PatientIdentifier) ConversionUtil.convert(identifierProperties, PatientIdentifier.class);
             patient.addIdentifier(patientIdentifier);
         }
-        delegate.setPatient(patient);
+        patientProfile.setPatient(patient);
 
         propertiesToUpdate.removeProperty("patient");
-        return delegate;
+        return patientProfile;
     }
 
     private List<Relationship> getRelationships(SimpleObject propertiesToCreate, Person currentPerson) {
