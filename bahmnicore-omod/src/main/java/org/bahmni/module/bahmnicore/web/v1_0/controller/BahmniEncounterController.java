@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.Date;
 
 import static org.bahmni.module.bahmnicore.util.MiscUtils.setUuidsForObservations;
+import static org.bahmni.module.bahmnicore.util.MiscUtils.validateFormFieldPath;
 
 @Controller
 @RequestMapping(value = "/rest/" + RestConstants.VERSION_1 + "/bahmnicore/bahmniencounter")
@@ -91,6 +92,7 @@ public class BahmniEncounterController extends BaseRestController {
     @Transactional
     public BahmniEncounterTransaction update(@RequestBody BahmniEncounterTransaction bahmniEncounterTransaction) {
         setUuidsForObservations(bahmniEncounterTransaction.getObservations());
+        validateFormFieldPath(bahmniEncounterTransaction.getObservations());
         return bahmniEncounterTransactionService.save(bahmniEncounterTransaction);
     }
 
